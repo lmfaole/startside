@@ -1,4 +1,5 @@
 import { env } from "./env"
+import { upstream } from "./upstream"
 
 export interface Hour {
   time: string
@@ -54,11 +55,11 @@ export async function getWeather(): Promise<Weather> {
   const place = env("WEATHER_PLACE") ?? "Oslo"
   const lat = env("WEATHER_LAT") ?? "59.91"
   const lon = env("WEATHER_LON") ?? "10.75"
-  const response = await fetch(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`, {
+  const response = await upstream(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`, {
     // MET's terms ask for an identifying User-Agent.
     headers: { "User-Agent": "startside github.com/lmfaole/startside" },
-    next: { revalidate: 600 },
-  } as RequestInit)
+    revalidate: 600,
+  })
   if (!response.ok) throw new Error(`Yr svarte ${response.status}`)
   const body = (await response.json()) as { properties: { timeseries: Timeseries[] } }
   const now = Date.now()

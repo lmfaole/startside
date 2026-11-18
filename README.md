@@ -9,9 +9,19 @@ server on every request. Next.js (App Router, SSR) on Cloudflare Workers through
 | Source | What | Config |
 | --- | --- | --- |
 | Yr (MET Norway `locationforecast`) | The forecast for the rest of the day | `WEATHER_PLACE`, `WEATHER_LAT`, `WEATHER_LON` in `wrangler.jsonc` |
-| GitHub | Pull requests awaiting your review, your open pull requests, issues assigned to you | secret `GITHUB_TOKEN` |
+| GitHub | Pull requests awaiting your review, your open pull requests, issues assigned to you | secret `GITHUB_TOKEN` on `startside-upstream` |
 
 A source that fails shows its own error and does not take the page down.
+
+## How it runs
+
+- **`startside`** (`worker.mjs`, `wrangler.jsonc`): the page, on the route `lmfaole.party/start*`. The static files are
+  embedded in the script (`scripts/embed-assets.mjs`), so a deploy is one upload.
+- **`startside-upstream`** (`upstream/`): a relay on workers.dev. A Worker on the `lmfaole.party` zone gets 525 on every
+  fetch to an origin outside Cloudflare, while workers.dev works, so the page fetches Yr and GitHub through it. It takes
+  only GET, only those hosts, and only with the shared secret `UPSTREAM_KEY` (set on both Workers). It holds `GITHUB_TOKEN`.
+
+In `next dev` there is no `UPSTREAM_URL`, so the page fetches the sources directly.
 
 Served at `lmfaole.party/start` through a Cloudflare route (`wrangler.jsonc`), with `basePath: "/start"` in `next.config.ts`.
 

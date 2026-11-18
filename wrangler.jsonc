@@ -1,14 +1,15 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "startside",
-  "main": ".open-next/worker.js",
+  "main": "worker.mjs",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "routes": [{ "pattern": "lmfaole.party/start*", "zone_name": "lmfaole.party" }],
-  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "vars": {
     "WEATHER_PLACE": "Oslo",
     "WEATHER_LAT": "59.91",
-    "WEATHER_LON": "10.75"
+    "WEATHER_LON": "10.75",
+    // The relay the page fetches its sources through (upstream/); its key is the secret UPSTREAM_KEY.
+    "UPSTREAM_URL": "https://startside-upstream.olejorgenbakken.workers.dev"
   }
 }

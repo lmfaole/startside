@@ -7,8 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "typecheck": "tsc --noEmit",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+    "preview": "npm run build:worker && wrangler dev",
+    "deploy": "npm run build:worker && wrangler deploy",
+    "build:worker": "opennextjs-cloudflare build && node scripts/embed-assets.mjs"
   },
   "dependencies": {
     "@lmfaole/designsystem": "github:lmfaole/designsystem#88077e0260a65d4d8e28174a10e8fff960665008",

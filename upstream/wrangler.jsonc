@@ -1,0 +1,8 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "startside-upstream",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true
+  // Secrets: UPSTREAM_KEY (the same as the page's), GITHUB_TOKEN.
+}
