@@ -11,7 +11,8 @@ Built after the design system's «Pages and navigation» rules (5.3): three leve
 | Page | Is |
 | --- | --- |
 | `/start` | The **digest**: the state in counts (`SummaryBar`, each a link to its group), then the few things that need you most from each source with «Se alle N». Follows the time of day (`lib/plan.ts`). |
-| `/start/pull-requests`, `/issues`, `/discussions` | The **lists**: everything, in groups by what needs you most |
+| `/start/pull-requests`, `/issues`, `/discussions` | The **lists**: everything, in groups by what needs you most. Discussions are under Issues (the bar holds five places) |
+| `/start/varsler` | What wants a look: **feilende CI** (a default branch whose last commit is red, in your public repositories and the watched ones), **nytt fra andre** (replies and reviews on what you are in, last three days, where somebody else wrote last) and **Dependabot** (its open pull requests in your public repositories, with their checks) |
 | `/start/vaer` | The whole forecast: the rest of today, tomorrow, the coming days |
 | `/start/pull-requests/{owner}/{repo}/{n}`, `/issues/…`, `/discussions/…` | The **detail** of one thing: status, description, facts, checks, last comments, and **«Åpne på GitHub» last** |
 
@@ -21,6 +22,13 @@ tabs. A description or a comment is Markdown, shown with `Markdown` and cut at a
 A row links to the app's own page for the thing (`lib/links.ts`), never straight out to GitHub: leaving is the last action on
 the detail page. The detail pages read one item from GitHub's GraphQL (`lib/detail.ts`); the address is checked before it is
 used (`parseRef`). The service worker keeps the last copy of each page by its address, so the pages open offline.
+
+## Alerts
+
+`lib/alerts.ts` (pure, tested): `ciFailures` and `fromOthers`; `lib/github.ts`: `getCiFailures`, `getReplies`, `getDependabot`. GitHub's own
+notifications are **not** used: the API does not accept a fine-grained token (403), so «nytt fra andre» is read from the conversations of what
+you are involved in (the last comment or review, kept when it is not yours). It sits on the front page as «Følg opp» (red first) and as counts in
+the summary, in the morning, the workday, the evening and the weekend, but not at night.
 
 ## Sources
 

@@ -21,10 +21,10 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   const ref = parseRef(await params)
   if (ref === null) notFound()
   const result = await settle(getIssue(ref))
-  const back = { path: "/issues", label: "Issues" }
+  const trail = [{ path: "/issues", label: "Issues" }]
   if (!result.ok) {
     return (
-      <Shell current="issues" back={back} title={`Issue #${ref.number}`}>
+      <Shell current="issues" trail={trail} title={`Issue #${ref.number}`}>
         <ErrorMessage error={result.error}>Kunne ikke hente issuen</ErrorMessage>
       </Shell>
     )
@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="issues" back={back} crumb={`#${ref.number}`} title={issue.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${issue.author === null ? "" : ` · av ${issue.author}`} · opprettet ${long.format(new Date(issue.created))}`}>
+    <Shell current="issues" trail={trail} crumb={`#${ref.number}`} title={issue.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${issue.author === null ? "" : ` · av ${issue.author}`} · opprettet ${long.format(new Date(issue.created))}`}>
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">

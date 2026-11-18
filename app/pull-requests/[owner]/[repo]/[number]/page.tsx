@@ -23,10 +23,10 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   const ref = parseRef(await params)
   if (ref === null) notFound()
   const result = await settle(getPull(ref))
-  const back = { path: "/pull-requests", label: "Pull requests" }
+  const trail = [{ path: "/pull-requests", label: "Pull requests" }]
   if (!result.ok) {
     return (
-      <Shell current="pull-requests" back={back} title={`Pull request #${ref.number}`}>
+      <Shell current="pull-requests" trail={trail} title={`Pull request #${ref.number}`}>
         <ErrorMessage error={result.error}>Kunne ikke hente pull requesten</ErrorMessage>
       </Shell>
     )
@@ -40,7 +40,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="pull-requests" back={back} crumb={`#${ref.number}`} title={pull.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${pull.author === null ? "" : ` · av ${pull.author}`} · opprettet ${long.format(new Date(pull.created))}`}>
+    <Shell current="pull-requests" trail={trail} crumb={`#${ref.number}`} title={pull.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${pull.author === null ? "" : ` · av ${pull.author}`} · opprettet ${long.format(new Date(pull.created))}`}>
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">

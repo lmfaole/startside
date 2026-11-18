@@ -1,6 +1,6 @@
 import type { Day, DayPart } from "./day"
 
-export type SectionId = "weather" | "pulls" | "issues" | "discussions"
+export type SectionId = "weather" | "alerts" | "pulls" | "issues" | "discussions"
 
 export interface Plan {
   greeting: string
@@ -15,16 +15,16 @@ export interface Plan {
 const GREETINGS: Record<DayPart, string> = { morgen: "God morgen", arbeidsdag: "God dag", kveld: "God kveld", natt: "God natt" }
 
 const WEEKDAY: Record<DayPart, Omit<Plan, "greeting">> = {
-  morgen: { sections: ["weather", "pulls", "issues", "discussions"], weatherWindow: "today", pulls: "all" },
-  arbeidsdag: { sections: ["pulls", "issues", "discussions", "weather"], weatherWindow: "today", pulls: "all" },
-  kveld: { sections: ["pulls", "weather"], weatherWindow: "tomorrow", pulls: "mine" },
+  morgen: { sections: ["weather", "alerts", "pulls", "issues", "discussions"], weatherWindow: "today", pulls: "all" },
+  arbeidsdag: { sections: ["alerts", "pulls", "issues", "discussions", "weather"], weatherWindow: "today", pulls: "all" },
+  kveld: { sections: ["alerts", "pulls", "weather"], weatherWindow: "tomorrow", pulls: "mine" },
   natt: { sections: ["weather"], weatherWindow: "tomorrow", pulls: "mine" },
 }
 
-/** What the page is made of at a time of day: weekends leave out the work (reviews and assigned issues). */
+/** What the page is made of at a time of day: weekends leave out the work (reviews and assigned issues) but keep what is red or waiting in your own repositories. */
 export function planFor({ part, weekend }: Pick<Day, "part" | "weekend">): Plan {
   const plan = WEEKDAY[part]
   const weatherWindow = weekend && (part === "morgen" || part === "arbeidsdag") ? "today" : plan.weatherWindow
-  const sections = weekend ? (part === "natt" ? plan.sections : ["weather" as const, "pulls" as const]) : plan.sections
+  const sections = weekend ? (part === "natt" ? plan.sections : ["weather" as const, "alerts" as const, "pulls" as const]) : plan.sections
   return { greeting: GREETINGS[part], sections: [...sections], weatherWindow, pulls: weekend ? "mine" : plan.pulls }
 }

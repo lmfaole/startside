@@ -23,6 +23,17 @@ test("the counts that are for the reader, each a link to its group, and none for
   assert.equal(items[1]?.tone, undefined)
 })
 
+test("what is red or new comes with the counts: failing CI first, as it stops something", () => {
+  const items = summaryItems("/start", { pulls: [], issues: [], discussions: [], alerts: { ci: 2, replies: 3, dependabot: 5 } })
+  assert.deepEqual(items.map((item) => [item.key, item.count, item.href]), [
+    ["ci", 2, "/start/varsler#alerts-ci"],
+    ["replies", 3, "/start/varsler#alerts-replies"],
+    ["dependabot", 5, "/start/varsler#alerts-dependabot"],
+  ])
+  assert.equal(items[0]?.tone, "destructive")
+  assert.deepEqual(summaryItems("/start", { pulls: [], issues: [], discussions: [], alerts: { ci: 0, replies: 0, dependabot: 0 } }), [])
+})
+
 test("nothing for the reader is nothing", () => {
   assert.deepEqual(summaryItems("/start", { pulls: [], issues: [], discussions: [] }), [])
   assert.deepEqual(summaryItems("/start", { pulls: [pull("waiting", 3), pull("drafts", 1)], issues: [issue("recent", 4)], discussions: [] }), [])

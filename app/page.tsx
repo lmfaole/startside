@@ -3,12 +3,12 @@ import { SummaryBar } from "@lmfaole/designsystem/components/summary-bar"
 import { cookies } from "next/headers"
 
 import { PositionControl } from "../components/position"
-import { DiscussionsSection, IssuesSection, PullsSection, WeatherDigest } from "../components/sections"
+import { AlertsSection, DiscussionsSection, IssuesSection, PullsSection, WeatherDigest } from "../components/sections"
 import { Shell } from "../components/shell"
 import { dayOf, now } from "../lib/day"
 import { groupDiscussions } from "../lib/discussions"
 import { clock, dateLine } from "../lib/format"
-import { getDiscussions, getIssues, getPulls } from "../lib/github"
+import { getCiFailures, getDependabot, getDiscussions, getIssues, getPulls, getReplies } from "../lib/github"
 import { groupIssues } from "../lib/issues"
 import { BASE } from "../lib/links"
 import { planFor } from "../lib/plan"
@@ -33,17 +33,21 @@ export default async function Page() {
   const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
   const wants = (id: (typeof plan.sections)[number]) => plan.sections.includes(id)
 
-  const [pulls, issues, discussions, forecast] = await Promise.all([
+  const [pulls, issues, discussions, forecast, ci, replies, dependabot] = await Promise.all([
     wants("pulls") ? settle(getPulls(plan.pulls)) : null,
     wants("issues") ? settle(getIssues()) : null,
     wants("discussions") ? settle(getDiscussions()) : null,
     wants("weather") ? settle(getForecast(position)) : null,
+    wants("alerts") ? settle(getCiFailures()) : null,
+    wants("alerts") ? settle(getReplies(instant)) : null,
+    wants("alerts") ? settle(getDependabot()) : null,
   ])
 
   const summary = summaryItems(BASE, {
     pulls: pulls?.ok ? groupPulls(pulls.value) : [],
     issues: issues?.ok ? groupIssues(issues.value, instant) : [],
     discussions: discussions?.ok ? groupDiscussions(discussions.value) : [],
+    alerts: { ci: ci?.ok ? ci.value.length : 0, replies: replies?.ok ? replies.value.length : 0, dependabot: dependabot?.ok ? dependabot.value.length : 0 },
   })
 
   return (
@@ -51,6 +55,7 @@ export default async function Page() {
       <Stack gap="xl">
         <SummaryBar label="Oversikt" items={summary} />
         {plan.sections.map((id) => {
+          if (id === "alerts" && ci && replies && dependabot) return <AlertsSection key={id} data={{ ci, replies, dependabot }} mode="digest" instant={instant} />
           if (id === "pulls" && pulls) return <PullsSection key={id} data={pulls} mode="digest" instant={instant} />
           if (id === "issues" && issues) return <IssuesSection key={id} data={issues} mode="digest" instant={instant} />
           if (id === "discussions" && discussions) return <DiscussionsSection key={id} data={discussions} mode="digest" />

@@ -21,10 +21,10 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   const ref = parseRef(await params)
   if (ref === null) notFound()
   const result = await settle(getDiscussion(ref))
-  const back = { path: "/discussions", label: "Discussions" }
+  const trail = [{ path: "/issues", label: "Issues" }, { path: "/discussions", label: "Discussions" }]
   if (!result.ok) {
     return (
-      <Shell current="discussions" back={back} title={`Discussion #${ref.number}`}>
+      <Shell current="issues" trail={trail} title={`Discussion #${ref.number}`}>
         <ErrorMessage error={result.error}>Kunne ikke hente discussionen</ErrorMessage>
       </Shell>
     )
@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="discussions" back={back} crumb={`#${ref.number}`} title={discussion.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${discussion.author === null ? "" : ` · av ${discussion.author}`} · opprettet ${long.format(new Date(discussion.created))}`}>
+    <Shell current="issues" trail={trail} crumb={`#${ref.number}`} title={discussion.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${discussion.author === null ? "" : ` · av ${discussion.author}`} · opprettet ${long.format(new Date(discussion.created))}`}>
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">

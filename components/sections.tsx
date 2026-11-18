@@ -1,7 +1,7 @@
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Stack } from "@lmfaole/designsystem/components/layout"
-import { PageSection, SectionGroup, SubSection } from "@lmfaole/designsystem/components/page-section"
+import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { StatusLine } from "@lmfaole/designsystem/components/status-line"
 import { Text, TextLink } from "@lmfaole/designsystem/components/text"
@@ -9,6 +9,7 @@ import type { IconName } from "@lmfaole/designsystem/lib/icons"
 
 import { groupDiscussions, type DiscussionGroupId } from "../lib/discussions"
 import { takeFirst } from "../lib/digest"
+import { replyText, type CiFailure, type Reply } from "../lib/alerts"
 import { clock, degrees, number, short } from "../lib/format"
 import { hoursOf, type Forecast } from "../lib/yr"
 import { weatherIcon } from "../lib/forecast"
@@ -23,7 +24,7 @@ import { describeSymbol } from "../lib/yr"
 import type { DiscussionItem } from "../lib/discussions"
 
 /** How many a section of the front page shows: the digest of a longer list, which has a page of its own. */
-export const DIGEST = { pulls: 3, issues: 3, discussions: 3, weather: 4 } as const
+export const DIGEST = { pulls: 3, issues: 3, discussions: 3, weather: 4, alerts: 4 } as const
 
 /** A row in the digest is compact: no repository line and at most two statuses; the whole of it is on the page of the thing. */
 const COMPACT_LABELS = 2
@@ -106,13 +107,13 @@ export function PullsSection({ data, mode, instant }: { data: Settled<PullsData>
   if (groups.length === 0) return <Quiet id="pulls" title="Pull requests" icon="pull-request">Ingen åpne pull requests.</Quiet>
   if (mode === "full") {
     return (
-      <SectionGroup id="pulls" title="Pull requests" icon="pull-request">
+      <Stack gap="xl">
         {groups.map((group) => (
-          <SubSection key={group.id} id={`pulls-${group.id}`} title={group.title} icon={PULL_ICONS[group.id]}>
+          <PageSection key={group.id} id={`pulls-${group.id}`} title={group.title} icon={PULL_ICONS[group.id]}>
             <Rows lead="icon" rows={group.entries.map((entry) => pullRow(entry, group.id, instant))} columns={COLUMNS} />
-          </SubSection>
+          </PageSection>
         ))}
-      </SectionGroup>
+      </Stack>
     )
   }
   const total = groups.reduce((sum, group) => sum + group.entries.length, 0)
@@ -134,13 +135,13 @@ export function IssuesSection({ data, mode, instant }: { data: Settled<IssuesDat
   const issueRow = (item: Item, compact = false) => row(item, [], { icon: "issue", label: "Issue" }, compact)
   if (mode === "full") {
     return (
-      <SectionGroup id="issues" title="Issues" icon="issue">
+      <Stack gap="xl">
         {groups.map((group) => (
-          <SubSection key={group.id} id={`issues-${group.id}`} title={group.title} icon={ISSUE_ICONS[group.id]}>
+          <PageSection key={group.id} id={`issues-${group.id}`} title={group.title} icon={ISSUE_ICONS[group.id]}>
             <Rows lead="icon" rows={group.items.map((item) => issueRow(item))} columns={COLUMNS} />
-          </SubSection>
+          </PageSection>
         ))}
-      </SectionGroup>
+      </Stack>
     )
   }
   const total = groups.reduce((sum, group) => sum + group.items.length, 0)
@@ -168,13 +169,13 @@ export function DiscussionsSection({ data, mode }: { data: Settled<DiscussionsDa
   if (groups.length === 0) return mode === "full" ? <Quiet id="discussions" title="Discussions" icon="discussion">Ingen discussions.</Quiet> : null
   if (mode === "full") {
     return (
-      <SectionGroup id="discussions" title="Discussions" icon="discussion">
+      <Stack gap="xl">
         {groups.map((group) => (
-          <SubSection key={group.id} id={`discussions-${group.id}`} title={group.title} icon={DISCUSSION_ICONS[group.id]}>
+          <PageSection key={group.id} id={`discussions-${group.id}`} title={group.title} icon={DISCUSSION_ICONS[group.id]}>
             <Rows lead="icon" rows={group.items.map((item) => discussionRow(item))} columns={COLUMNS} />
-          </SubSection>
+          </PageSection>
         ))}
-      </SectionGroup>
+      </Stack>
     )
   }
   const total = groups.reduce((sum, group) => sum + group.items.length, 0)
@@ -209,6 +210,71 @@ export function WeatherDigest({ data, window, day, instant }: { data: Settled<Fo
   return (
     <PageSection id="weather" title={`Vær i ${data.value.place} ${window === "today" ? "nå" : "i morgen"}`} icon="weather" more={{ href: withBase("/vaer"), label: "Se hele meldingen" }}>
       <Rows lead="icon" rows={hourRows(data.value, window, day, instant, DIGEST.weather)} columns={{ name: "Tid og vær", value: "Temperatur, nedbør og vind" }} />
+    </PageSection>
+  )
+}
+
+export type AlertsData = { ci: Settled<CiFailure[]>; replies: Settled<Reply[]>; dependabot: Settled<Item[]> }
+
+const ALERT_ICONS = { ci: "failure", replies: "discussion", dependabot: "package" } as const satisfies Record<string, IconName>
+const ALERT_TITLES = { ci: "Feilende CI", replies: "Nytt fra andre", dependabot: "Dependabot" } as const
+
+const ciRow = (failure: CiFailure): RowData => ({
+  key: `ci/${failure.repo}`,
+  icon: "failure",
+  iconLabel: "Feilende CI",
+  iconTone: "destructive",
+  body: (
+    <Stack gap="xs">
+      {/* A repository has no page of its own here: the checks of the red commit are on GitHub, so the link out is marked. */}
+      <ExternalLink href={failure.href}>{failure.repo}</ExternalLink>
+      <Text size="xs" tone="muted">
+        {failure.headline}
+      </Text>
+      <StatusLine items={[{ text: `Feilet på ${failure.branch}`, tone: "destructive", icon: "failure" }]} />
+    </Stack>
+  ),
+  trailing: short.format(new Date(failure.committed)),
+})
+
+const replyRow = (reply: Reply): RowData =>
+  row(
+    { key: reply.key, href: reply.href, title: reply.title, repo: reply.repo, updated: reply.when },
+    [{ text: `${reply.who} ${replyText(reply.what)}`, tone: reply.what === "changes" ? "destructive" : "default", icon: reply.what === "approved" ? "success" : reply.what === "changes" ? "changes" : "discussion" }],
+    { icon: "discussion", label: "Svar" },
+  )
+
+/**
+ * What wants a look beyond your own pull requests: repositories whose default branch is red, replies and reviews from others on what you are
+ * in, and Dependabot's open pull requests. On the front page the first few of them, red first; on their own page each as a group. A source
+ * that fails shows its own error; nothing is shown where there is nothing.
+ */
+export function AlertsSection({ data, mode, instant }: { data: AlertsData; mode: "digest" | "full"; instant: Date }) {
+  const errors = [data.ci, data.replies, data.dependabot].flatMap((result) => (result.ok ? [] : [result.error]))
+  const groups = [
+    { id: "ci" as const, rows: data.ci.ok ? data.ci.value.map(ciRow) : [] },
+    { id: "replies" as const, rows: data.replies.ok ? data.replies.value.map(replyRow) : [] },
+    { id: "dependabot" as const, rows: data.dependabot.ok ? data.dependabot.value.map((item) => row(item, [...(item.status === undefined ? [] : statusLabels(item.status, "mine")), ...ageLabels(item, "mine", instant)], { icon: "package", label: "Dependabot" })) : [] },
+  ].filter((group) => group.rows.length > 0)
+  const failed = errors.map((error) => <ErrorMessage key={error.message} error={error}>Kunne ikke hente GitHub</ErrorMessage>)
+  if (groups.length === 0 && errors.length === 0) return mode === "full" ? <Quiet id="alerts" title="Varsler" icon="notification">Ingenting å følge opp.</Quiet> : null
+  if (mode === "full") {
+    return (
+      <Stack gap="xl">
+        {groups.map((group) => (
+          <PageSection key={group.id} id={`alerts-${group.id}`} title={ALERT_TITLES[group.id]} icon={ALERT_ICONS[group.id]}>
+            <Rows lead="icon" rows={group.rows} columns={COLUMNS} />
+          </PageSection>
+        ))}
+        {failed}
+      </Stack>
+    )
+  }
+  const total = groups.reduce((sum, group) => sum + group.rows.length, 0)
+  return (
+    <PageSection id="alerts" title="Følg opp" icon="notification" {...(total > DIGEST.alerts ? { more: { href: withBase("/varsler"), label: `Se alle ${total}` } } : {})}>
+      <Rows lead="icon" rows={takeFirst(groups.map((group) => group.rows), DIGEST.alerts)} columns={COLUMNS} />
+      {failed}
     </PageSection>
   )
 }

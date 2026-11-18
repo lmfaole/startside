@@ -1,3 +1,5 @@
+import { ciFailures, fromOthers, type CiFailure, type InvolvedNode, type RepoNode, type Reply } from "./alerts"
+import { osloDateDaysAgo } from "./day"
 import { discussionNodes, type DiscussionItem } from "./discussions"
 import { isWatched, parseRepos, scope } from "./github-query"
 import { env } from "./env"
@@ -164,4 +166,62 @@ export async function getDiscussions(): Promise<{ involved: DiscussionItem[]; re
   const involved = (body.data.involved as { nodes: Nodes } | null)?.nodes ?? []
   const recent = repos.flatMap((_, index) => (body.data?.[`r${index}`] as { discussions: { nodes: Nodes } } | null)?.discussions.nodes ?? [])
   return { involved: discussionNodes(involved).filter((item) => isWatched(item.repo, env("GITHUB_WATCH_REPOS"))), recent: discussionNodes(recent) }
+}
+
+async function askGraphql<T>(token: string | undefined, query: string): Promise<T> {
+  const response = await upstream("https://api.github.com/graphql", {
+    headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), "User-Agent": "startside" },
+    json: { query },
+    revalidate: 60,
+  })
+  if (!response.ok) throw new Error(response.status === 500 ? await response.text() : `GitHub (GraphQL) svarte ${response.status}`)
+  const body = (await response.json()) as { data?: T; errors?: { message: string }[] }
+  if (body.data === undefined) throw new Error(body.errors?.[0]?.message ?? "GitHub svarte uten data")
+  return body.data
+}
+
+const REPO = `fragment R on Repository { nameWithOwner isArchived defaultBranchRef { name target { ... on Commit { oid url messageHeadline committedDate statusCheckRollup { state } } } } }`
+
+/** An aliased `repository(...)` of the answer, as a repository, or nothing where it is not one. */
+function asRepo(value: unknown): RepoNode | null {
+  return typeof value === "object" && value !== null && "nameWithOwner" in value ? (value as RepoNode) : null
+}
+
+/** The repositories whose default branch is red: your own public ones that moved last, and the watched ones (`GITHUB_WATCH_REPOS`). */
+export async function getCiFailures(): Promise<CiFailure[]> {
+  const accessToken = token()
+  const watched = parseRepos(env("GITHUB_WATCH_REPOS"))
+  const aliases = watched.map((repo, index) => {
+    const [owner, name] = repo.split("/")
+    return `w${index}: repository(owner: "${owner}", name: "${name}") { ...R }`
+  })
+  type Data = { viewer: { repositories: { nodes: (RepoNode | null)[] } } } & Record<string, unknown>
+  const data = await askGraphql<Data>(accessToken, `query { viewer { repositories(first: 30, privacy: PUBLIC, isFork: false, ownerAffiliations: OWNER, orderBy: { field: PUSHED_AT, direction: DESC }) { nodes { ...R } } } ${aliases.join(" ")} } ${REPO}`)
+  const own = data.viewer.repositories.nodes
+  const watchedNodes = watched.map((_, index) => asRepo(data[`w${index}`]))
+  return ciFailures([...own, ...watchedNodes])
+}
+
+/** Dependabot's open pull requests in your own public repositories, with their checks: what is waiting to be merged or closed. */
+export async function getDependabot(): Promise<Item[]> {
+  return pulls(token(), `is:open author:app/dependabot user:${await login()} archived:false is:public`)
+}
+
+async function login(): Promise<string> {
+  const data = await askGraphql<{ viewer: { login: string } }>(token(), "query { viewer { login } }")
+  return data.viewer.login
+}
+
+/** Things you are involved in (public) that have moved in the last days, where somebody else wrote last: the replies and reviews that are for you to read. */
+export async function getReplies(instant: Date): Promise<Reply[]> {
+  const since = osloDateDaysAgo(instant, 3)
+  type Data = { viewer: { login: string }; search: { nodes: (InvolvedNode | null)[] } }
+  const data = await askGraphql<Data>(
+    token(),
+    `query { viewer { login } search(query: "involves:@me is:public archived:false updated:>=${since} sort:updated-desc", type: ISSUE, first: 30) { nodes {
+      ... on Issue { id url title repository { nameWithOwner } comments(last: 1) { nodes { author { login } createdAt } } }
+      ... on PullRequest { id url title repository { nameWithOwner } comments(last: 1) { nodes { author { login } createdAt } } reviews(last: 1) { nodes { author { login } submittedAt state } } }
+    } } }`,
+  )
+  return fromOthers(data.search.nodes, data.viewer.login, instant, 3)
 }
