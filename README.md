@@ -27,14 +27,16 @@ Served at `lmfaole.party/start` through a Cloudflare route (`wrangler.jsonc`), w
 
 ## Deploy
 
-`.github/workflows/deploy.yml` builds every push and deploys the default branch (and manual runs) to Cloudflare. It needs
-three repository secrets:
+`.github/workflows/deploy.yml` builds and type-checks every push. On the default branch it also deploys both Workers,
+once the repository has the secrets `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit, Workers Routes: Edit on `lmfaole.party`)
+and `CLOUDFLARE_ACCOUNT_ID`; without them the run only builds. `npm run deploy` deploys the page from a machine.
 
-| Secret | What |
+Secrets on the Workers, set with `wrangler secret put` or in the dashboard as **Secret** (not as text):
+
+| Worker | Secret |
 | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | A token with *Workers Scripts: Edit* and *Workers Routes: Edit* on the `lmfaole.party` zone |
-| `CLOUDFLARE_ACCOUNT_ID` | The Cloudflare account id |
-| `GH_PAT` | The GitHub token the page reads with; set on the Worker as `GITHUB_TOKEN` |
+| `startside` | `UPSTREAM_KEY` |
+| `startside-upstream` | `UPSTREAM_KEY` (the same), `GITHUB_TOKEN` (read access to pull requests and issues) |
 
 ## Develop
 

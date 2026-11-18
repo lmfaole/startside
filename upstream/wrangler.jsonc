@@ -3,6 +3,9 @@
   "name": "startside-upstream",
   "main": "worker.js",
   "compatibility_date": "2026-11-01",
-  "workers_dev": true
+  // The page reaches it on workers.dev (see worker.js); no preview addresses.
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": { "enabled": true }
   // Secrets: UPSTREAM_KEY (the same as the page's), GITHUB_TOKEN.
 }
