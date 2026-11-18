@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert"
 import { test } from "node:test"
 
-import { addDays, dayOf, now, partOfHour } from "./day.ts"
+import { addDays, dayOf, now, osloDateDaysAgo, partOfHour } from "./day.ts"
 import { planFor } from "./plan.ts"
 
 // 2026-11-18 is a Wednesday, CET (UTC+1); 2026-07-15 is a Wednesday, CEST (UTC+2).
@@ -85,4 +85,11 @@ test("after midnight the night still belongs to the day before, so tomorrow is t
   assert.equal(day.date, "2026-11-18")
   const picked = pickHours(hourly("2026-11-18T23:00:00Z", 26), "tomorrow", day.date, new Date("2026-11-19T00:30:00Z"))
   assert.equal(picked[0]?.time, "2026-11-18T23:00:00Z") // 00:00 CET on Thursday 19 Nov: the whole of the 19th, and nothing of the 18th
+})
+
+test("a number of days ago, counted in Oslo dates", () => {
+  assert.equal(osloDateDaysAgo(new Date("2026-11-18T12:00:00Z"), 7), "2026-11-11")
+  // 23:30 UTC on 17 Nov is 00:30 on 18 Nov in Oslo.
+  assert.equal(osloDateDaysAgo(new Date("2026-11-17T23:30:00Z"), 0), "2026-11-18")
+  assert.equal(osloDateDaysAgo(new Date("2026-03-02T10:00:00Z"), 7), "2026-02-23")
 })

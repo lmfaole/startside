@@ -10,6 +10,8 @@
   "observability": { "enabled": true },
   "routes": [{ "pattern": "lmfaole.party/start*", "zone_name": "lmfaole.party" }],
   "vars": {
+    // GitHub: the repositories whose issues are watched (the ones you are involved in, new ones nobody owns, what moved lately).
+    "GITHUB_WATCH_REPOS": "fremtind/jokul",
     "WEATHER_PLACE": "Oslo",
     "WEATHER_LAT": "59.91",
     "WEATHER_LON": "10.75",

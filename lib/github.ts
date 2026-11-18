@@ -1,4 +1,4 @@
-import { scope } from "./github-query"
+import { isWatched, repoQualifiers, scope } from "./github-query"
 import { env } from "./env"
 import { readStatuses, withStatus, type PullStatus, type Statuses } from "./pr-status"
 import { upstream } from "./upstream"
@@ -10,16 +10,18 @@ export interface Item {
   repo: string
   created: string
   updated: string
+  /** The logins it is assigned to. */
+  assignees: string[]
   /** For a pull request: its checks, review and so on. */
   status?: PullStatus
 }
 
 interface SearchResult {
-  items: { id: number; html_url: string; title: string; repository_url: string; created_at: string; updated_at: string }[]
+  items: { id: number; html_url: string; title: string; repository_url: string; created_at: string; updated_at: string; assignees?: { login: string }[] }[]
 }
 
-async function search(token: string | undefined, query: string): Promise<Item[]> {
-  const response = await upstream(`https://api.github.com/search/issues?per_page=15&sort=updated&q=${encodeURIComponent(query)}`, {
+async function search(token: string | undefined, query: string, perPage = 15): Promise<Item[]> {
+  const response = await upstream(`https://api.github.com/search/issues?per_page=${perPage}&sort=updated&q=${encodeURIComponent(query)}`, {
     headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), Accept: "application/vnd.github+json", "User-Agent": "startside", "X-GitHub-Api-Version": "2022-11-28" },
     revalidate: 60,
   })
@@ -32,6 +34,7 @@ async function search(token: string | undefined, query: string): Promise<Item[]>
     repo: item.repository_url.replace("https://api.github.com/repos/", ""),
     created: item.created_at,
     updated: item.updated_at,
+    assignees: (item.assignees ?? []).map((assignee) => assignee.login),
   }))
 }
 
@@ -87,5 +90,27 @@ export async function getPulls(which: "all" | "mine"): Promise<{ reviews: Item[]
   return { reviews, mine }
 }
 
-/** Issues assigned to you. */
-export const getIssues = (): Promise<Item[]> => search(token(), `is:open is:issue assignee:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`)
+/**
+ * Issues, for `groupIssues`: the ones assigned to you in any public repository, the ones you are involved in in the
+ * watched repositories (`GITHUB_WATCH_REPOS`), and the 50 that moved last there, from which the new ones nobody owns come.
+ * Listing a repository's issues takes a search on the repository itself, which an organisation can block for the token
+ * (SpareBank 1 does, for fine-grained tokens that live longer than 366 days): then those two groups are left out, and the
+ * rest still shows, since «involved» searches by you and is filtered to the repositories here.
+ */
+export async function getIssues(): Promise<{ assigned: Item[]; involved: Item[]; recent: Item[] }> {
+  const accessToken = token()
+  const limit = scope(env("GITHUB_EXCLUDE_ORGS"))
+  const watchedRepos = env("GITHUB_WATCH_REPOS")
+  const watched = repoQualifiers(watchedRepos)
+  const [assigned, involved, recent] = await Promise.all([
+    search(accessToken, `is:open is:issue assignee:@me archived:false ${limit}`),
+    search(accessToken, `is:open is:issue involves:@me archived:false ${limit}`, 50).then((items) => items.filter((item) => isWatched(item.repo, watchedRepos))),
+    watched === ""
+      ? []
+      : search(accessToken, `is:open is:issue archived:false ${watched} ${limit}`, 50).catch((error: unknown): Item[] => {
+          console.warn("Kunne ikke liste issues i de overvåkede repoene:", error instanceof Error ? error.message : error)
+          return []
+        }),
+  ])
+  return { assigned, involved, recent }
+}

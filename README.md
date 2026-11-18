@@ -42,6 +42,19 @@ Before 05:00 it is still the day before, so the night after Friday is a weekday 
 What is not shown is not fetched. In `next dev`, `NOW=2026-11-18T07:00:00+01:00 npm run dev` stands in for the clock;
 it is never read in production. `npm test` covers the parts of the day, their edges, the clocks changing and the forecast windows.
 
+## Issues
+
+Issues are a `SectionGroup` too (`lib/issues.ts`), in the order of what is for you: **Tildelt deg** (any public repository),
+**Du er involvert i** (the watched repositories), **Nye uten eier** (made in the last week, nobody on it) and **Nylig aktive**
+(what moved lately). An issue is in the first group it belongs to, at most ten each. The watched repositories are
+`GITHUB_WATCH_REPOS` in `wrangler.jsonc` (comma-separated `owner/name`; `fremtind/jokul` now). Shown in the morning and
+the workday, not in the evening or the weekend. Discussions are not shown: GitHub has them in GraphQL only.
+
+SpareBank 1 blocks searches on `repo:fremtind/jokul` (and GraphQL) for fine-grained tokens that live longer than 366 days.
+«Involved» searches by you and is filtered to the watched repositories, so it works; «Nye uten eier» and «Nylig aktive» list
+the repository itself, so they stay empty (a warning in the Worker's log) until `GITHUB_TOKEN` is regenerated with a lifetime
+of 366 days or less. The same step gives the pull requests in `jokul` their status, and makes discussions possible.
+
 ## Live updates
 
 An open page keeps itself fresh (`components/refresh.tsx`): every 60 seconds, and at once when the window comes back into view
@@ -75,7 +88,7 @@ Served at `lmfaole.party/start` through a Cloudflare route (`wrangler.jsonc`), w
 ## App
 
 The page installs as an app (PWA): `app/manifest.ts`, the icons (`public/icons`, `app/icon.png`, `app/apple-icon.png`,
-drawn by `scripts/icons.mjs`), and a service worker (`app/sw.js/route.ts`) that keeps the built files and the last copy
+drawn by `scripts/icons.mjs`; the manifest colours are the dark background, since Android colours the system bars from the manifest, which has one colour), and a service worker (`app/sw.js/route.ts`) that keeps the built files and the last copy
 of the page, so it opens without network (registered by `components/service-worker.tsx`). Installing is the browser's own
 (the install icon in the address bar, «Legg til på Hjem-skjerm»). The manifest and icons are outside Cloudflare Access (the application «Startside –
 app-filer», a bypass policy), since browsers fetch them without the login cookie.

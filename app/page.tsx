@@ -14,6 +14,7 @@ import { Refresh } from "../components/refresh"
 import { dayOf, now, type Day } from "../lib/day"
 import { getIssues, getPulls, type Item } from "../lib/github"
 import { ageLabels, statusLabels, type Label } from "../lib/pr-status"
+import { groupIssues } from "../lib/issues"
 import { groupPulls } from "../lib/pulls"
 import { planFor, type Plan, type SectionId } from "../lib/plan"
 import { parsePosition, POSITION_COOKIE, type Position } from "../lib/position"
@@ -67,7 +68,7 @@ async function Weather({ window, day, instant, position }: { window: "today" | "
   }
 }
 
-function row(item: Item, labels: Label[]): RowData {
+function row(item: Pick<Item, "key" | "href" | "title" | "repo" | "updated">, labels: Label[]): RowData {
   return {
     key: item.key,
     body: (
@@ -127,23 +128,31 @@ async function Pulls({ which, instant }: { which: "all" | "mine"; instant: Date 
   }
 }
 
+/** Issues in sections by what is for you (lib/issues.ts): assigned to you, ones you are involved in, new ones nobody owns, and what moved lately. */
 async function Issues() {
   try {
-    const items = await getIssues()
-    return (
-      <PageSection id="issues" title="Tildelt deg">
-        {items.length === 0 ? (
+    const groups = groupIssues(await getIssues(), new Date())
+    if (groups.length === 0) {
+      return (
+        <PageSection id="issues" title="Issues">
           <Text size="sm" tone="muted">
-            Ingen saker.
+            Ingen åpne issues.
           </Text>
-        ) : (
-          <Rows rows={items.map((item) => row(item, []))} columns={COLUMNS} />
-        )}
-      </PageSection>
+        </PageSection>
+      )
+    }
+    return (
+      <SectionGroup id="issues" title="Issues" width="row">
+        {groups.map((group) => (
+          <SubSection key={group.id} id={`issues-${group.id}`} title={group.title}>
+            <Rows rows={group.items.map((item) => row(item, []))} columns={COLUMNS} />
+          </SubSection>
+        ))}
+      </SectionGroup>
     )
   } catch (error) {
     return (
-      <PageSection id="issues" title="Tildelt deg">
+      <PageSection id="issues" title="Issues">
         <ErrorMessage error={asError(error)}>Kunne ikke hente GitHub</ErrorMessage>
       </PageSection>
     )

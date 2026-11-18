@@ -25,6 +25,11 @@ export function addDays(date: string, days: number): string {
   return moved.toISOString().slice(0, 10)
 }
 
+/** The Oslo date (`YYYY-MM-DD`) a number of days before an instant. */
+export function osloDateDaysAgo(instant: Date, days: number): string {
+  return addDays(osloTime(instant).date, -days)
+}
+
 /** Morning 05–09, workday 09–16, evening 16–22, night 22–05, in Oslo time. */
 export function partOfHour(hour: number): DayPart {
   if (hour >= 5 && hour < 9) return "morgen"
