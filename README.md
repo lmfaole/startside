@@ -46,7 +46,7 @@ npm run deploy
 wrangler secret put GITHUB_TOKEN
 ```
 
-The page shows personal data: put it behind Cloudflare Access before it is public.
+The page shows personal data, so `lmfaole.party/start` is behind Cloudflare Access (the application «Startside»): only the owner's address gets in, with a login code by e-mail.
 
 ## Add a source
 
