@@ -11,7 +11,7 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
-    "@lmfaole/designsystem": "github:lmfaole/designsystem#v4.1.0",
+    "@lmfaole/designsystem": "github:lmfaole/designsystem#88077e0260a65d4d8e28174a10e8fff960665008",
     "@opennextjs/cloudflare": "^1.20.17",
     "next": "^16.4.6",
     "react": "^19.2.8",
