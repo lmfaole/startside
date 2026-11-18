@@ -95,7 +95,7 @@ const LISTS = {
 async function GithubList({ id }: { id: keyof typeof LISTS }) {
   const list = LISTS[id]
   try {
-    const { items, notice } = await list.load()
+    const items = await list.load()
     return (
       <PageSection id={id} title={list.title}>
         {items.length === 0 ? (
@@ -104,11 +104,6 @@ async function GithubList({ id }: { id: keyof typeof LISTS }) {
           </Text>
         ) : (
           <Rows rows={itemRows(items, id === "reviews" ? "theirs" : "mine")} columns={{ name: "Tittel", value: "Sist oppdatert" }} />
-        )}
-        {notice === null ? null : (
-          <Text size="xs" tone="muted">
-            Status mangler for noen: {notice}
-          </Text>
         )}
       </PageSection>
     )

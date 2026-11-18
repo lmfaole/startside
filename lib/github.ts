@@ -47,22 +47,14 @@ const PULLS = `query ($q: String!) {
   }
 }`
 
-export interface Listing {
-  items: Item[]
-  /** Why part of it is missing, in GitHub's words. */
-  notice: string | null
-}
-
 /**
- * Pull requests: the list from the search (which reads what the token may see), and their status from GraphQL where it
- * may read the pull requests themselves. An organisation can block the one and not the other, so the list never depends on it.
+ * Pull requests: the list from the search, and their status from GraphQL where the token may read the pull requests
+ * themselves. An organisation can block the one and not the other, so the list never depends on it: what GraphQL could
+ * not read is shown without a status.
  */
-async function pulls(token: string | undefined, query: string): Promise<Listing> {
-  const [items, statuses] = await Promise.all([
-    search(token, `${query} is:pr`),
-    graphql(token, query).catch((error: unknown): Statuses => ({ byUrl: new Map(), notice: error instanceof Error ? error.message : String(error) })),
-  ])
-  return { items: withStatus(items, statuses), notice: statuses.notice }
+async function pulls(token: string | undefined, query: string): Promise<Item[]> {
+  const [items, statuses] = await Promise.all([search(token, `${query} is:pr`), graphql(token, query).catch((): Statuses => new Map())])
+  return withStatus(items, statuses)
 }
 
 async function graphql(token: string | undefined, query: string): Promise<Statuses> {
@@ -71,7 +63,7 @@ async function graphql(token: string | undefined, query: string): Promise<Status
     json: { query: PULLS, variables: { q: `${query} is:pr sort:updated-desc` } },
     revalidate: 120,
   })
-  if (!response.ok) throw new Error(response.status === 500 ? await response.text() : `GitHub (GraphQL) svarte ${response.status}`)
+  if (!response.ok) throw new Error(`GitHub (GraphQL) svarte ${response.status}`)
   return readStatuses((await response.json()) as Parameters<typeof readStatuses>[0])
 }
 
@@ -83,10 +75,10 @@ function token(): string | undefined {
 }
 
 /** Pull requests that wait for your review (public repositories only, see `scope`). */
-export const getReviews = (): Promise<Listing> => pulls(token(), `is:open review-requested:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`)
+export const getReviews = (): Promise<Item[]> => pulls(token(), `is:open review-requested:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`)
 
 /** Your own open pull requests. */
-export const getMine = (): Promise<Listing> => pulls(token(), `is:open author:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`)
+export const getMine = (): Promise<Item[]> => pulls(token(), `is:open author:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`)
 
 /** Issues assigned to you. */
-export const getIssues = async (): Promise<Listing> => ({ items: await search(token(), `is:open is:issue assignee:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`), notice: null })
+export const getIssues = (): Promise<Item[]> => search(token(), `is:open is:issue assignee:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`)

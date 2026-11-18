@@ -56,15 +56,12 @@ const node = (n: number): PullNode => ({
 
 test("the list comes from the search, and GraphQL adds a status where it could read the pull request", () => {
   const items = [1, 2, 3].map((n) => ({ href: `https://github.com/o/r/pull/${n}`, title: `T${n}` }))
-  const statuses = readStatuses({ data: { search: { nodes: [node(1), null, node(3)] } }, errors: [{ message: "The 'X' enterprise forbids access via a fine-grained personal access token" }] })
-  const merged = withStatus(items, statuses)
+  const merged = withStatus(items, readStatuses({ data: { search: { nodes: [node(1), null, node(3)] } } }))
   assert.deepEqual(merged.map((item) => item.title), ["T1", "T2", "T3"])
   assert.deepEqual(merged.map((item) => item.status !== undefined), [true, false, true])
-  assert.match(statuses.notice ?? "", /enterprise forbids/)
 })
 
-test("an answer without errors has no notice, and one without data leaves every item as it was", () => {
-  assert.equal(readStatuses({ data: { search: { nodes: [node(1)] } } }).notice, null)
+test("an answer without data leaves every item as it was", () => {
   const items = [{ href: "https://github.com/o/r/pull/1" }]
-  assert.deepEqual(withStatus(items, readStatuses({ errors: [{ message: "Nope" }] })), items)
+  assert.deepEqual(withStatus(items, readStatuses({})), items)
 })

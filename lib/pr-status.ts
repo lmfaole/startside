@@ -68,23 +68,18 @@ export function pullNodes(nodes: readonly (Partial<PullNode> | null)[]): PullNod
   return nodes.filter((node): node is PullNode => node !== null && node.databaseId !== undefined)
 }
 
-/** What GraphQL could say about a list of pull requests: their statuses by address, and why some are missing. */
-export interface Statuses {
-  byUrl: Map<string, PullStatus>
-  /** GitHub's own reason, when it left some out (an organisation that blocks the token, say). */
-  notice: string | null
-}
+/** What GraphQL could say about a list of pull requests, by address. It leaves out what the token may not read (an organisation can block it). */
+export type Statuses = Map<string, PullStatus>
 
-/** The statuses in a GraphQL `search` answer, and the first reason it gave for leaving any out. */
-export function readStatuses(answer: { data?: { search: { nodes: readonly (Partial<PullNode> | null)[] } }; errors?: readonly { message: string }[] }): Statuses {
-  const nodes = pullNodes(answer.data?.search.nodes ?? [])
-  return { byUrl: new Map(nodes.map((node) => [node.url, toStatus(node)])), notice: answer.errors?.[0]?.message ?? null }
+/** The statuses in a GraphQL `search` answer. */
+export function readStatuses(answer: { data?: { search: { nodes: readonly (Partial<PullNode> | null)[] } } }): Statuses {
+  return new Map(pullNodes(answer.data?.search.nodes ?? []).map((node) => [node.url, toStatus(node)]))
 }
 
 /** The items with the status GraphQL had for them, in the order they came; those it had none for are kept without one. */
 export function withStatus<Item extends { href: string }>(items: readonly Item[], statuses: Statuses): (Item & { status?: PullStatus })[] {
   return items.map((item) => {
-    const status = statuses.byUrl.get(item.href)
+    const status = statuses.get(item.href)
     return status === undefined ? item : { ...item, status }
   })
 }
