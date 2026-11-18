@@ -11,6 +11,9 @@ server on every request. Next.js (App Router, SSR) on Cloudflare Workers through
 | Yr (MET Norway `locationforecast`) | The forecast for the rest of the day | `WEATHER_PLACE`, `WEATHER_LAT`, `WEATHER_LON` in `wrangler.jsonc` |
 | GitHub | Pull requests awaiting your review, your open pull requests, issues assigned to you | secret `GITHUB_TOKEN` on `startside-upstream` |
 
+GitHub is limited to public repositories and leaves out the organisations in `GITHUB_EXCLUDE_ORGS` (`wrangler.jsonc`;
+`fremtind`, SpareBank 1's, which blocks the token): `lib/github-query.ts`.
+
 Pull requests also show their status (draft, checks, review decision, conflicts, open conversations; `lib/pr-status.ts`).
 The list comes from the search and the status from GitHub's GraphQL (one call for all of them, through the relay, which
 allows POST only to `api.github.com/graphql`). An organisation can allow the one and block the other (SpareBank 1 blocks

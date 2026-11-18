@@ -10,6 +10,8 @@
   "observability": { "enabled": true },
   "routes": [{ "pattern": "lmfaole.party/start*", "zone_name": "lmfaole.party" }],
   "vars": {
+    // GitHub: public repositories only, and not these organisations (SpareBank 1's, which blocks the token).
+    "GITHUB_EXCLUDE_ORGS": "fremtind",
     "WEATHER_PLACE": "Oslo",
     "WEATHER_LAT": "59.91",
     "WEATHER_LON": "10.75",

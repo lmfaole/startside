@@ -1,3 +1,4 @@
+import { scope } from "./github-query"
 import { env } from "./env"
 import { readStatuses, withStatus, type PullStatus, type Statuses } from "./pr-status"
 import { upstream } from "./upstream"
@@ -81,11 +82,11 @@ function token(): string | undefined {
   return value
 }
 
-/** Pull requests that wait for your review. */
-export const getReviews = (): Promise<Listing> => pulls(token(), "is:open review-requested:@me archived:false")
+/** Pull requests that wait for your review (public repositories only, see `scope`). */
+export const getReviews = (): Promise<Listing> => pulls(token(), `is:open review-requested:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`)
 
 /** Your own open pull requests. */
-export const getMine = (): Promise<Listing> => pulls(token(), "is:open author:@me archived:false")
+export const getMine = (): Promise<Listing> => pulls(token(), `is:open author:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`)
 
 /** Issues assigned to you. */
-export const getIssues = async (): Promise<Listing> => ({ items: await search(token(), "is:open is:issue assignee:@me archived:false"), notice: null })
+export const getIssues = async (): Promise<Listing> => ({ items: await search(token(), `is:open is:issue assignee:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`), notice: null })
