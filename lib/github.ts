@@ -1,3 +1,4 @@
+import { discussionNodes, type DiscussionItem } from "./discussions"
 import { isWatched, repoQualifiers, scope } from "./github-query"
 import { env } from "./env"
 import { readStatuses, withStatus, type PullStatus, type Statuses } from "./pr-status"
@@ -113,4 +114,34 @@ export async function getIssues(): Promise<{ assigned: Item[]; involved: Item[];
         }),
   ])
   return { assigned, involved, recent }
+}
+
+const DISCUSSIONS = `query ($involved: String!, $unanswered: String!) {
+  involved: search(query: $involved, type: DISCUSSION, first: 20) { nodes { ...D } }
+  unanswered: search(query: $unanswered, type: DISCUSSION, first: 20) { nodes { ...D } }
+}
+fragment D on Discussion {
+  id url title createdAt updatedAt
+  category { name }
+  comments { totalCount }
+  repository { nameWithOwner }
+}`
+
+/**
+ * Discussions in the watched repositories: the ones you are in and the unanswered ones. GitHub has them in GraphQL only,
+ * and an organisation can block that for the token (see `getIssues`), so a failure is an error here.
+ */
+export async function getDiscussions(): Promise<{ involved: DiscussionItem[]; unanswered: DiscussionItem[] }> {
+  const watched = repoQualifiers(env("GITHUB_WATCH_REPOS"))
+  if (watched === "") return { involved: [], unanswered: [] }
+  const accessToken = token()
+  const response = await upstream("https://api.github.com/graphql", {
+    headers: { ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}), "User-Agent": "startside" },
+    json: { query: DISCUSSIONS, variables: { involved: `${watched} involves:@me sort:updated-desc`, unanswered: `${watched} is:unanswered sort:updated-desc` } },
+    revalidate: 60,
+  })
+  if (!response.ok) throw new Error(response.status === 500 ? await response.text() : `GitHub (GraphQL) svarte ${response.status}`)
+  const body = (await response.json()) as { data?: { involved: { nodes: Parameters<typeof discussionNodes>[0] }; unanswered: { nodes: Parameters<typeof discussionNodes>[0] } }; errors?: { message: string }[] }
+  if (body.data === undefined) throw new Error(body.errors?.[0]?.message ?? "GitHub svarte uten data")
+  return { involved: discussionNodes(body.data.involved.nodes), unanswered: discussionNodes(body.data.unanswered.nodes) }
 }

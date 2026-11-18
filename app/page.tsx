@@ -12,8 +12,9 @@ import { cookies } from "next/headers"
 import { PositionControl } from "../components/position"
 import { Refresh } from "../components/refresh"
 import { dayOf, now, type Day } from "../lib/day"
-import { getIssues, getPulls, type Item } from "../lib/github"
+import { getDiscussions, getIssues, getPulls, type Item } from "../lib/github"
 import { ageLabels, statusLabels, type Label } from "../lib/pr-status"
+import { groupDiscussions } from "../lib/discussions"
 import { groupIssues } from "../lib/issues"
 import { groupPulls } from "../lib/pulls"
 import { planFor, type Plan, type SectionId } from "../lib/plan"
@@ -159,9 +160,36 @@ async function Issues() {
   }
 }
 
+/** Discussions in sections (lib/discussions.ts): the ones you are in, and the unanswered ones. Nothing shown where there are none. */
+async function Discussions() {
+  try {
+    const groups = groupDiscussions(await getDiscussions())
+    if (groups.length === 0) return null
+    return (
+      <SectionGroup id="discussions" title="Discussions" width="row">
+        {groups.map((group) => (
+          <SubSection key={group.id} id={`discussions-${group.id}`} title={group.title}>
+            <Rows
+              rows={group.items.map((item) => row(item, [...(item.category === "" ? [] : [{ text: item.category, tone: "muted" as const }]), { text: item.comments === 1 ? "1 svar" : `${item.comments} svar`, tone: "muted" as const }]))}
+              columns={COLUMNS}
+            />
+          </SubSection>
+        ))}
+      </SectionGroup>
+    )
+  } catch (error) {
+    return (
+      <PageSection id="discussions" title="Discussions">
+        <ErrorMessage error={asError(error)}>Kunne ikke hente GitHub</ErrorMessage>
+      </PageSection>
+    )
+  }
+}
+
 function Section({ id, plan, day, instant, position }: { id: SectionId; plan: Plan; day: Day; instant: Date; position: Position | null }) {
   if (id === "weather") return <Weather window={plan.weatherWindow} day={day} instant={instant} position={position} />
-  return id === "pulls" ? <Pulls which={plan.pulls} instant={instant} /> : <Issues />
+  if (id === "pulls") return <Pulls which={plan.pulls} instant={instant} />
+  return id === "issues" ? <Issues /> : <Discussions />
 }
 
 export default async function Page() {

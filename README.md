@@ -48,12 +48,15 @@ Issues are a `SectionGroup` too (`lib/issues.ts`), in the order of what is for y
 **Du er involvert i** (the watched repositories), **Nye uten eier** (made in the last week, nobody on it) and **Nylig aktive**
 (what moved lately). An issue is in the first group it belongs to, at most ten each. The watched repositories are
 `GITHUB_WATCH_REPOS` in `wrangler.jsonc` (comma-separated `owner/name`; `fremtind/jokul` now). Shown in the morning and
-the workday, not in the evening or the weekend. Discussions are not shown: GitHub has them in GraphQL only.
+the workday, not in the evening or the weekend. 
+
+**Discussions** (`lib/discussions.ts`, GraphQL only) in the watched repositories, morning and workday: **Du er med i** and
+**Ubesvarte**, at most ten each; nothing is shown where there are none.
 
 SpareBank 1 blocks searches on `repo:fremtind/jokul` (and GraphQL) for fine-grained tokens that live longer than 366 days.
 «Involved» searches by you and is filtered to the watched repositories, so it works; «Nye uten eier» and «Nylig aktive» list
 the repository itself, so they stay empty (a warning in the Worker's log) until `GITHUB_TOKEN` is regenerated with a lifetime
-of 366 days or less. The same step gives the pull requests in `jokul` their status, and makes discussions possible.
+of 366 days or less. The same step gives the pull requests in `jokul` their status, and makes the discussions appear.
 
 ## Live updates
 

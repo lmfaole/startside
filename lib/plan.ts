@@ -1,6 +1,6 @@
 import type { Day, DayPart } from "./day"
 
-export type SectionId = "weather" | "pulls" | "issues"
+export type SectionId = "weather" | "pulls" | "issues" | "discussions"
 
 export interface Plan {
   greeting: string
@@ -15,8 +15,8 @@ export interface Plan {
 const GREETINGS: Record<DayPart, string> = { morgen: "God morgen", arbeidsdag: "God dag", kveld: "God kveld", natt: "God natt" }
 
 const WEEKDAY: Record<DayPart, Omit<Plan, "greeting">> = {
-  morgen: { sections: ["weather", "pulls", "issues"], weatherWindow: "today", pulls: "all" },
-  arbeidsdag: { sections: ["pulls", "issues", "weather"], weatherWindow: "today", pulls: "all" },
+  morgen: { sections: ["weather", "pulls", "issues", "discussions"], weatherWindow: "today", pulls: "all" },
+  arbeidsdag: { sections: ["pulls", "issues", "discussions", "weather"], weatherWindow: "today", pulls: "all" },
   kveld: { sections: ["pulls", "weather"], weatherWindow: "tomorrow", pulls: "mine" },
   natt: { sections: ["weather"], weatherWindow: "tomorrow", pulls: "mine" },
 }

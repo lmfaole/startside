@@ -44,8 +44,8 @@ test("addDays crosses months and years", () => {
 
 test("the plan for each time of day", () => {
   const weekday = (part: Parameters<typeof planFor>[0]["part"]) => planFor({ part, weekend: false })
-  assert.deepEqual(weekday("morgen"), { greeting: "God morgen", sections: ["weather", "pulls", "issues"], weatherWindow: "today", pulls: "all" })
-  assert.deepEqual(weekday("arbeidsdag"), { greeting: "God dag", sections: ["pulls", "issues", "weather"], weatherWindow: "today", pulls: "all" })
+  assert.deepEqual(weekday("morgen"), { greeting: "God morgen", sections: ["weather", "pulls", "issues", "discussions"], weatherWindow: "today", pulls: "all" })
+  assert.deepEqual(weekday("arbeidsdag"), { greeting: "God dag", sections: ["pulls", "issues", "discussions", "weather"], weatherWindow: "today", pulls: "all" })
   assert.deepEqual(weekday("kveld"), { greeting: "God kveld", sections: ["pulls", "weather"], weatherWindow: "tomorrow", pulls: "mine" })
   assert.deepEqual(weekday("natt"), { greeting: "God natt", sections: ["weather"], weatherWindow: "tomorrow", pulls: "mine" })
 })
