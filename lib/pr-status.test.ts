@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert"
 import { test } from "node:test"
 
-import { ageLabels, pullNodes, readStatuses, statusLabels, toStatus, withStatus, type PullNode, type PullStatus } from "./pr-status.ts"
+import { ageLabels, compactLabels, checkLook, reviewStateText, pullNodes, readStatuses, statusLabels, toStatus, withStatus, type PullNode, type PullStatus } from "./pr-status.ts"
 
 const base: PullStatus = { draft: false, checks: null, review: null, mergeable: "MERGEABLE", openThreads: 0, author: "kari", size: null }
 const texts = (status: Partial<PullStatus>, whose: "mine" | "theirs") => statusLabels({ ...base, ...status }, whose).map((label) => label.text)
@@ -91,4 +91,27 @@ test("every status has a symbol that means what it says", () => {
   assert.deepEqual(icons({ checks: "SUCCESS", review: "APPROVED" }, "mine"), { "Tester OK": "success", Godkjent: "success" })
   assert.deepEqual(icons({ checks: "PENDING", review: "REVIEW_REQUIRED" }, "mine"), { "Tester kjører": "pending", "Venter på review": "waiting" })
   assert.deepEqual(icons({ draft: true }, "mine"), { Utkast: "pull-request-draft" })
+})
+
+test("what a reviewer did, in words", () => {
+  assert.equal(reviewStateText("APPROVED"), "godkjent")
+  assert.equal(reviewStateText("CHANGES_REQUESTED"), "ønsker endringer")
+  assert.equal(reviewStateText("COMMENTED"), "kommenterte")
+  assert.equal(reviewStateText("PENDING"), "venter")
+})
+
+test("a check as a symbol and words: what failed is marked, the rest is quiet", () => {
+  assert.deepEqual(checkLook("SUCCESS"), { icon: "success", text: "OK", tone: "muted" })
+  for (const failed of ["FAILURE", "ERROR", "TIMED_OUT", "CANCELLED"]) assert.deepEqual(checkLook(failed), { icon: "failure", text: "Feilet", tone: "destructive" }, failed)
+  for (const running of ["PENDING", "IN_PROGRESS", "QUEUED", "EXPECTED"]) assert.equal(checkLook(running).icon, "pending", running)
+  assert.equal(checkLook("SKIPPED").text, "Hoppet over")
+})
+
+test("a compact row keeps what stops something first, then the rest in order", () => {
+  const label = (text: string, tone: "default" | "muted" | "destructive") => ({ text, tone, icon: "info" as const })
+  const labels = [label("av kari", "muted"), label("+1 −1", "muted"), label("Tester OK", "default"), label("Venter 5 dager", "destructive")]
+  assert.deepEqual(compactLabels(labels, 2).map((l) => l.text), ["Venter 5 dager", "av kari"])
+  assert.deepEqual(compactLabels(labels, 1).map((l) => l.text), ["Venter 5 dager"])
+  assert.deepEqual(compactLabels(labels.slice(0, 2), 2).map((l) => l.text), ["av kari", "+1 −1"])
+  assert.deepEqual(compactLabels([], 2), [])
 })

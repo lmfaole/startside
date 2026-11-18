@@ -4,6 +4,21 @@ A personal start page: what to do and look at during the working day, fetched fr
 server on every request. Next.js (App Router, SSR) on Cloudflare Workers through OpenNext, built from the components of
 [`lmfaole/designsystem`](https://github.com/lmfaole/designsystem). The project writes no styling of its own.
 
+## Pages
+
+Built after the design system's «Pages and navigation» rules (5.3): three levels, internal links first.
+
+| Page | Is |
+| --- | --- |
+| `/start` | The **digest**: the state in counts (`SummaryBar`, each a link to its group), then the few things that need you most from each source with «Se alle N». Follows the time of day (`lib/plan.ts`). |
+| `/start/pull-requests`, `/issues`, `/discussions` | The **lists**: everything, in groups by what needs you most |
+| `/start/vaer` | The whole forecast: the rest of today, tomorrow, the coming days |
+| `/start/pull-requests/{owner}/{repo}/{n}`, `/issues/…`, `/discussions/…` | The **detail** of one thing: status, description, facts, checks, last comments, and **«Åpne på GitHub» last** |
+
+A row links to the app's own page for the thing (`lib/links.ts`), never straight out to GitHub: leaving is the last action on
+the detail page. The detail pages read one item from GitHub's GraphQL (`lib/detail.ts`); the address is checked before it is
+used (`parseRef`). The service worker keeps the last copy of each page by its address, so the pages open offline.
+
 ## Sources
 
 | Source | What | Config |

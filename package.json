@@ -13,7 +13,7 @@
     "build:worker": "opennextjs-cloudflare build && node scripts/embed-assets.mjs"
   },
   "dependencies": {
-    "@lmfaole/designsystem": "github:lmfaole/designsystem#bd3558ea32818128dbc7c2e7b21da5fa62d02574",
+    "@lmfaole/designsystem": "github:lmfaole/designsystem#47a76b37dc227131d9c7115889bc27ad0efa3231",
     "@opennextjs/cloudflare": "^1.20.17",
     "next": "^16.4.6",
     "react": "^19.2.8",

@@ -63,7 +63,7 @@ test("NOW stands in for the clock, and nonsense is ignored", () => {
   assert.ok(Math.abs(now(undefined).getTime() - Date.now()) < 5000)
 })
 
-import { pickHours, weatherIcon, type Timeseries } from "./forecast.ts"
+import { dailyOutlook, pickHours, weatherIcon, type Timeseries } from "./forecast.ts"
 
 const series = (isos: string[]): Timeseries[] => isos.map((time) => ({ time, data: { instant: { details: { air_temperature: 1, wind_speed: 1 } } } }))
 const hourly = (from: string, count: number) => series(Array.from({ length: count }, (_, i) => new Date(Date.parse(from) + i * 3_600_000).toISOString().replace(".000Z", "Z")))
@@ -107,4 +107,26 @@ test("the icon for Yr's symbol codes", () => {
   assert.equal(weatherIcon("fog"), "fog")
   assert.equal(weatherIcon("rainandthunder"), "thunder")
   assert.equal(weatherIcon("lightrainshowersandthunder_day"), "thunder")
+})
+
+test("the coming days in one line each, from the day after tomorrow", () => {
+  const entry = (time: string, temperature: number, hourly?: number, sixHourly?: number, symbol = "cloudy"): Timeseries => ({
+    time,
+    data: {
+      instant: { details: { air_temperature: temperature, wind_speed: 1 } },
+      ...(hourly === undefined ? {} : { next_1_hours: { summary: { symbol_code: symbol }, details: { precipitation_amount: hourly } } }),
+      ...(sixHourly === undefined ? {} : { next_6_hours: { summary: { symbol_code: symbol }, details: { precipitation_amount: sixHourly } } }),
+    },
+  })
+  const series = [
+    entry("2026-11-19T11:00:00Z", 1, 0, 0), // tomorrow: not in the outlook
+    // The 20th in Oslo (CET): 00:00 is 23:00Z on the 19th.
+    entry("2026-11-19T23:00:00Z", -2, undefined, 0.2), entry("2026-11-20T05:00:00Z", -4, undefined, 0.5), entry("2026-11-20T11:00:00Z", 3, undefined, 1.1, "rain"), entry("2026-11-20T17:00:00Z", 1, undefined, 0.2),
+    entry("2026-11-21T11:00:00Z", 5, 0.4, undefined, "lightrain"), entry("2026-11-21T12:00:00Z", 6, 0.1, undefined, "lightrain"),
+  ]
+  const outlook = dailyOutlook(series, "2026-11-18", 3)
+  assert.deepEqual(outlook.map((day) => day.date), ["2026-11-20", "2026-11-21"])
+  assert.deepEqual(outlook[0], { date: "2026-11-20", min: -4, max: 3, precipitation: 2, symbol: "rain" })
+  assert.deepEqual(outlook[1], { date: "2026-11-21", min: 5, max: 6, precipitation: 0.5, symbol: "lightrain" })
+  assert.deepEqual(dailyOutlook([], "2026-11-18", 3), [])
 })

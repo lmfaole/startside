@@ -112,3 +112,45 @@ export function ageLabels(item: { created: string; updated: string }, whose: "mi
   const quiet = daysSince(item.updated, now)
   return quiet >= 3 ? [{ text: `Stille i ${quiet} dager`, tone: "muted", icon: "time" }] : []
 }
+
+/** What a reviewer last did, in words. */
+export function reviewStateText(state: string): string {
+  switch (state) {
+    case "APPROVED":
+      return "godkjent"
+    case "CHANGES_REQUESTED":
+      return "ønsker endringer"
+    case "COMMENTED":
+      return "kommenterte"
+    case "DISMISSED":
+      return "avvist"
+    default:
+      return "venter"
+  }
+}
+
+/** A check (a test run, a status) as a symbol and words: done well, failed, still running, or neither (skipped, neutral). */
+export function checkLook(state: string): { icon: IconName; text: string; tone: "muted" | "destructive" } {
+  switch (state) {
+    case "SUCCESS":
+      return { icon: "success", text: "OK", tone: "muted" }
+    case "FAILURE":
+    case "ERROR":
+    case "TIMED_OUT":
+    case "CANCELLED":
+    case "STARTUP_FAILURE":
+    case "ACTION_REQUIRED":
+      return { icon: "failure", text: "Feilet", tone: "destructive" }
+    case "NEUTRAL":
+    case "SKIPPED":
+    case "STALE":
+      return { icon: "info", text: "Hoppet over", tone: "muted" }
+    default:
+      return { icon: "pending", text: "Kjører", tone: "muted" }
+  }
+}
+
+/** The most important statuses for a compact row: what stops something first, then the rest in their order, at most `count`. */
+export function compactLabels(labels: readonly Label[], count: number): Label[] {
+  return [...labels.filter((label) => label.tone === "destructive"), ...labels.filter((label) => label.tone !== "destructive")].slice(0, count)
+}

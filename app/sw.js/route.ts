@@ -42,21 +42,21 @@ self.addEventListener("fetch", (event) => {
     return
   }
 
-  // The page: always fresh from the network, which may send it to the Cloudflare Access login. The last good copy is
-  // kept, and shown when there is no network.
+  // A page: always fresh from the network, which may send it to the Cloudflare Access login. The last good copy of each page
+  // is kept by its address, and shown when there is no network (else the front page, else the offline page).
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
         .then((response) => {
           if (response.ok && response.type === "basic" && url.pathname !== OFFLINE) {
             const copy = response.clone()
-            caches.open(PAGES).then((cache) => cache.put("/start", copy))
+            caches.open(PAGES).then((cache) => cache.put(url.pathname, copy))
           }
           return response
         })
         .catch(async () => {
           const cache = await caches.open(PAGES)
-          return (await cache.match("/start")) ?? (await cache.match(OFFLINE)) ?? Response.error()
+          return (await cache.match(url.pathname)) ?? (await cache.match("/start")) ?? (await cache.match(OFFLINE)) ?? Response.error()
         }),
     )
   }

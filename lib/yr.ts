@@ -45,9 +45,13 @@ export function describeSymbol(code: string): string {
   return `${text}${showers}${thunder ? " og torden" : ""}`
 }
 
-/** The forecast from MET Norway (the data Yr shows) for the rest of the day or for the day after. */
-export async function getWeather(window: "today" | "tomorrow", day: Day, instant: Date = new Date(), position: Position | null = null): Promise<Weather> {
-  // The device's position when there is one, otherwise the place in the settings.
+export interface Forecast {
+  place: string
+  timeseries: Timeseries[]
+}
+
+/** The whole forecast from MET Norway (the data Yr shows) for the device's position, or for the place in the settings. */
+export async function getForecast(position: Position | null = null): Promise<Forecast> {
   const lat = position?.lat ?? env("WEATHER_LAT") ?? "59.91"
   const lon = position?.lon ?? env("WEATHER_LON") ?? "10.75"
   const place = position === null ? (env("WEATHER_PLACE") ?? "Oslo") : ((await placeName(position.lat, position.lon)) ?? "din posisjon")
@@ -58,7 +62,12 @@ export async function getWeather(window: "today" | "tomorrow", day: Day, instant
   })
   if (!response.ok) throw new Error(`Yr svarte ${response.status}`)
   const body = (await response.json()) as { properties: { timeseries: Timeseries[] } }
-  const hours = pickHours(body.properties.timeseries, window, day.date, instant).map((entry): Hour => {
+  return { place, timeseries: body.properties.timeseries }
+}
+
+/** The entries of a forecast for the rest of the day or for the day after, as hours. */
+export function hoursOf(forecast: Forecast, window: "today" | "tomorrow", day: Day, instant: Date): Hour[] {
+  return pickHours(forecast.timeseries, window, day.date, instant).map((entry): Hour => {
     const next = entry.data.next_1_hours ?? entry.data.next_6_hours
     return {
       time: entry.time,
@@ -68,5 +77,4 @@ export async function getWeather(window: "today" | "tomorrow", day: Day, instant
       symbol: next?.summary.symbol_code ?? "cloudy",
     }
   })
-  return { place, hours }
 }
