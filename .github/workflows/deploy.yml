@@ -1,0 +1,45 @@
+name: Deploy
+
+# Every push is built and type-checked; a push to the default branch, or a manual run, is also deployed to
+# Cloudflare Workers (lmfaole.party/start).
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npx opennextjs-cloudflare build
+
+      - name: Deploy
+        if: github.event_name != 'pull_request' && github.ref_name == github.event.repository.default_branch
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx opennextjs-cloudflare deploy
+
+      # The page reads GitHub with this token. Repository secrets cannot be named GITHUB_*, so it is GH_PAT here.
+      - name: Set the Worker's GitHub token
+        if: github.event_name != 'pull_request' && github.ref_name == github.event.repository.default_branch
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          if [ -n "$GH_PAT" ]; then printf '%s' "$GH_PAT" | npx wrangler secret put GITHUB_TOKEN; else echo "GH_PAT is not set; skipping"; fi

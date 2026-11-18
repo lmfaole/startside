@@ -15,6 +15,17 @@ A source that fails shows its own error and does not take the page down.
 
 Served at `lmfaole.party/start` through a Cloudflare route (`wrangler.jsonc`), with `basePath: "/start"` in `next.config.ts`.
 
+## Deploy
+
+`.github/workflows/deploy.yml` builds every push and deploys the default branch (and manual runs) to Cloudflare. It needs
+three repository secrets:
+
+| Secret | What |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | A token with *Workers Scripts: Edit* and *Workers Routes: Edit* on the `lmfaole.party` zone |
+| `CLOUDFLARE_ACCOUNT_ID` | The Cloudflare account id |
+| `GH_PAT` | The GitHub token the page reads with; set on the Worker as `GITHUB_TOKEN` |
+
 ## Develop
 
 ```sh
