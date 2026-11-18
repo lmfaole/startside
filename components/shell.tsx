@@ -1,4 +1,4 @@
-import { BackLink } from "@lmfaole/designsystem/components/back-link"
+import { Breadcrumbs } from "@lmfaole/designsystem/components/breadcrumbs"
 import { NavBar } from "@lmfaole/designsystem/components/nav-bar"
 import { PageHeader } from "@lmfaole/designsystem/components/page-header"
 import { PageLayout } from "@lmfaole/designsystem/components/page-layout"
@@ -26,11 +26,11 @@ const PLACES = [
  * the title, and on a detail page the way back to the list it belongs to. `current` is the place the page is in; for a detail page,
  * the list it belongs to.
  */
-export function Shell({ current, back, title, lead, actions, children }: { current: PageId; back?: { path: string; label: string }; title: string; lead?: string; actions?: ReactNode; children: ReactNode }) {
+export function Shell({ current, back, crumb, title, lead, actions, children }: { current: PageId; /** On a detail page: the list it belongs to; the breadcrumbs are the front page, that list and the page itself. */ back?: { path: string; label: string }; /** The page's name in the breadcrumbs when the title is long (a pull request's title): `#6851`. */ crumb?: string; title: string; lead?: string; actions?: ReactNode; children: ReactNode }) {
   return (
     <PageLayout nav={<NavBar label="Hovedmeny" title="Startside" items={PLACES.map((place) => ({ key: place.key, label: place.label, href: withBase(place.path), icon: place.icon, current: place.key === current }))} />}>
       <Refresh everySeconds={REFRESH_SECONDS} />
-      {back === undefined ? null : <BackLink href={withBase(back.path)} label={back.label} />}
+      {back === undefined ? null : <Breadcrumbs items={[{ label: "Startside", href: withBase("") }, { label: back.label, href: withBase(back.path) }, { label: crumb ?? title, href: "#" }]} />}
       <PageHeader title={title} lead={lead} actions={actions} />
       {children}
     </PageLayout>

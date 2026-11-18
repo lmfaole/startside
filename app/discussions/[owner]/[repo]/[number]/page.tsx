@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="discussions" back={back} title={discussion.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${discussion.author === null ? "" : ` · av ${discussion.author}`} · opprettet ${long.format(new Date(discussion.created))}`}>
+    <Shell current="discussions" back={back} crumb={`#${ref.number}`} title={discussion.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${discussion.author === null ? "" : ` · av ${discussion.author}`} · opprettet ${long.format(new Date(discussion.created))}`}>
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">

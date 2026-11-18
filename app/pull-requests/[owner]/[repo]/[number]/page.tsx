@@ -40,7 +40,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="pull-requests" back={back} title={pull.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${pull.author === null ? "" : ` · av ${pull.author}`} · opprettet ${long.format(new Date(pull.created))}`}>
+    <Shell current="pull-requests" back={back} crumb={`#${ref.number}`} title={pull.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${pull.author === null ? "" : ` · av ${pull.author}`} · opprettet ${long.format(new Date(pull.created))}`}>
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">
@@ -50,9 +50,9 @@ export default async function Page({ params }: { params: Promise<{ owner: string
               facts={[
                 ["Gren", `${pull.head} → ${pull.base}`],
                 ["Størrelse", `+${pull.size.additions} −${pull.size.deletions} · ${pull.size.files} ${pull.size.files === 1 ? "fil" : "filer"}`],
-                ["Etiketter", pull.labels.join(", ")],
-                ["Venter på review fra", pull.requested.join(", ")],
-                ["Reviews", pull.reviews.map((review) => `${review.author}: ${reviewStateText(review.state)}`).join(", ")],
+                ["Etiketter", pull.labels],
+                ["Venter på review fra", pull.requested],
+                ["Reviews", pull.reviews.map((review) => `${review.author}: ${reviewStateText(review.state)}`)],
               ]}
             />
           </PageSection>

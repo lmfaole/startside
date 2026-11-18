@@ -38,13 +38,13 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="issues" back={back} title={issue.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${issue.author === null ? "" : ` · av ${issue.author}`} · opprettet ${long.format(new Date(issue.created))}`}>
+    <Shell current="issues" back={back} crumb={`#${ref.number}`} title={issue.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${issue.author === null ? "" : ` · av ${issue.author}`} · opprettet ${long.format(new Date(issue.created))}`}>
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">
           <About body={issue.body} />
           <PageSection id="facts" title="Fakta" icon="info">
-            <FactList facts={[["Etiketter", issue.labels.join(", ")], ["Tildelt", issue.assignees.join(", ")]]} />
+            <FactList facts={[["Etiketter", issue.labels], ["Tildelt", issue.assignees]]} />
           </PageSection>
           <LatestComments comments={issue.comments} />
         </Stack>
