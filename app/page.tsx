@@ -1,5 +1,5 @@
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
-import { Grid, Stack } from "@lmfaole/designsystem/components/layout"
+import { Grid, Inline, Stack } from "@lmfaole/designsystem/components/layout"
 import { PageHeader } from "@lmfaole/designsystem/components/page-header"
 import { PageLayout } from "@lmfaole/designsystem/components/page-layout"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
@@ -12,6 +12,7 @@ import { cookies } from "next/headers"
 import { PositionControl } from "../components/position"
 import { dayOf, now, type Day } from "../lib/day"
 import { getIssues, getMine, getReviews, type Item } from "../lib/github"
+import { statusLabels } from "../lib/pr-status"
 import { planFor, type SectionId } from "../lib/plan"
 import { parsePosition, POSITION_COOKIE, type Position } from "../lib/position"
 import { describeSymbol, getWeather } from "../lib/yr"
@@ -61,7 +62,7 @@ async function Weather({ window, day, instant, position }: { window: "today" | "
   }
 }
 
-function itemRows(items: Item[]): RowData[] {
+function itemRows(items: Item[], whose: "mine" | "theirs"): RowData[] {
   return items.map((item) => ({
     key: item.key,
     body: (
@@ -70,6 +71,15 @@ function itemRows(items: Item[]): RowData[] {
         <Text size="xs" tone="muted">
           {item.repo}
         </Text>
+        {item.status === undefined ? null : (
+          <Inline gap="sm">
+            {statusLabels(item.status, whose).map((label) => (
+              <Text key={label.text} as="span" size="xs" tone={label.tone} weight={label.tone === "destructive" ? "medium" : "normal"}>
+                {label.text}
+              </Text>
+            ))}
+          </Inline>
+        )}
       </Stack>
     ),
     trailing: short.format(new Date(item.updated)),
@@ -85,7 +95,7 @@ const LISTS = {
 async function GithubList({ id }: { id: keyof typeof LISTS }) {
   const list = LISTS[id]
   try {
-    const items = await list.load()
+    const { items, notice } = await list.load()
     return (
       <PageSection id={id} title={list.title}>
         {items.length === 0 ? (
@@ -93,7 +103,12 @@ async function GithubList({ id }: { id: keyof typeof LISTS }) {
             {list.empty}
           </Text>
         ) : (
-          <Rows rows={itemRows(items)} columns={{ name: "Tittel", value: "Sist oppdatert" }} />
+          <Rows rows={itemRows(items, id === "reviews" ? "theirs" : "mine")} columns={{ name: "Tittel", value: "Sist oppdatert" }} />
+        )}
+        {notice === null ? null : (
+          <Text size="xs" tone="muted">
+            Status mangler for noen: {notice}
+          </Text>
         )}
       </PageSection>
     )
