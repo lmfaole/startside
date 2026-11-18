@@ -13,6 +13,8 @@ server on every request. Next.js (App Router, SSR) on Cloudflare Workers through
 
 A source that fails shows its own error and does not take the page down.
 
+Served at `lmfaole.party/start` through a Cloudflare route (`wrangler.jsonc`), with `basePath: "/start"` in `next.config.ts`.
+
 ## Develop
 
 ```sh
