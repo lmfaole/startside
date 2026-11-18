@@ -1,6 +1,6 @@
 import type { Day, DayPart } from "./day"
 
-export type SectionId = "weather" | "alerts" | "pulls" | "issues" | "discussions"
+export type SectionId = "departures" | "weather" | "alerts" | "pulls" | "issues" | "discussions"
 
 export interface Plan {
   greeting: string
@@ -15,9 +15,9 @@ export interface Plan {
 const GREETINGS: Record<DayPart, string> = { morgen: "God morgen", arbeidsdag: "God dag", kveld: "God kveld", natt: "God natt" }
 
 const WEEKDAY: Record<DayPart, Omit<Plan, "greeting">> = {
-  morgen: { sections: ["weather", "alerts", "pulls", "issues", "discussions"], weatherWindow: "today", pulls: "all" },
-  arbeidsdag: { sections: ["alerts", "pulls", "issues", "discussions", "weather"], weatherWindow: "today", pulls: "all" },
-  kveld: { sections: ["alerts", "pulls", "weather"], weatherWindow: "tomorrow", pulls: "mine" },
+  morgen: { sections: ["departures", "weather", "alerts", "pulls", "issues", "discussions"], weatherWindow: "today", pulls: "all" },
+  arbeidsdag: { sections: ["alerts", "pulls", "issues", "discussions", "departures", "weather"], weatherWindow: "today", pulls: "all" },
+  kveld: { sections: ["departures", "alerts", "pulls", "weather"], weatherWindow: "tomorrow", pulls: "mine" },
   natt: { sections: ["weather"], weatherWindow: "tomorrow", pulls: "mine" },
 }
 
@@ -25,6 +25,6 @@ const WEEKDAY: Record<DayPart, Omit<Plan, "greeting">> = {
 export function planFor({ part, weekend }: Pick<Day, "part" | "weekend">): Plan {
   const plan = WEEKDAY[part]
   const weatherWindow = weekend && (part === "morgen" || part === "arbeidsdag") ? "today" : plan.weatherWindow
-  const sections = weekend ? (part === "natt" ? plan.sections : ["weather" as const, "alerts" as const, "pulls" as const]) : plan.sections
+  const sections = weekend ? (part === "natt" ? plan.sections : ["weather" as const, "departures" as const, "alerts" as const, "pulls" as const]) : plan.sections
   return { greeting: GREETINGS[part], sections: [...sections], weatherWindow, pulls: weekend ? "mine" : plan.pulls }
 }

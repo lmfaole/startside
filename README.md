@@ -12,6 +12,7 @@ Built after the design system's «Pages and navigation» rules (5.3): three leve
 | --- | --- |
 | `/start` | The **digest**: the state in counts (`SummaryBar`, each a link to its group), then the few things that need you most from each source with «Se alle N». Follows the time of day (`lib/plan.ts`). |
 | `/start/pull-requests`, `/issues`, `/discussions` | The **lists**: everything, in groups by what needs you most. Discussions are under Issues (the bar holds five places) |
+| `/start/avganger` | Getting around: from where you are (the workplace, home, or the device's position) the way to where you are likely going, **public transport set against walking** (when to leave, minutes, minutes saved), and the next departures from the stops around you. Home is set on the page (`Her er hjemme`, kept in a cookie in the browser); the workplace is `WORK_*` in `wrangler.jsonc` (Fremtind, Hammersborggata 8). The front page shows a digest of it in the mornings and evenings |
 | `/start/varsler` | What wants a look: **feilende CI** (a default branch whose last commit is red, in your public repositories and the watched ones), **nytt fra andre** (replies and reviews on what you are in, last three days, where somebody else wrote last) and **Dependabot** (its open pull requests in your public repositories, with their checks) |
 | `/start/vaer` | The whole forecast: the rest of today, tomorrow, the coming days |
 | `/start/pull-requests/{owner}/{repo}/{n}`, `/issues/…`, `/discussions/…` | The **detail** of one thing: status, description, facts, checks, last comments, and **«Åpne på GitHub» last** |
@@ -34,6 +35,7 @@ the summary, in the morning, the workday, the evening and the weekend, but not a
 
 | Source | What | Config |
 | --- | --- | --- |
+| Entur (Journey Planner v3, through the relay) | Departures from the stops nearby and trips compared with walking | `WORK_NAME`, `WORK_LAT`, `WORK_LON` in `wrangler.jsonc` |
 | Yr (MET Norway `locationforecast`) | The forecast for the rest of the day | `WEATHER_PLACE`, `WEATHER_LAT`, `WEATHER_LON` in `wrangler.jsonc` |
 | GitHub | Pull requests awaiting your review, your open pull requests, issues assigned to you | secret `GITHUB_TOKEN` on `startside-upstream` |
 
@@ -119,7 +121,7 @@ the rest do not see it. `lib/position.ts` is tested.
   embedded in the script (`scripts/embed-assets.mjs`), so a deploy is one upload.
 - **`startside-upstream`** (`upstream/`): a relay on workers.dev. A Worker on the `lmfaole.party` zone gets 525 on every
   fetch to an origin outside Cloudflare, while workers.dev works, so the page fetches Yr and GitHub through it. It takes
-  only GET, only those hosts (Yr, GitHub, Nominatim), and only with the shared secret `UPSTREAM_KEY` (set on both Workers). It holds `GITHUB_TOKEN`.
+  only GET, only those hosts (Yr, GitHub, Nominatim, Entur), and only with the shared secret `UPSTREAM_KEY` (set on both Workers). It holds `GITHUB_TOKEN`.
 
 In `next dev` there is no `UPSTREAM_URL`, so the page fetches the sources directly.
 

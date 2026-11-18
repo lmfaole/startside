@@ -12,6 +12,10 @@
   "vars": {
     // GitHub: the repositories whose issues are watched (the ones you are involved in, new ones nobody owns, what moved lately).
     "GITHUB_WATCH_REPOS": "fremtind/jokul",
+    // The workplace for departures and the way to and from it (Fremtind, Hammersborggata 8); home is set on the page.
+    "WORK_NAME": "Fremtind",
+    "WORK_LAT": "59.915013",
+    "WORK_LON": "10.751613",
     "WEATHER_PLACE": "Oslo",
     "WEATHER_LAT": "59.91",
     "WEATHER_LON": "10.75",
