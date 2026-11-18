@@ -1,5 +1,5 @@
 import { DiscussionsSection } from "../../components/sections"
-import { Shell } from "../../components/shell"
+import { GITHUB, Shell } from "../../components/shell"
 import { getDiscussions } from "../../lib/github"
 import { settle } from "../../lib/settle"
 
@@ -10,7 +10,7 @@ export const metadata = { title: "Discussions · Startside" }
 export default async function Page() {
   const discussions = await settle(getDiscussions())
   return (
-    <Shell current="issues" trail={[{ path: "/issues", label: "Issues" }]} title="Discussions" lead="Samtalene du er med i, spørsmål uten svar, og det som har rørt seg.">
+    <Shell current="github" trail={[GITHUB]} title="Discussions" lead="Samtalene du er med i, spørsmål uten svar, og det som har rørt seg.">
       <DiscussionsSection data={discussions} mode="full" />
     </Shell>
   )

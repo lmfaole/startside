@@ -1,7 +1,6 @@
-import { SubPages } from "@lmfaole/designsystem/components/sub-pages"
 
 import { IssuesSection } from "../../components/sections"
-import { Shell } from "../../components/shell"
+import { GITHUB, Shell } from "../../components/shell"
 import { now } from "../../lib/day"
 import { getIssues } from "../../lib/github"
 import { withBase } from "../../lib/links"
@@ -15,8 +14,7 @@ export default async function Page() {
   const instant = now()
   const issues = await settle(getIssues())
   return (
-    <Shell current="issues" title="Issues" lead="Det som er tildelt deg, det du er med i, det nye som ingen eier, og det som har rørt seg.">
-      <SubPages label="Under Issues" pages={[{ href: withBase("/discussions"), label: "Discussions", icon: "discussion", description: "Samtalene du er med i, spørsmål uten svar og det som har rørt seg." }]} />
+    <Shell current="github" trail={[GITHUB]} title="Issues" lead="Det som er tildelt deg, det du er med i, det nye som ingen eier, og det som har rørt seg.">
       <IssuesSection data={issues} mode="full" instant={instant} />
     </Shell>
   )

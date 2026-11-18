@@ -1,5 +1,5 @@
 import { PullsSection } from "../../components/sections"
-import { Shell } from "../../components/shell"
+import { GITHUB, Shell } from "../../components/shell"
 import { now } from "../../lib/day"
 import { getPulls } from "../../lib/github"
 import { settle } from "../../lib/settle"
@@ -12,7 +12,7 @@ export default async function Page() {
   const instant = now()
   const pulls = await settle(getPulls("all"))
   return (
-    <Shell current="pull-requests" title="Pull requests" lead="Dine egne og de som venter på din review, med det som krever deg først.">
+    <Shell current="github" trail={[GITHUB]} title="Pull requests" lead="Dine egne og de som venter på din review, med det som krever deg først.">
       <PullsSection data={pulls} mode="full" instant={instant} />
     </Shell>
   )

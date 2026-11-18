@@ -8,7 +8,7 @@ import { Text } from "@lmfaole/designsystem/components/text"
 import { notFound } from "next/navigation"
 
 import { About, LatestComments } from "../../../../../components/detail"
-import { Shell } from "../../../../../components/shell"
+import { GITHUB, Shell } from "../../../../../components/shell"
 import { getDiscussion } from "../../../../../lib/detail"
 import { long } from "../../../../../lib/format"
 import { parseRef } from "../../../../../lib/links"
@@ -21,10 +21,10 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   const ref = parseRef(await params)
   if (ref === null) notFound()
   const result = await settle(getDiscussion(ref))
-  const trail = [{ path: "/issues", label: "Issues" }, { path: "/discussions", label: "Discussions" }]
+  const trail = [GITHUB, { path: "/discussions", label: "Discussions" }]
   if (!result.ok) {
     return (
-      <Shell current="issues" trail={trail} title={`Discussion #${ref.number}`}>
+      <Shell current="github" trail={trail} title={`Discussion #${ref.number}`}>
         <ErrorMessage error={result.error}>Kunne ikke hente discussionen</ErrorMessage>
       </Shell>
     )
@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="issues" trail={trail} crumb={`#${ref.number}`} title={discussion.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${discussion.author === null ? "" : ` · av ${discussion.author}`} · opprettet ${long.format(new Date(discussion.created))}`}>
+    <Shell current="github" trail={trail} crumb={`#${ref.number}`} title={discussion.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${discussion.author === null ? "" : ` · av ${discussion.author}`} · opprettet ${long.format(new Date(discussion.created))}`}>
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">

@@ -10,14 +10,16 @@ import { Refresh } from "./refresh"
 /** How often the open page asks for itself again (components/refresh.tsx); GitHub is cached for as long, so each ask sees fresh lists. */
 const REFRESH_SECONDS = 60
 
-export type PageId = "front" | "pull-requests" | "issues" | "alerts" | "weather"
+export type PageId = "front" | "github" | "departures" | "weather"
+
+/** The pages under GitHub (pull requests, issues, discussions, alerts) have this as their first crumb. */
+export const GITHUB = { path: "/github", label: "GitHub" } as const
 
 /** The top-level places: one-word labels, the same order on every page. */
 const PLACES = [
   { key: "front", label: "Forside", path: "", icon: "home" },
-  { key: "pull-requests", label: "PR-er", path: "/pull-requests", icon: "pull-request" },
-  { key: "issues", label: "Issues", path: "/issues", icon: "issue" },
-  { key: "alerts", label: "Varsler", path: "/varsler", icon: "notification" },
+  { key: "github", label: "GitHub", path: "/github", icon: "branch" },
+  { key: "departures", label: "Avganger", path: "/avganger", icon: "bus" },
   { key: "weather", label: "Vær", path: "/vaer", icon: "weather" },
 ] as const
 

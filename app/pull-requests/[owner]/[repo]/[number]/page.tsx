@@ -9,7 +9,7 @@ import { Text } from "@lmfaole/designsystem/components/text"
 import { notFound } from "next/navigation"
 
 import { About, LatestComments } from "../../../../../components/detail"
-import { Shell } from "../../../../../components/shell"
+import { GITHUB, Shell } from "../../../../../components/shell"
 import { getPull } from "../../../../../lib/detail"
 import { long } from "../../../../../lib/format"
 import { parseRef } from "../../../../../lib/links"
@@ -23,10 +23,10 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   const ref = parseRef(await params)
   if (ref === null) notFound()
   const result = await settle(getPull(ref))
-  const trail = [{ path: "/pull-requests", label: "Pull requests" }]
+  const trail = [GITHUB, { path: "/pull-requests", label: "Pull requests" }]
   if (!result.ok) {
     return (
-      <Shell current="pull-requests" trail={trail} title={`Pull request #${ref.number}`}>
+      <Shell current="github" trail={trail} title={`Pull request #${ref.number}`}>
         <ErrorMessage error={result.error}>Kunne ikke hente pull requesten</ErrorMessage>
       </Shell>
     )
@@ -40,7 +40,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="pull-requests" trail={trail} crumb={`#${ref.number}`} title={pull.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${pull.author === null ? "" : ` · av ${pull.author}`} · opprettet ${long.format(new Date(pull.created))}`}>
+    <Shell current="github" trail={trail} crumb={`#${ref.number}`} title={pull.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${pull.author === null ? "" : ` · av ${pull.author}`} · opprettet ${long.format(new Date(pull.created))}`}>
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">

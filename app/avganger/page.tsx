@@ -23,7 +23,7 @@ export default async function Page() {
   const around = journey === null ? null : await getAround(journey)
 
   return (
-    <Shell current="front" trail={[]} title="Avganger" lead="Buss, trikk og T-bane fra der du er, mot gange." actions={<Stack gap="sm"><PositionControl current={position} /><HomeControl isSet={home !== null} /></Stack>}>
+    <Shell current="departures" title="Avganger" lead="Buss, trikk og T-bane fra der du er, mot gange." actions={<Stack gap="sm"><PositionControl current={position} /><HomeControl isSet={home !== null} /></Stack>}>
       <Stack gap="xl">
         {around === null ? (
           <PageSection id="departures" title="Avganger" icon="bus">

@@ -1,5 +1,5 @@
 import { AlertsSection } from "../../components/sections"
-import { Shell } from "../../components/shell"
+import { GITHUB, Shell } from "../../components/shell"
 import { now } from "../../lib/day"
 import { getCiFailures, getDependabot, getReplies } from "../../lib/github"
 import { settle } from "../../lib/settle"
@@ -12,7 +12,7 @@ export default async function Page() {
   const instant = now()
   const [ci, replies, dependabot] = await Promise.all([settle(getCiFailures()), settle(getReplies(instant)), settle(getDependabot())])
   return (
-    <Shell current="alerts" title="Varsler" lead="Det som er rødt, det som er nytt fra andre, og det Dependabot venter på.">
+    <Shell current="github" trail={[GITHUB]} title="Varsler" lead="Det som er rødt, det som er nytt fra andre, og det Dependabot venter på.">
       <AlertsSection data={{ ci, replies, dependabot }} mode="full" instant={instant} />
     </Shell>
   )
