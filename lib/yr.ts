@@ -1,4 +1,6 @@
+import type { Day } from "./day.ts"
 import { env } from "./env"
+import { pickHours, type Timeseries } from "./forecast.ts"
 import { upstream } from "./upstream"
 
 export interface Hour {
@@ -41,17 +43,8 @@ export function describeSymbol(code: string): string {
   return `${text}${showers}${thunder ? " og torden" : ""}`
 }
 
-interface Timeseries {
-  time: string
-  data: {
-    instant: { details: { air_temperature: number; wind_speed: number } }
-    next_1_hours?: { summary: { symbol_code: string }; details: { precipitation_amount: number } }
-    next_6_hours?: { summary: { symbol_code: string }; details: { precipitation_amount: number } }
-  }
-}
-
-/** The forecast from MET Norway (the data Yr shows) for the rest of the day, one entry per two hours. */
-export async function getWeather(): Promise<Weather> {
+/** The forecast from MET Norway (the data Yr shows) for the rest of the day or for the day after. */
+export async function getWeather(window: "today" | "tomorrow", day: Day, instant: Date = new Date()): Promise<Weather> {
   const place = env("WEATHER_PLACE") ?? "Oslo"
   const lat = env("WEATHER_LAT") ?? "59.91"
   const lon = env("WEATHER_LON") ?? "10.75"
@@ -62,21 +55,15 @@ export async function getWeather(): Promise<Weather> {
   })
   if (!response.ok) throw new Error(`Yr svarte ${response.status}`)
   const body = (await response.json()) as { properties: { timeseries: Timeseries[] } }
-  const now = Date.now()
-  const endOfDay = new Date()
-  endOfDay.setHours(23, 59, 59, 999)
-  const hours = body.properties.timeseries
-    .filter((entry) => new Date(entry.time).getTime() >= now - 3_600_000 && new Date(entry.time).getTime() <= Math.max(endOfDay.getTime(), now + 8 * 3_600_000))
-    .filter((_, index) => index % 2 === 0)
-    .map((entry): Hour => {
-      const next = entry.data.next_1_hours ?? entry.data.next_6_hours
-      return {
-        time: entry.time,
-        temperature: entry.data.instant.details.air_temperature,
-        precipitation: next?.details.precipitation_amount ?? 0,
-        wind: entry.data.instant.details.wind_speed,
-        symbol: next?.summary.symbol_code ?? "cloudy",
-      }
-    })
+  const hours = pickHours(body.properties.timeseries, window, day.date, instant).map((entry): Hour => {
+    const next = entry.data.next_1_hours ?? entry.data.next_6_hours
+    return {
+      time: entry.time,
+      temperature: entry.data.instant.details.air_temperature,
+      precipitation: next?.details.precipitation_amount ?? 0,
+      wind: entry.data.instant.details.wind_speed,
+      symbol: next?.summary.symbol_code ?? "cloudy",
+    }
+  })
   return { place, hours }
 }

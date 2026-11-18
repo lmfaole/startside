@@ -9,12 +9,6 @@ export interface Item {
   updated: string
 }
 
-export interface Github {
-  reviews: Item[]
-  mine: Item[]
-  issues: Item[]
-}
-
 interface SearchResult {
   items: { id: number; html_url: string; title: string; repository_url: string; updated_at: string }[]
 }
@@ -35,15 +29,18 @@ async function search(token: string | undefined, query: string): Promise<Item[]>
   }))
 }
 
-/** What GitHub wants from you today: pull requests to review, your own open pull requests, and issues assigned to you. */
-export async function getGithub(): Promise<Github> {
-  const token = env("GITHUB_TOKEN")
+function token(): string | undefined {
+  const value = env("GITHUB_TOKEN")
   // Through the relay, the relay holds the token.
-  if (!token && !env("UPSTREAM_URL")) throw new Error("GITHUB_TOKEN er ikke satt")
-  const [reviews, mine, issues] = await Promise.all([
-    search(token, "is:open is:pr review-requested:@me archived:false"),
-    search(token, "is:open is:pr author:@me archived:false"),
-    search(token, "is:open is:issue assignee:@me archived:false"),
-  ])
-  return { reviews, mine, issues }
+  if (!value && !env("UPSTREAM_URL")) throw new Error("GITHUB_TOKEN er ikke satt")
+  return value
 }
+
+/** Pull requests that wait for your review. */
+export const getReviews = (): Promise<Item[]> => search(token(), "is:open is:pr review-requested:@me archived:false")
+
+/** Your own open pull requests. */
+export const getMine = (): Promise<Item[]> => search(token(), "is:open is:pr author:@me archived:false")
+
+/** Issues assigned to you. */
+export const getIssues = (): Promise<Item[]> => search(token(), "is:open is:issue assignee:@me archived:false")

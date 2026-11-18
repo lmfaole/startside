@@ -1,0 +1,88 @@
+import { strict as assert } from "node:assert"
+import { test } from "node:test"
+
+import { addDays, dayOf, now, partOfHour } from "./day.ts"
+import { planFor } from "./plan.ts"
+
+// 2026-11-18 is a Wednesday, CET (UTC+1); 2026-07-15 is a Wednesday, CEST (UTC+2).
+const at = (iso: string) => dayOf(new Date(iso))
+
+test("the four parts of the day, with their edges, in Oslo time", () => {
+  for (const [hour, part] of [[4, "natt"], [5, "morgen"], [8, "morgen"], [9, "arbeidsdag"], [15, "arbeidsdag"], [16, "kveld"], [21, "kveld"], [22, "natt"], [0, "natt"]] as const) {
+    assert.equal(partOfHour(hour), part, `${hour}:00`)
+  }
+})
+
+test("Oslo time, not UTC: winter is UTC+1 and summer UTC+2", () => {
+  assert.equal(at("2026-11-18T07:59:00Z").part, "morgen") // 08:59 CET
+  assert.equal(at("2026-11-18T08:00:00Z").part, "arbeidsdag") // 09:00 CET
+  assert.equal(at("2026-07-15T06:59:00Z").part, "morgen") // 08:59 CEST
+  assert.equal(at("2026-07-15T07:00:00Z").part, "arbeidsdag") // 09:00 CEST
+})
+
+test("the clocks changing: 29 March 2026 (summer time) and 25 October 2026 (winter time)", () => {
+  assert.equal(at("2026-03-29T02:59:00Z").part, "natt") // 04:59 CEST (the clocks went forward at 01:00Z)
+  assert.equal(at("2026-03-29T03:00:00Z").part, "morgen") // 05:00 CEST
+  assert.equal(at("2026-10-25T03:59:00Z").part, "natt") // 04:59 CET
+  assert.equal(at("2026-10-25T04:00:00Z").part, "morgen") // 05:00 CET
+})
+
+test("a day belongs to the date before 05:00 and weekends include the night after Saturday and Sunday", () => {
+  assert.equal(at("2026-11-21T23:30:00Z").date, "2026-11-21") // 00:30 Sunday CET: still Saturday's night
+  assert.equal(at("2026-11-20T23:30:00Z").date, "2026-11-20") // Fri 20 Nov, 00:30 Sat CET: still Friday's night
+  assert.equal(at("2026-11-20T23:30:00Z").weekend, false)
+  assert.equal(at("2026-11-21T10:00:00Z").weekend, true) // Saturday
+  assert.equal(at("2026-11-22T23:30:00Z").weekend, true) // 00:30 Monday: Sunday's night
+  assert.equal(at("2026-11-23T04:30:00Z").weekend, false) // 05:30 Monday
+  assert.equal(at("2026-11-18T10:00:00Z").weekend, false)
+})
+
+test("addDays crosses months and years", () => {
+  assert.equal(addDays("2026-12-31", 1), "2027-01-01")
+  assert.equal(addDays("2026-03-01", -1), "2026-02-28")
+})
+
+test("the plan for each time of day", () => {
+  const weekday = (part: Parameters<typeof planFor>[0]["part"]) => planFor({ part, weekend: false })
+  assert.deepEqual(weekday("morgen"), { greeting: "God morgen", sections: ["weather", "reviews", "mine", "issues"], weatherWindow: "today" })
+  assert.deepEqual(weekday("arbeidsdag"), { greeting: "God dag", sections: ["reviews", "mine", "issues", "weather"], weatherWindow: "today" })
+  assert.deepEqual(weekday("kveld"), { greeting: "God kveld", sections: ["mine", "weather"], weatherWindow: "tomorrow" })
+  assert.deepEqual(weekday("natt"), { greeting: "God natt", sections: ["weather"], weatherWindow: "tomorrow" })
+})
+
+test("a weekend leaves out reviews and assigned issues", () => {
+  assert.deepEqual(planFor({ part: "morgen", weekend: true }), { greeting: "God morgen", sections: ["weather", "mine"], weatherWindow: "today" })
+  assert.deepEqual(planFor({ part: "arbeidsdag", weekend: true }), { greeting: "God dag", sections: ["weather", "mine"], weatherWindow: "today" })
+  assert.deepEqual(planFor({ part: "kveld", weekend: true }), { greeting: "God kveld", sections: ["weather", "mine"], weatherWindow: "tomorrow" })
+  assert.deepEqual(planFor({ part: "natt", weekend: true }), { greeting: "God natt", sections: ["weather"], weatherWindow: "tomorrow" })
+})
+
+test("NOW stands in for the clock, and nonsense is ignored", () => {
+  assert.equal(now("2026-11-18T07:00:00+01:00").toISOString(), "2026-11-18T06:00:00.000Z")
+  assert.ok(Math.abs(now("not a date").getTime() - Date.now()) < 5000)
+  assert.ok(Math.abs(now(undefined).getTime() - Date.now()) < 5000)
+})
+
+import { pickHours, type Timeseries } from "./forecast.ts"
+
+const series = (isos: string[]): Timeseries[] => isos.map((time) => ({ time, data: { instant: { details: { air_temperature: 1, wind_speed: 1 } } } }))
+const hourly = (from: string, count: number) => series(Array.from({ length: count }, (_, i) => new Date(Date.parse(from) + i * 3_600_000).toISOString().replace(".000Z", "Z")))
+
+test("the forecast for the rest of today stops at midnight in Oslo, not in UTC", () => {
+  // Wed 18 Nov 2026, 20:00 CET = 19:00Z. Oslo midnight is 23:00Z, so 22:00Z (23:00 CET) is in, 23:00Z (Thursday 00:00) is out.
+  const picked = pickHours(hourly("2026-11-18T19:00:00Z", 8), "today", "2026-11-18", new Date("2026-11-18T19:00:00Z"))
+  assert.deepEqual(picked.map((entry) => entry.time), ["2026-11-18T19:00:00Z", "2026-11-18T21:00:00Z"])
+})
+
+test("tomorrow is the whole next Oslo day, every third hour", () => {
+  const picked = pickHours(hourly("2026-11-18T20:00:00Z", 30), "tomorrow", "2026-11-18", new Date("2026-11-18T20:00:00Z"))
+  const hours = picked.map((entry) => new Date(entry.time).toLocaleTimeString("en-GB", { timeZone: "Europe/Oslo", hour: "2-digit", minute: "2-digit" }))
+  assert.deepEqual(hours, ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"])
+})
+
+test("after midnight the night still belongs to the day before, so tomorrow is today's calendar date", () => {
+  const day = dayOf(new Date("2026-11-19T00:30:00Z")) // 01:30 CET on Thursday 19 Nov
+  assert.equal(day.date, "2026-11-18")
+  const picked = pickHours(hourly("2026-11-18T23:00:00Z", 26), "tomorrow", day.date, new Date("2026-11-19T00:30:00Z"))
+  assert.equal(picked[0]?.time, "2026-11-18T23:00:00Z") // 00:00 CET on Thursday 19 Nov: the whole of the 19th, and nothing of the 18th
+})

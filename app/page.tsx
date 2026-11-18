@@ -7,7 +7,9 @@ import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Text } from "@lmfaole/designsystem/components/text"
 
-import { getGithub, type Item } from "../lib/github"
+import { dayOf, now, type Day } from "../lib/day"
+import { getIssues, getMine, getReviews, type Item } from "../lib/github"
+import { planFor, type SectionId } from "../lib/plan"
 import { describeSymbol, getWeather } from "../lib/yr"
 
 // Rendered on the server for every request: the page shows what is true now.
@@ -15,7 +17,7 @@ export const dynamic = "force-dynamic"
 
 const TIME_ZONE = "Europe/Oslo"
 const clock = new Intl.DateTimeFormat("nb-NO", { hour: "2-digit", minute: "2-digit", timeZone: TIME_ZONE })
-const day = new Intl.DateTimeFormat("nb-NO", { weekday: "long", day: "numeric", month: "long", timeZone: TIME_ZONE })
+const dateLine = new Intl.DateTimeFormat("nb-NO", { weekday: "long", day: "numeric", month: "long", timeZone: TIME_ZONE })
 const short = new Intl.DateTimeFormat("nb-NO", { day: "numeric", month: "short", timeZone: TIME_ZONE })
 const number = new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 1 })
 
@@ -23,9 +25,9 @@ function asError(error: unknown): Error {
   return error instanceof Error ? error : new Error(String(error))
 }
 
-async function Weather() {
+async function Weather({ window, day, instant }: { window: "today" | "tomorrow"; day: Day; instant: Date }) {
   try {
-    const { place, hours } = await getWeather()
+    const { place, hours } = await getWeather(window, day, instant)
     const rows: RowData[] = hours.map((hour) => ({
       key: hour.time,
       body: (
@@ -39,7 +41,7 @@ async function Weather() {
       trailing: `${Math.round(hour.temperature)}° · ${number.format(hour.precipitation)} mm · ${number.format(hour.wind)} m/s`,
     }))
     return (
-      <PageSection id="weather" title={`Vær i ${place}`}>
+      <PageSection id="weather" title={`Vær i ${place} ${window === "today" ? "i dag" : "i morgen"}`}>
         <Rows rows={rows} columns={{ name: "Tid og vær", value: "Temperatur, nedbør og vind" }} />
         <Text size="xs" tone="muted">
           Værdata fra <ExternalLink href="https://www.yr.no">Yr</ExternalLink> (Meteorologisk institutt).
@@ -70,45 +72,52 @@ function itemRows(items: Item[]): RowData[] {
   }))
 }
 
-async function Github() {
+const LISTS = {
+  reviews: { title: "Venter på din review", empty: "Ingen å se på.", load: getReviews },
+  mine: { title: "Dine åpne pull requests", empty: "Ingen åpne.", load: getMine },
+  issues: { title: "Tildelt deg", empty: "Ingen saker.", load: getIssues },
+} as const
+
+async function GithubList({ id }: { id: keyof typeof LISTS }) {
+  const list = LISTS[id]
   try {
-    const { reviews, mine, issues } = await getGithub()
-    const lists = [
-      { id: "reviews", title: "Venter på din review", items: reviews, empty: "Ingen å se på." },
-      { id: "mine", title: "Dine åpne pull requests", items: mine, empty: "Ingen åpne." },
-      { id: "issues", title: "Tildelt deg", items: issues, empty: "Ingen saker." },
-    ]
+    const items = await list.load()
     return (
-      <>
-        {lists.map((list) => (
-          <PageSection key={list.id} id={list.id} title={list.title}>
-            {list.items.length === 0 ? (
-              <Text size="sm" tone="muted">
-                {list.empty}
-              </Text>
-            ) : (
-              <Rows rows={itemRows(list.items)} columns={{ name: "Tittel", value: "Sist oppdatert" }} />
-            )}
-          </PageSection>
-        ))}
-      </>
+      <PageSection id={id} title={list.title}>
+        {items.length === 0 ? (
+          <Text size="sm" tone="muted">
+            {list.empty}
+          </Text>
+        ) : (
+          <Rows rows={itemRows(items)} columns={{ name: "Tittel", value: "Sist oppdatert" }} />
+        )}
+      </PageSection>
     )
   } catch (error) {
     return (
-      <PageSection id="github" title="GitHub">
+      <PageSection id={id} title={list.title}>
         <ErrorMessage error={asError(error)}>Kunne ikke hente GitHub</ErrorMessage>
       </PageSection>
     )
   }
 }
 
+function Section({ id, window, day, instant }: { id: SectionId; window: "today" | "tomorrow"; day: Day; instant: Date }) {
+  return id === "weather" ? <Weather window={window} day={day} instant={instant} /> : <GithubList id={id} />
+}
+
 export default function Page() {
+  // What the page shows follows the time of day (lib/plan.ts); what is left out is not fetched either.
+  const instant = now()
+  const day = dayOf(instant)
+  const plan = planFor(day)
   return (
     <PageLayout>
-      <PageHeader title="God dag" lead={day.format(new Date())} />
+      <PageHeader title={plan.greeting} lead={dateLine.format(instant)} />
       <Grid columns="sections" gap="xl">
-        <Github />
-        <Weather />
+        {plan.sections.map((id) => (
+          <Section key={id} id={id} window={plan.weatherWindow} day={day} instant={instant} />
+        ))}
       </Grid>
     </PageLayout>
   )

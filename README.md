@@ -13,6 +13,22 @@ server on every request. Next.js (App Router, SSR) on Cloudflare Workers through
 
 A source that fails shows its own error and does not take the page down.
 
+## Time of day
+
+The page follows the time of day in Oslo (`lib/day.ts`, the plan in `lib/plan.ts`):
+
+| | Greeting | Shown, in order | Forecast |
+| --- | --- | --- | --- |
+| Morning 05–09 | God morgen | weather, reviews, own pull requests, assigned issues | rest of today |
+| Workday 09–16 | God dag | reviews, own pull requests, assigned issues, weather | rest of today |
+| Evening 16–22 | God kveld | own pull requests, weather | tomorrow |
+| Night 22–05 | God natt | weather | tomorrow |
+| Weekend | as above | weather, own pull requests (night: weather) | today by day, tomorrow in the evening |
+
+Before 05:00 it is still the day before, so the night after Friday is a weekday and the night after Sunday a weekend.
+What is not shown is not fetched. In `next dev`, `NOW=2026-11-18T07:00:00+01:00 npm run dev` stands in for the clock;
+it is never read in production. `npm test` covers the parts of the day, their edges, the clocks changing and the forecast windows.
+
 ## How it runs
 
 - **`startside`** (`worker.mjs`, `wrangler.jsonc`): the page, on the route `lmfaole.party/start*`. The static files are
