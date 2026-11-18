@@ -42,6 +42,15 @@ Before 05:00 it is still the day before, so the night after Friday is a weekday 
 What is not shown is not fetched. In `next dev`, `NOW=2026-11-18T07:00:00+01:00 npm run dev` stands in for the clock;
 it is never read in production. `npm test` covers the parts of the day, their edges, the clocks changing and the forecast windows.
 
+## Live updates
+
+An open page keeps itself fresh (`components/refresh.tsx`): every 60 seconds, and at once when the window comes back into view
+after more than half that, it asks the server for the page again (`router.refresh()`), so the lists, the weather and the
+time of day change without a reload and without losing the page's state. Nothing runs while the window is hidden or the
+device is offline. «oppdatert 19:27» under the title is when the server last built the page. If the Access session has
+run out, the refresh ends at the login, as a reload would. The pull requests are one `SectionGroup` of the design system
+(5.1), so the grid places them as one part.
+
 ## Position
 
 «Bruk min posisjon» (next to the title) asks the browser for the device's position, on a tap and never on load. The position

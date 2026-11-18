@@ -21,7 +21,7 @@ interface SearchResult {
 async function search(token: string | undefined, query: string): Promise<Item[]> {
   const response = await upstream(`https://api.github.com/search/issues?per_page=15&sort=updated&q=${encodeURIComponent(query)}`, {
     headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), Accept: "application/vnd.github+json", "User-Agent": "startside", "X-GitHub-Api-Version": "2022-11-28" },
-    revalidate: 120,
+    revalidate: 60,
   })
   if (!response.ok) throw new Error(response.status === 500 ? await response.text() : `GitHub svarte ${response.status}`)
   const body = (await response.json()) as SearchResult
@@ -63,7 +63,7 @@ async function graphql(token: string | undefined, query: string): Promise<Status
   const response = await upstream("https://api.github.com/graphql", {
     headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), "User-Agent": "startside" },
     json: { query: PULLS, variables: { q: `${query} is:pr sort:updated-desc` } },
-    revalidate: 120,
+    revalidate: 60,
   })
   if (!response.ok) throw new Error(`GitHub (GraphQL) svarte ${response.status}`)
   return readStatuses((await response.json()) as Parameters<typeof readStatuses>[0])

@@ -2,7 +2,7 @@ import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { Grid, Inline, Stack } from "@lmfaole/designsystem/components/layout"
 import { PageHeader } from "@lmfaole/designsystem/components/page-header"
 import { PageLayout } from "@lmfaole/designsystem/components/page-layout"
-import { PageSection } from "@lmfaole/designsystem/components/page-section"
+import { PageSection, SectionGroup, SubSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Text } from "@lmfaole/designsystem/components/text"
@@ -10,6 +10,7 @@ import { Text } from "@lmfaole/designsystem/components/text"
 import { cookies } from "next/headers"
 
 import { PositionControl } from "../components/position"
+import { Refresh } from "../components/refresh"
 import { dayOf, now, type Day } from "../lib/day"
 import { getIssues, getPulls, type Item } from "../lib/github"
 import { ageLabels, statusLabels, type Label } from "../lib/pr-status"
@@ -22,6 +23,9 @@ import { describeSymbol, getWeather } from "../lib/yr"
 export const dynamic = "force-dynamic"
 
 const TIME_ZONE = "Europe/Oslo"
+
+/** How often the open page asks for itself again (components/refresh.tsx); GitHub is cached for as long, so each ask sees fresh lists. */
+const REFRESH_SECONDS = 60
 const clock = new Intl.DateTimeFormat("nb-NO", { hour: "2-digit", minute: "2-digit", timeZone: TIME_ZONE })
 const dateLine = new Intl.DateTimeFormat("nb-NO", { weekday: "long", day: "numeric", month: "long", timeZone: TIME_ZONE })
 const short = new Intl.DateTimeFormat("nb-NO", { day: "numeric", month: "short", timeZone: TIME_ZONE })
@@ -103,16 +107,16 @@ async function Pulls({ which, instant }: { which: "all" | "mine"; instant: Date 
       )
     }
     return (
-      <>
+      <SectionGroup id="pulls" title="Pull requests" width="row">
         {groups.map((group) => (
-          <PageSection key={group.id} id={`pulls-${group.id}`} title={group.title}>
+          <SubSection key={group.id} id={`pulls-${group.id}`} title={group.title}>
             <Rows
               rows={group.entries.map(({ item, whose }) => row(item, [...(item.status === undefined ? [] : statusLabels(item.status, whose)), ...ageLabels(item, whose, instant)]))}
               columns={COLUMNS}
             />
-          </PageSection>
+          </SubSection>
         ))}
-      </>
+      </SectionGroup>
     )
   } catch (error) {
     return (
@@ -159,7 +163,8 @@ export default async function Page() {
   const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
   return (
     <PageLayout>
-      <PageHeader title={plan.greeting} lead={dateLine.format(instant)} actions={<PositionControl current={position} />} />
+      <Refresh everySeconds={REFRESH_SECONDS} />
+      <PageHeader title={plan.greeting} lead={`${dateLine.format(instant)} · oppdatert ${clock.format(instant)}`} actions={<PositionControl current={position} />} />
       <Grid columns="sections" gap="xl">
         {plan.sections.map((id) => (
           <Section key={id} id={id} plan={plan} day={day} instant={instant} position={position} />
