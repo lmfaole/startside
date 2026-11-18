@@ -1,0 +1,3 @@
+# Copy to .dev.vars for local development. In production: `wrangler secret put GITHUB_TOKEN`.
+# A fine-grained or classic token that can read your pull requests and issues.
+GITHUB_TOKEN=
