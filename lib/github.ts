@@ -1,5 +1,5 @@
 import { discussionNodes, type DiscussionItem } from "./discussions"
-import { isWatched, repoQualifiers, scope } from "./github-query"
+import { isWatched, parseRepos, scope } from "./github-query"
 import { env } from "./env"
 import { readStatuses, withStatus, type PullStatus, type Statuses } from "./pr-status"
 import { upstream } from "./upstream"
@@ -91,57 +91,77 @@ export async function getPulls(which: "all" | "mine"): Promise<{ reviews: Item[]
   return { reviews, mine }
 }
 
+interface RepoIssue {
+  id: number
+  html_url: string
+  title: string
+  created_at: string
+  updated_at: string
+  assignees?: { login: string }[]
+  pull_request?: unknown
+}
+
+/** The 50 open issues of a repository that moved last, straight from the repository (pull requests are in the same list and left out). */
+async function repoIssues(token: string | undefined, repo: string): Promise<Item[]> {
+  const response = await upstream(`https://api.github.com/repos/${repo}/issues?state=open&sort=updated&direction=desc&per_page=50`, {
+    headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), Accept: "application/vnd.github+json", "User-Agent": "startside", "X-GitHub-Api-Version": "2022-11-28" },
+    revalidate: 60,
+  })
+  if (!response.ok) throw new Error(response.status === 500 ? await response.text() : `GitHub svarte ${response.status}`)
+  return ((await response.json()) as RepoIssue[])
+    .filter((issue) => issue.pull_request === undefined)
+    .map((issue) => ({ key: String(issue.id), href: issue.html_url, title: issue.title, repo, created: issue.created_at, updated: issue.updated_at, assignees: (issue.assignees ?? []).map((assignee) => assignee.login) }))
+}
+
 /**
  * Issues, for `groupIssues`: the ones assigned to you in any public repository, the ones you are involved in in the
- * watched repositories (`GITHUB_WATCH_REPOS`), and the 50 that moved last there, from which the new ones nobody owns come.
- * Listing a repository's issues takes a search on the repository itself, which an organisation can block for the token
- * (SpareBank 1 does, for fine-grained tokens that live longer than 366 days): then those two groups are left out, and the
- * rest still shows, since «involved» searches by you and is filtered to the repositories here.
+ * watched repositories (`GITHUB_WATCH_REPOS`), and in them the 50 that moved last, from which the new ones nobody owns come.
+ * Searching on a repository or an organisation is blocked by SAML single sign-on for the token, so «involved» searches by
+ * you and is filtered to the repositories here, and the repositories' own issues are read straight from them.
  */
 export async function getIssues(): Promise<{ assigned: Item[]; involved: Item[]; recent: Item[] }> {
   const accessToken = token()
   const limit = scope(env("GITHUB_EXCLUDE_ORGS"))
   const watchedRepos = env("GITHUB_WATCH_REPOS")
-  const watched = repoQualifiers(watchedRepos)
   const [assigned, involved, recent] = await Promise.all([
     search(accessToken, `is:open is:issue assignee:@me archived:false ${limit}`),
     search(accessToken, `is:open is:issue involves:@me archived:false ${limit}`, 50).then((items) => items.filter((item) => isWatched(item.repo, watchedRepos))),
-    watched === ""
-      ? []
-      : search(accessToken, `is:open is:issue archived:false ${watched} ${limit}`, 50).catch((error: unknown): Item[] => {
-          console.warn("Kunne ikke liste issues i de overvåkede repoene:", error instanceof Error ? error.message : error)
-          return []
-        }),
+    Promise.all(parseRepos(watchedRepos).map((repo) => repoIssues(accessToken, repo))).then((lists) => lists.flat()),
   ])
   return { assigned, involved, recent }
 }
 
-const DISCUSSIONS = `query ($involved: String!, $unanswered: String!) {
-  involved: search(query: $involved, type: DISCUSSION, first: 20) { nodes { ...D } }
-  unanswered: search(query: $unanswered, type: DISCUSSION, first: 20) { nodes { ...D } }
-}
-fragment D on Discussion {
-  id url title createdAt updatedAt
+const DISCUSSION = `fragment D on Discussion {
+  id url title createdAt updatedAt isAnswered
   category { name }
   comments { totalCount }
   repository { nameWithOwner }
 }`
 
 /**
- * Discussions in the watched repositories: the ones you are in and the unanswered ones. GitHub has them in GraphQL only,
- * and an organisation can block that for the token (see `getIssues`), so a failure is an error here.
+ * Discussions in the watched repositories: the ones you are in, and the 30 that moved last in each. GitHub has them in
+ * GraphQL only; searching on a repository is blocked by SAML single sign-on for the token, so «involved» searches by you
+ * and is filtered to the repositories here, and the repositories' own discussions are read straight from them.
  */
-export async function getDiscussions(): Promise<{ involved: DiscussionItem[]; unanswered: DiscussionItem[] }> {
-  const watched = repoQualifiers(env("GITHUB_WATCH_REPOS"))
-  if (watched === "") return { involved: [], unanswered: [] }
+export async function getDiscussions(): Promise<{ involved: DiscussionItem[]; recent: DiscussionItem[] }> {
+  const repos = parseRepos(env("GITHUB_WATCH_REPOS"))
+  if (repos.length === 0) return { involved: [], recent: [] }
   const accessToken = token()
+  // The names are checked by `parseRepos` (letters, digits, dots, dashes and underscores), so they can go into the query.
+  const perRepo = repos.map((repo, index) => {
+    const [owner, name] = repo.split("/")
+    return `r${index}: repository(owner: "${owner}", name: "${name}") { discussions(first: 30, orderBy: { field: UPDATED_AT, direction: DESC }) { nodes { ...D } } }`
+  })
   const response = await upstream("https://api.github.com/graphql", {
     headers: { ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}), "User-Agent": "startside" },
-    json: { query: DISCUSSIONS, variables: { involved: `${watched} involves:@me sort:updated-desc`, unanswered: `${watched} is:unanswered sort:updated-desc` } },
+    json: { query: `query { involved: search(query: "involves:@me", type: DISCUSSION, first: 30) { nodes { ...D } } ${perRepo.join(" ")} } ${DISCUSSION}` },
     revalidate: 60,
   })
   if (!response.ok) throw new Error(response.status === 500 ? await response.text() : `GitHub (GraphQL) svarte ${response.status}`)
-  const body = (await response.json()) as { data?: { involved: { nodes: Parameters<typeof discussionNodes>[0] }; unanswered: { nodes: Parameters<typeof discussionNodes>[0] } }; errors?: { message: string }[] }
+  type Nodes = Parameters<typeof discussionNodes>[0]
+  const body = (await response.json()) as { data?: Record<string, { nodes: Nodes } | { discussions: { nodes: Nodes } } | null>; errors?: { message: string }[] }
   if (body.data === undefined) throw new Error(body.errors?.[0]?.message ?? "GitHub svarte uten data")
-  return { involved: discussionNodes(body.data.involved.nodes), unanswered: discussionNodes(body.data.unanswered.nodes) }
+  const involved = (body.data.involved as { nodes: Nodes } | null)?.nodes ?? []
+  const recent = repos.flatMap((_, index) => (body.data?.[`r${index}`] as { discussions: { nodes: Nodes } } | null)?.discussions.nodes ?? [])
+  return { involved: discussionNodes(involved).filter((item) => isWatched(item.repo, env("GITHUB_WATCH_REPOS"))), recent: discussionNodes(recent) }
 }

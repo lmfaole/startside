@@ -53,10 +53,14 @@ the workday, not in the evening or the weekend.
 **Discussions** (`lib/discussions.ts`, GraphQL only) in the watched repositories, morning and workday: **Du er med i** and
 **Ubesvarte**, at most ten each; nothing is shown where there are none.
 
-SpareBank 1 blocks searches on `repo:fremtind/jokul` (and GraphQL) for fine-grained tokens that live longer than 366 days.
-«Involved» searches by you and is filtered to the watched repositories, so it works; «Nye uten eier» and «Nylig aktive» list
-the repository itself, so they stay empty (a warning in the Worker's log) until `GITHUB_TOKEN` is regenerated with a lifetime
-of 366 days or less. The same step gives the pull requests in `jokul` their status, and makes the discussions appear.
+Searching on `repo:` or `org:` is blocked for the token by SpareBank 1's SAML single sign-on, while reading the repository
+itself is not. So «Du er involvert i» searches by you (`involves:@me`) and is filtered to the watched repositories, and
+the repositories' own issues (for «Nye uten eier» and «Nylig aktive») and discussions are read straight from them
+(`/repos/{repo}/issues`, GraphQL `repository(...)`). `GITHUB_TOKEN` must live 366 days or less (SpareBank 1 blocks GraphQL
+and direct reads for longer ones).
+
+**Discussions** (`lib/discussions.ts`, GraphQL only) in the watched repositories, morning and workday: **Du er med i**,
+**Ubesvarte spørsmål** (only categories with answers can be unanswered) and **Nylig aktive**, at most ten each.
 
 ## Live updates
 
