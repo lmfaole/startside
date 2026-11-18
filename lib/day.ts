@@ -4,6 +4,8 @@ export type DayPart = "morgen" | "arbeidsdag" | "kveld" | "natt"
 
 export interface Day {
   part: DayPart
+  /** The Oslo hour, 0–23. */
+  hour: number
   /** Saturday and Sunday, with the night after a Saturday or Sunday evening: the night after Friday is still a weekday. */
   weekend: boolean
   /** The date the day belongs to, `YYYY-MM-DD` in Oslo: before 05:00 it is still the day before. */
@@ -42,7 +44,7 @@ export function dayOf(instant: Date): Day {
   const { date: calendar, hour } = osloTime(instant)
   const date = hour < 5 ? addDays(calendar, -1) : calendar
   const weekday = new Date(`${date}T12:00:00Z`).getUTCDay()
-  return { part: partOfHour(hour), weekend: weekday === 0 || weekday === 6, date }
+  return { part: partOfHour(hour), hour, weekend: weekday === 0 || weekday === 6, date }
 }
 
 /** Now; in `next dev`, `NOW` (an ISO time) stands in for it, to see every time of day. Never read in production. */
