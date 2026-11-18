@@ -1,19 +1,25 @@
-import { excerpt } from "./digest"
+import { truncateMarkdown } from "./digest"
 import { env } from "./env"
 import type { Ref } from "./links"
 import { upstream } from "./upstream"
 
-/** A person's text under a pull request, an issue or a discussion. */
+/** A person's text under a pull request, an issue or a discussion, in Markdown. */
 export interface Comment {
   author: string
   created: string
   text: string
 }
 
+/** A description in Markdown, cut for the page: its text, and whether the rest is left out. */
+export interface Body {
+  text: string
+  cut: boolean
+}
+
 interface CommentNode {
   author: { login: string } | null
   createdAt: string
-  bodyText: string
+  body: string
 }
 
 interface Comments {
@@ -21,11 +27,15 @@ interface Comments {
   nodes: (CommentNode | null)[]
 }
 
-const COMMENTS = "comments(last: 3) { totalCount nodes { author { login } createdAt bodyText } }"
+const COMMENTS = "comments(last: 3) { totalCount nodes { author { login } createdAt body } }"
+
+/** How much of a description or a comment is shown (Markdown, cut at a paragraph): enough to decide; the whole is on GitHub. */
+const BODY_MAX = 6000
+const COMMENT_MAX = 1200
 
 const toComments = (comments: Comments): { total: number; latest: Comment[] } => ({
   total: comments.totalCount,
-  latest: comments.nodes.flatMap((node) => (node === null ? [] : [{ author: node.author?.login ?? "ukjent", created: node.createdAt, text: excerpt(node.bodyText, 240) }])),
+  latest: comments.nodes.flatMap((node) => (node === null ? [] : [{ author: node.author?.login ?? "ukjent", created: node.createdAt, text: truncateMarkdown(node.body, COMMENT_MAX).text }])),
 })
 
 async function ask<T>(query: string, ref: Ref): Promise<T> {
@@ -57,7 +67,7 @@ export interface PullDetail {
   author: string | null
   created: string
   updated: string
-  text: string
+  body: Body
   head: string
   base: string
   size: { additions: number; deletions: number; files: number }
@@ -75,7 +85,7 @@ export interface PullDetail {
 /** One pull request with what is needed to decide what to do with it: its text, checks, reviewers and last comments. `null` where there is no such pull request. */
 export async function getPull(ref: Ref): Promise<PullDetail | null> {
   type Node = {
-    title: string; url: string; state: string; isDraft: boolean; bodyText: string; createdAt: string; updatedAt: string
+    title: string; url: string; state: string; isDraft: boolean; body: string; createdAt: string; updatedAt: string
     author: { login: string } | null; headRefName: string; baseRefName: string
     additions: number; deletions: number; changedFiles: number
     reviewDecision: PullDetail["review"]; mergeable: PullDetail["mergeable"]
@@ -88,7 +98,7 @@ export async function getPull(ref: Ref): Promise<PullDetail | null> {
   }
   const data = await ask<{ repository: { pullRequest: Node | null } | null }>(
     `query ($owner: String!, $name: String!, $number: Int!) { repository(owner: $owner, name: $name) { pullRequest(number: $number) {
-      title url state isDraft bodyText createdAt updatedAt author { login } headRefName baseRefName additions deletions changedFiles reviewDecision mergeable
+      title url state isDraft body createdAt updatedAt author { login } headRefName baseRefName additions deletions changedFiles reviewDecision mergeable
       labels(first: 10) { nodes { name } }
       reviewRequests(first: 10) { nodes { requestedReviewer { ... on User { login } ... on Team { name } } } }
       latestReviews(first: 10) { nodes { state author { login } } }
@@ -103,7 +113,7 @@ export async function getPull(ref: Ref): Promise<PullDetail | null> {
   const rollup = pull.commits.nodes[0]?.commit.statusCheckRollup ?? null
   return {
     title: pull.title, url: pull.url, state: pull.state, draft: pull.isDraft, author: pull.author?.login ?? null, created: pull.createdAt, updated: pull.updatedAt,
-    text: excerpt(pull.bodyText, 600), head: pull.headRefName, base: pull.baseRefName,
+    body: truncateMarkdown(pull.body, BODY_MAX), head: pull.headRefName, base: pull.baseRefName,
     size: { additions: pull.additions, deletions: pull.deletions, files: pull.changedFiles },
     checks: rollup?.state ?? null,
     checkLines: (rollup?.contexts.nodes ?? []).flatMap((node) => (node === null ? [] : [node.__typename === "CheckRun" ? { name: node.name ?? "Sjekk", state: node.conclusion ?? node.status ?? "PENDING" } : { name: node.context ?? "Status", state: node.state ?? "PENDING" }])),
@@ -122,7 +132,7 @@ export interface IssueDetail {
   author: string | null
   created: string
   updated: string
-  text: string
+  body: Body
   labels: string[]
   assignees: string[]
   comments: { total: number; latest: Comment[] }
@@ -130,10 +140,10 @@ export interface IssueDetail {
 
 /** One issue: its text, labels, who it is assigned to and the last comments. `null` where there is no such issue. */
 export async function getIssue(ref: Ref): Promise<IssueDetail | null> {
-  type Node = { title: string; url: string; state: string; bodyText: string; createdAt: string; updatedAt: string; author: { login: string } | null; labels: { nodes: { name: string }[] }; assignees: { nodes: { login: string }[] }; comments: Comments }
+  type Node = { title: string; url: string; state: string; body: string; createdAt: string; updatedAt: string; author: { login: string } | null; labels: { nodes: { name: string }[] }; assignees: { nodes: { login: string }[] }; comments: Comments }
   const data = await ask<{ repository: { issue: Node | null } | null }>(
     `query ($owner: String!, $name: String!, $number: Int!) { repository(owner: $owner, name: $name) { issue(number: $number) {
-      title url state bodyText createdAt updatedAt author { login }
+      title url state body createdAt updatedAt author { login }
       labels(first: 10) { nodes { name } }
       assignees(first: 5) { nodes { login } }
       ${COMMENTS}
@@ -144,7 +154,7 @@ export async function getIssue(ref: Ref): Promise<IssueDetail | null> {
   if (issue === null || issue === undefined) return null
   return {
     title: issue.title, url: issue.url, state: issue.state, author: issue.author?.login ?? null, created: issue.createdAt, updated: issue.updatedAt,
-    text: excerpt(issue.bodyText, 600), labels: issue.labels.nodes.map((label) => label.name), assignees: issue.assignees.nodes.map((assignee) => assignee.login),
+    body: truncateMarkdown(issue.body, BODY_MAX), labels: issue.labels.nodes.map((label) => label.name), assignees: issue.assignees.nodes.map((assignee) => assignee.login),
     comments: toComments(issue.comments),
   }
 }
@@ -158,18 +168,18 @@ export interface DiscussionDetail {
   author: string | null
   created: string
   updated: string
-  text: string
+  body: Body
   answer: Comment | null
   comments: { total: number; latest: Comment[] }
 }
 
 /** One discussion: its text, its answer if it has one, and the last comments. `null` where there is no such discussion. */
 export async function getDiscussion(ref: Ref): Promise<DiscussionDetail | null> {
-  type Node = { title: string; url: string; bodyText: string; createdAt: string; updatedAt: string; isAnswered: boolean | null; author: { login: string } | null; category: { name: string } | null; answer: CommentNode | null; comments: Comments }
+  type Node = { title: string; url: string; body: string; createdAt: string; updatedAt: string; isAnswered: boolean | null; author: { login: string } | null; category: { name: string } | null; answer: CommentNode | null; comments: Comments }
   const data = await ask<{ repository: { discussion: Node | null } | null }>(
     `query ($owner: String!, $name: String!, $number: Int!) { repository(owner: $owner, name: $name) { discussion(number: $number) {
-      title url bodyText createdAt updatedAt isAnswered author { login } category { name }
-      answer { author { login } createdAt bodyText }
+      title url body createdAt updatedAt isAnswered author { login } category { name }
+      answer { author { login } createdAt body }
       ${COMMENTS}
     } } }`,
     ref,
@@ -178,8 +188,8 @@ export async function getDiscussion(ref: Ref): Promise<DiscussionDetail | null> 
   if (discussion === null || discussion === undefined) return null
   return {
     title: discussion.title, url: discussion.url, category: discussion.category?.name ?? "", answered: discussion.isAnswered, author: discussion.author?.login ?? null,
-    created: discussion.createdAt, updated: discussion.updatedAt, text: excerpt(discussion.bodyText, 600),
-    answer: discussion.answer === null ? null : { author: discussion.answer.author?.login ?? "ukjent", created: discussion.answer.createdAt, text: excerpt(discussion.answer.bodyText, 400) },
+    created: discussion.createdAt, updated: discussion.updatedAt, body: truncateMarkdown(discussion.body, BODY_MAX),
+    answer: discussion.answer === null ? null : { author: discussion.answer.author?.login ?? "ukjent", created: discussion.answer.createdAt, text: truncateMarkdown(discussion.answer.body, COMMENT_MAX).text },
     comments: toComments(discussion.comments),
   }
 }

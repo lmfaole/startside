@@ -1,4 +1,4 @@
-import { Grid, Stack } from "@lmfaole/designsystem/components/layout"
+import { Stack } from "@lmfaole/designsystem/components/layout"
 import { SummaryBar } from "@lmfaole/designsystem/components/summary-bar"
 import { cookies } from "next/headers"
 
@@ -50,15 +50,13 @@ export default async function Page() {
     <Shell current="front" title={plan.greeting} lead={`${dateLine.format(instant)} · oppdatert ${clock.format(instant)}`} actions={<PositionControl current={position} />}>
       <Stack gap="xl">
         <SummaryBar label="Oversikt" items={summary} />
-        <Grid columns="sections" gap="xl">
-          {plan.sections.map((id) => {
-            if (id === "pulls" && pulls) return <PullsSection key={id} data={pulls} mode="digest" instant={instant} />
-            if (id === "issues" && issues) return <IssuesSection key={id} data={issues} mode="digest" instant={instant} />
-            if (id === "discussions" && discussions) return <DiscussionsSection key={id} data={discussions} mode="digest" />
-            if (id === "weather" && forecast) return <WeatherDigest key={id} data={forecast} window={plan.weatherWindow} day={day} instant={instant} />
-            return null
-          })}
-        </Grid>
+        {plan.sections.map((id) => {
+          if (id === "pulls" && pulls) return <PullsSection key={id} data={pulls} mode="digest" instant={instant} />
+          if (id === "issues" && issues) return <IssuesSection key={id} data={issues} mode="digest" instant={instant} />
+          if (id === "discussions" && discussions) return <DiscussionsSection key={id} data={discussions} mode="digest" />
+          if (id === "weather" && forecast) return <WeatherDigest key={id} data={forecast} window={plan.weatherWindow} day={day} instant={instant} />
+          return null
+        })}
       </Stack>
     </Shell>
   )

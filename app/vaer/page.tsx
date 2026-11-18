@@ -1,5 +1,5 @@
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
-import { Grid, Stack } from "@lmfaole/designsystem/components/layout"
+import { Stack } from "@lmfaole/designsystem/components/layout"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows } from "@lmfaole/designsystem/components/rows"
 import { Text } from "@lmfaole/designsystem/components/text"
@@ -33,7 +33,7 @@ export default async function Page() {
       {!forecast.ok ? (
         <ErrorMessage error={forecast.error}>Kunne ikke hente været</ErrorMessage>
       ) : (
-        <Grid columns="sections" gap="xl">
+        <Stack gap="xl">
           <PageSection id="today" title="Resten av i dag" icon="weather">
             <Rows lead="icon" rows={hourRows(forecast.value, "today", day, instant)} columns={columns} />
           </PageSection>
@@ -59,7 +59,7 @@ export default async function Page() {
               columns={{ name: "Dag og vær", value: "Laveste og høyeste temperatur, og nedbør" }}
             />
           </PageSection>
-        </Grid>
+        </Stack>
       )}
       <Text size="xs" tone="muted">
         Værdata fra <ExternalLink href="https://www.yr.no">Yr</ExternalLink> (Meteorologisk institutt).

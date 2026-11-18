@@ -1,6 +1,6 @@
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { FactList } from "@lmfaole/designsystem/components/fact-list"
-import { Grid, Stack } from "@lmfaole/designsystem/components/layout"
+import { Stack } from "@lmfaole/designsystem/components/layout"
 import { LinkButton } from "@lmfaole/designsystem/components/link-button"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { StatusLine, type Status } from "@lmfaole/designsystem/components/status-line"
@@ -24,7 +24,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   const back = { path: "/discussions", label: "Discussions" }
   if (!result.ok) {
     return (
-      <Shell back={back} title={`Discussion #${ref.number}`}>
+      <Shell current="discussions" back={back} title={`Discussion #${ref.number}`}>
         <ErrorMessage error={result.error}>Kunne ikke hente discussionen</ErrorMessage>
       </Shell>
     )
@@ -38,11 +38,11 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell back={back} title={discussion.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${discussion.author === null ? "" : ` · av ${discussion.author}`} · opprettet ${long.format(new Date(discussion.created))}`}>
+    <Shell current="discussions" back={back} title={discussion.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${discussion.author === null ? "" : ` · av ${discussion.author}`} · opprettet ${long.format(new Date(discussion.created))}`}>
       <Stack gap="xl">
         <StatusLine items={status} />
-        <Grid columns="sections" gap="xl">
-          <About text={discussion.text} />
+        <Stack gap="xl">
+          <About body={discussion.body} />
           <PageSection id="facts" title="Fakta" icon="info">
             <FactList facts={[["Kategori", discussion.category], ["Besvart av", discussion.answer?.author ?? ""]]} />
           </PageSection>
@@ -57,7 +57,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
             </PageSection>
           )}
           <LatestComments comments={discussion.comments} />
-        </Grid>
+        </Stack>
         <Text size="xs" tone="muted">
           Sist endret {long.format(new Date(discussion.updated))}.
         </Text>

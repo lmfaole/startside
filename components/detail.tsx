@@ -1,9 +1,10 @@
 import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Stack } from "@lmfaole/designsystem/components/layout"
+import { Markdown } from "@lmfaole/designsystem/components/markdown"
 import { Text } from "@lmfaole/designsystem/components/text"
 
-import type { Comment } from "../lib/detail"
+import type { Body, Comment } from "../lib/detail"
 import { short } from "../lib/format"
 
 /** The last few comments of a thing: who, when and a short text of each; the whole conversation is where it lives, at the end. */
@@ -17,9 +18,13 @@ export function LatestComments({ comments, title = "Siste kommentarer" }: { comm
         <Text size="sm" weight="medium">
           {comment.author}
         </Text>
-        <Text size="sm" tone="muted">
-          {comment.text || "(uten tekst)"}
-        </Text>
+        {comment.text === "" ? (
+          <Text size="sm" tone="muted">
+            (uten tekst)
+          </Text>
+        ) : (
+          <Markdown source={comment.text} size="sm" from="h4" />
+        )}
       </Stack>
     ),
     trailing: short.format(new Date(comment.created)),
@@ -31,13 +36,20 @@ export function LatestComments({ comments, title = "Siste kommentarer" }: { comm
   )
 }
 
-/** What a thing is, in its own words: the first of its text, or a quiet line where it has none. */
-export function About({ text }: { text: string }) {
+/** What a thing is, in its own words: its description as Markdown, cut at a paragraph (the rest is on GitHub), or a quiet line where it has none. */
+export function About({ body }: { body: Body }) {
   return (
     <PageSection id="about" title="Beskrivelse" icon="info">
-      <Stack width="prose">
-        <Text tone={text === "" ? "muted" : "default"}>{text === "" ? "Ingen beskrivelse." : text}</Text>
-      </Stack>
+      {body.text === "" ? (
+        <Text tone="muted">Ingen beskrivelse.</Text>
+      ) : (
+        <Markdown source={body.text} />
+      )}
+      {body.cut ? (
+        <Text size="xs" tone="muted">
+          Beskrivelsen er kortet ned. Resten er på GitHub.
+        </Text>
+      ) : null}
     </PageSection>
   )
 }

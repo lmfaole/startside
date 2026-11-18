@@ -1,6 +1,6 @@
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { FactList } from "@lmfaole/designsystem/components/fact-list"
-import { Grid, Stack } from "@lmfaole/designsystem/components/layout"
+import { Stack } from "@lmfaole/designsystem/components/layout"
 import { LinkButton } from "@lmfaole/designsystem/components/link-button"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows } from "@lmfaole/designsystem/components/rows"
@@ -26,7 +26,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   const back = { path: "/pull-requests", label: "Pull requests" }
   if (!result.ok) {
     return (
-      <Shell back={back} title={`Pull request #${ref.number}`}>
+      <Shell current="pull-requests" back={back} title={`Pull request #${ref.number}`}>
         <ErrorMessage error={result.error}>Kunne ikke hente pull requesten</ErrorMessage>
       </Shell>
     )
@@ -40,11 +40,11 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell back={back} title={pull.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${pull.author === null ? "" : ` · av ${pull.author}`} · opprettet ${long.format(new Date(pull.created))}`}>
+    <Shell current="pull-requests" back={back} title={pull.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${pull.author === null ? "" : ` · av ${pull.author}`} · opprettet ${long.format(new Date(pull.created))}`}>
       <Stack gap="xl">
         <StatusLine items={status} />
-        <Grid columns="sections" gap="xl">
-          <About text={pull.text} />
+        <Stack gap="xl">
+          <About body={pull.body} />
           <PageSection id="facts" title="Fakta" icon="info">
             <FactList
               facts={[
@@ -69,7 +69,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
             </PageSection>
           )}
           <LatestComments comments={pull.comments} />
-        </Grid>
+        </Stack>
         <Text size="xs" tone="muted">
           Sist endret {long.format(new Date(pull.updated))}.
         </Text>

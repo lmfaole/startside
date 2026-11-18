@@ -9,14 +9,16 @@ description: Use when choosing which design system component to use for somethin
 
 | You need | Use |
 | --- | --- |
-| Things under / next to each other | `Stack`, `Inline`; columns `Grid`; a rail beside content `Split` |
+| Things under each other (text, lists, sections) | `Stack`; short things in a line `Inline` |
+| Things that are LOOKED AT in columns | `Grid` (`tiles`, `cards`, `charts`, a count), `Tiles`; a rail of reference `Split` |
 | The page frame, its title | `PageLayout`, `PageColumn`, `PageHeader` |
 | A titled part of a page | `PageSection`; a set that belongs together `SectionGroup` + `SubSection`; a link to all of it: `more` |
 | Text, a heading, a link | `Text`, `Heading`, `TextLink`; out to another site `ExternalLink`, `LinkButton external` |
+| Text written in Markdown (a description, a comment) | `Markdown`, never HTML inserted; `size="sm"` for a comment |
 | A list of things | `Rows` (icon / rank / poster lead), `PictureRows`, `EntityRows`, `Tiles`, `HeadlineList`, `StoryList`, `DatedLinkTable` |
 | Label and value pairs | `FactList`; links on a line `LinkList` |
 | A status | `StatusLine`; a count that links `SummaryBar` |
-| The way between pages | `PageTabs`; up one level `BackLink`; a set of places `NavCards`; narrowing a list `FilterChips`; a view switch `SegmentedToggle` |
+| The way between pages | `NavBar` (bar at the foot on a phone, rail at the left from tablet width; given to `PageLayout` as `nav`); up one level `BackLink`; a set of places `NavCards`; narrowing a list `FilterChips`; a view switch `SegmentedToggle` |
 | An icon | `Icon` (a meaning from `ICONS` in `src/lib/icons.ts`) |
 | A picture | `Picture`, `PictureCard`, `ImageLightbox`, `Logo`, `Logos` |
 | A card | `Card` (see the cards rule), `ChartCard` for a chart |
@@ -38,7 +40,7 @@ If the thing is not here, **add a component**; do not style in the project.
 4. **Server-renderable** unless it needs state: no hook, no `"use client"` in a component that can be plain.
 5. **Icons** come from `src/lib/icons.ts` by meaning; no `lucide-react` import outside it and `ui/`.
 6. **Accessible** (see **designsystem-accessibility**) and **content-checked** (see **designsystem-content**).
-7. **Wide screens:** fit by room, never a layout `max-w-*`; `src/desktop.test.ts` pins this.
+7. **One reading direction: down.** Text, lists and sections stand under each other in the reading column; columns only for what is looked at. `src/desktop.test.ts` pins this (see **designsystem-hierarchy**).
 
 ## Add or change a component
 

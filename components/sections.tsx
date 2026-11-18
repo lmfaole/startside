@@ -106,7 +106,7 @@ export function PullsSection({ data, mode, instant }: { data: Settled<PullsData>
   if (groups.length === 0) return <Quiet id="pulls" title="Pull requests" icon="pull-request">Ingen åpne pull requests.</Quiet>
   if (mode === "full") {
     return (
-      <SectionGroup id="pulls" title="Pull requests" icon="pull-request" width="row">
+      <SectionGroup id="pulls" title="Pull requests" icon="pull-request">
         {groups.map((group) => (
           <SubSection key={group.id} id={`pulls-${group.id}`} title={group.title} icon={PULL_ICONS[group.id]}>
             <Rows lead="icon" rows={group.entries.map((entry) => pullRow(entry, group.id, instant))} columns={COLUMNS} />
@@ -134,7 +134,7 @@ export function IssuesSection({ data, mode, instant }: { data: Settled<IssuesDat
   const issueRow = (item: Item, compact = false) => row(item, [], { icon: "issue", label: "Issue" }, compact)
   if (mode === "full") {
     return (
-      <SectionGroup id="issues" title="Issues" icon="issue" width="row">
+      <SectionGroup id="issues" title="Issues" icon="issue">
         {groups.map((group) => (
           <SubSection key={group.id} id={`issues-${group.id}`} title={group.title} icon={ISSUE_ICONS[group.id]}>
             <Rows lead="icon" rows={group.items.map((item) => issueRow(item))} columns={COLUMNS} />
@@ -168,7 +168,7 @@ export function DiscussionsSection({ data, mode }: { data: Settled<DiscussionsDa
   if (groups.length === 0) return mode === "full" ? <Quiet id="discussions" title="Discussions" icon="discussion">Ingen discussions.</Quiet> : null
   if (mode === "full") {
     return (
-      <SectionGroup id="discussions" title="Discussions" icon="discussion" width="row">
+      <SectionGroup id="discussions" title="Discussions" icon="discussion">
         {groups.map((group) => (
           <SubSection key={group.id} id={`discussions-${group.id}`} title={group.title} icon={DISCUSSION_ICONS[group.id]}>
             <Rows lead="icon" rows={group.items.map((item) => discussionRow(item))} columns={COLUMNS} />

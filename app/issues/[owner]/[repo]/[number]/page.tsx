@@ -1,6 +1,6 @@
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { FactList } from "@lmfaole/designsystem/components/fact-list"
-import { Grid, Stack } from "@lmfaole/designsystem/components/layout"
+import { Stack } from "@lmfaole/designsystem/components/layout"
 import { LinkButton } from "@lmfaole/designsystem/components/link-button"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { StatusLine, type Status } from "@lmfaole/designsystem/components/status-line"
@@ -24,7 +24,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   const back = { path: "/issues", label: "Issues" }
   if (!result.ok) {
     return (
-      <Shell back={back} title={`Issue #${ref.number}`}>
+      <Shell current="issues" back={back} title={`Issue #${ref.number}`}>
         <ErrorMessage error={result.error}>Kunne ikke hente issuen</ErrorMessage>
       </Shell>
     )
@@ -38,16 +38,16 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell back={back} title={issue.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${issue.author === null ? "" : ` · av ${issue.author}`} · opprettet ${long.format(new Date(issue.created))}`}>
+    <Shell current="issues" back={back} title={issue.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${issue.author === null ? "" : ` · av ${issue.author}`} · opprettet ${long.format(new Date(issue.created))}`}>
       <Stack gap="xl">
         <StatusLine items={status} />
-        <Grid columns="sections" gap="xl">
-          <About text={issue.text} />
+        <Stack gap="xl">
+          <About body={issue.body} />
           <PageSection id="facts" title="Fakta" icon="info">
             <FactList facts={[["Etiketter", issue.labels.join(", ")], ["Tildelt", issue.assignees.join(", ")]]} />
           </PageSection>
           <LatestComments comments={issue.comments} />
-        </Grid>
+        </Stack>
         <Text size="xs" tone="muted">
           Sist endret {long.format(new Date(issue.updated))}.
         </Text>

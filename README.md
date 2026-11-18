@@ -15,6 +15,9 @@ Built after the design system's «Pages and navigation» rules (5.3): three leve
 | `/start/vaer` | The whole forecast: the rest of today, tomorrow, the coming days |
 | `/start/pull-requests/{owner}/{repo}/{n}`, `/issues/…`, `/discussions/…` | The **detail** of one thing: status, description, facts, checks, last comments, and **«Åpne på GitHub» last** |
 
+The navigation between the places is the design system's `NavBar` (a bar at the foot on a phone, a rail at the left from tablet width), not
+tabs. A description or a comment is Markdown, shown with `Markdown` and cut at a paragraph.
+
 A row links to the app's own page for the thing (`lib/links.ts`), never straight out to GitHub: leaving is the last action on
 the detail page. The detail pages read one item from GitHub's GraphQL (`lib/detail.ts`); the address is checked before it is
 used (`parseRef`). The service worker keeps the last copy of each page by its address, so the pages open offline.
