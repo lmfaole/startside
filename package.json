@@ -10,10 +10,12 @@
     "test": "node --test lib/*.test.ts",
     "preview": "npm run build:worker && wrangler dev",
     "deploy": "npm run build:worker && wrangler deploy",
-    "build:worker": "opennextjs-cloudflare build && node scripts/embed-assets.mjs"
+    "build:worker": "opennextjs-cloudflare build && node scripts/embed-assets.mjs",
+    "skills": "designsystem-skills",
+    "skills:check": "designsystem-skills --check"
   },
   "dependencies": {
-    "@lmfaole/designsystem": "github:lmfaole/designsystem#47a76b37dc227131d9c7115889bc27ad0efa3231",
+    "@lmfaole/designsystem": "github:lmfaole/designsystem#aa8d5fd9123e77ca4d9c860243f720a0e3d4bd1a",
     "@opennextjs/cloudflare": "^1.20.17",
     "next": "^16.4.6",
     "react": "^19.2.8",
