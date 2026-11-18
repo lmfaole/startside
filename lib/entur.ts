@@ -20,13 +20,13 @@ interface NearestResult {
 /** The stops around a place with their next departures (Entur's Journey Planner), the nearest first. Stops with nothing leaving are left out. */
 export async function getStops(spot: Spot, radius = 600): Promise<Stop[]> {
   const data = await ask<NearestResult>(
-    `{ nearest(latitude:${spot.lat},longitude:${spot.lon},maximumDistance:${radius},maximumResults:8,filterByPlaceTypes:[stopPlace]){ edges{ node{ distance place{ ... on StopPlace{ id name estimatedCalls(numberOfDepartures:4,timeRange:5400){ expectedDepartureTime realtime destinationDisplay{frontText} serviceJourney{ line{publicCode transportMode} } } } } } } } }`,
+    `{ nearest(latitude:${spot.lat},longitude:${spot.lon},maximumDistance:${radius},maximumResults:8,filterByPlaceTypes:[stopPlace]){ edges{ node{ distance place{ ... on StopPlace{ id name estimatedCalls(numberOfDepartures:12,timeRange:3600){ expectedDepartureTime realtime destinationDisplay{frontText} serviceJourney{ line{publicCode transportMode} } } } } } } } }`,
     30,
   )
   return data.nearest.edges.flatMap(({ node }): Stop[] => {
     const { id, name, estimatedCalls } = node.place
     if (id === undefined || name === undefined || estimatedCalls === undefined || estimatedCalls.length === 0) return []
-    const departures = estimatedCalls.map((call): Departure => ({ time: call.expectedDepartureTime, line: call.serviceJourney.line.publicCode ?? "", destination: call.destinationDisplay?.frontText ?? "", mode: modeOf(call.serviceJourney.line.transportMode), realtime: call.realtime, stop: name }))
+    const departures = estimatedCalls.map((call): Departure => ({ time: call.expectedDepartureTime, line: call.serviceJourney.line.publicCode ?? "", destination: call.destinationDisplay?.frontText ?? "", mode: modeOf(call.serviceJourney.line.transportMode), realtime: call.realtime, stop: name, distance: node.distance }))
     return [{ id, name, distance: node.distance, departures }]
   })
 }

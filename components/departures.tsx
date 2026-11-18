@@ -8,7 +8,7 @@ import type { IconName } from "@lmfaole/designsystem/lib/icons"
 import { clock } from "../lib/format"
 import type { Around } from "../lib/getaround"
 import { withBase } from "../lib/links"
-import { compare, minutesUntil, nextDepartures, type Departure, type Mode, type Option, type Stop } from "../lib/transit"
+import { compare, leaveIn, MODE_NAME, minutesUntil, nextDepartures, walkMinutesOver, type Departure, type Mode, type Option, type Stop } from "../lib/transit"
 
 const MODE_ICON = { walk: "walk", bus: "bus", tram: "tram", metro: "metro", other: "place" } as const satisfies Record<Mode, IconName>
 
@@ -21,7 +21,8 @@ const when = (time: string, instant: Date): string => {
   return left < 1 ? "nå" : left < 20 ? `${left} min` : clock.format(new Date(time))
 }
 
-function departureRow(departure: Departure, instant: Date, withStop: boolean): RowData {
+function departureRow(departure: Departure, instant: Date): RowData {
+  const leave = leaveIn(departure, instant)
   return {
     key: `${departure.stop}-${departure.line}-${departure.time}`,
     icon: MODE_ICON[departure.mode],
@@ -29,15 +30,13 @@ function departureRow(departure: Departure, instant: Date, withStop: boolean): R
       <Stack gap="xs">
         <Text as="span" size="sm">
           <Text as="span" size="sm" weight="medium">
-            {departure.line}
+            {MODE_NAME[departure.mode]} {departure.line}
           </Text>{" "}
           {departure.destination}
         </Text>
-        {withStop ? (
-          <Text size="xs" tone="muted">
-            {departure.stop}
-          </Text>
-        ) : null}
+        <Text size="xs" tone="muted">
+          {departure.stop} · {walkMinutesOver(departure.distance)} min å gå · gå om {leave} min
+        </Text>
       </Stack>
     ),
     trailing: `${when(departure.time, instant)}${departure.realtime ? "" : " (rutetid)"}`,
@@ -87,7 +86,7 @@ export function DeparturesSection({ data, mode, instant }: { data: Around; mode:
         {trips !== null && !trips.ok ? <ErrorMessage error={trips.error}>Kunne ikke hente reiseforslag fra Entur</ErrorMessage> : null}
         {comparison === null ? null : <Rows lead="icon" rows={[...walk, ...comparison.options.map(optionRow)]} columns={{ name: "Reisemåte", value: "Tid og ankomst" }} />}
         {data.stops.ok ? (
-          <Departures stops={data.stops.value} instant={instant} limit={size.departures} full={mode === "full"} />
+          <Departures stops={data.stops.value} instant={instant} limit={size.departures} />
         ) : (
           <ErrorMessage error={data.stops.error}>Kunne ikke hente avganger fra Entur</ErrorMessage>
         )}
@@ -96,14 +95,14 @@ export function DeparturesSection({ data, mode, instant }: { data: Around; mode:
   )
 }
 
-function Departures({ stops, instant, limit, full }: { stops: Stop[]; instant: Date; limit: number; full: boolean }) {
+function Departures({ stops, instant, limit }: { stops: Stop[]; instant: Date; limit: number }) {
   const departures = nextDepartures(stops, instant, limit)
   if (departures.length === 0) {
     return (
       <Text size="sm" tone="muted">
-        Ingen avganger de neste halvannen timen.
+        Ingen avganger du rekker de neste halvannen timen.
       </Text>
     )
   }
-  return <Rows lead="icon" rows={departures.map((departure) => departureRow(departure, instant, full))} columns={{ name: "Avgang", value: "Om" }} />
+  return <Rows lead="icon" rows={departures.map((departure) => departureRow(departure, instant))} columns={{ name: "Avgang", value: "Om" }} />
 }

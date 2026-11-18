@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert"
 import { test } from "node:test"
 
-import { compare, minutesUntil, nextDepartures, tripName, type Stop, type Trip } from "./transit.ts"
+import { compare, leaveIn, minutesUntil, nextDepartures, tripName, type Stop, type Trip } from "./transit.ts"
 
 const instant = new Date("2026-11-18T20:50:00+01:00")
 const trip = (start: string, duration: number, legs: Trip["legs"]): Trip => ({ start, end: start, duration, legs })
@@ -13,10 +13,16 @@ test("minutes until a time never go below zero", () => {
 })
 
 test("departures from all stops come soonest first, without what has gone", () => {
-  const stop = (name: string, times: string[]): Stop => ({ id: name, name, distance: 1, departures: times.map((time) => ({ time, line: "1", destination: "X", mode: "bus", realtime: true, stop: name })) })
+  const stop = (name: string, times: string[]): Stop => ({ id: name, name, distance: 1, departures: times.map((time) => ({ time, line: "1", destination: "X", mode: "bus", realtime: true, stop: name, distance: 0 })) })
   const list = nextDepartures([stop("A", ["2026-11-18T20:58:00+01:00", "2026-11-18T20:30:00+01:00"]), stop("B", ["2026-11-18T20:52:00+01:00"])], instant, 5)
   assert.deepEqual(list.map((d) => d.stop), ["B", "A"])
   assert.equal(nextDepartures([stop("A", ["2026-11-18T20:52:00+01:00", "2026-11-18T20:53:00+01:00"])], instant, 1).length, 1)
+})
+
+test("a departure that leaves before the reader can walk to the stop is left out", () => {
+  const near: Stop = { id: "a", name: "A", distance: 240, departures: [{ time: "2026-11-18T20:52:00+01:00", line: "1", destination: "X", mode: "bus", realtime: true, stop: "A", distance: 240 }, { time: "2026-11-18T20:56:00+01:00", line: "2", destination: "X", mode: "bus", realtime: true, stop: "A", distance: 240 }] }
+  assert.deepEqual(nextDepartures([near], instant, 5).map((d) => d.line), ["2"])
+  assert.equal(leaveIn(near.departures[1]!, instant), 2)
 })
 
 test("a trip is named by what it rides", () => {

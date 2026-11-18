@@ -8,6 +8,8 @@ export interface Departure {
   mode: Mode
   realtime: boolean
   stop: string
+  /** Metres from the place asked for to the stop. */
+  distance: number
 }
 
 export interface Stop {
@@ -49,11 +51,21 @@ export function minutes(seconds: number): number {
   return Math.max(1, Math.round(seconds / 60))
 }
 
-/** The departures of all the stops, soonest first, with a limit. A call already gone is left out. */
+/** Minutes on foot over a distance in metres: about a metre a second, which allows for the streets not being straight. */
+export function walkMinutesOver(metres: number): number {
+  return Math.max(1, Math.round(metres / 60))
+}
+
+/** Minutes until the reader has to leave to catch a departure from where they are; below zero when it cannot be caught. */
+export function leaveIn(departure: Departure, instant: Date): number {
+  return Math.round((new Date(departure.time).getTime() - instant.getTime()) / 60_000) - walkMinutesOver(departure.distance)
+}
+
+/** The departures of all the stops that can still be caught on foot, soonest first, with a limit. */
 export function nextDepartures(stops: readonly Stop[], instant: Date, limit: number): Departure[] {
   return stops
     .flatMap((stop) => stop.departures)
-    .filter((departure) => new Date(departure.time).getTime() >= instant.getTime() - 30_000)
+    .filter((departure) => leaveIn(departure, instant) >= 0)
     .sort((a, b) => a.time.localeCompare(b.time))
     .slice(0, limit)
 }
