@@ -7,6 +7,7 @@ import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Text } from "@lmfaole/designsystem/components/text"
 
+import { Install } from "../components/install"
 import { getGithub, type Item } from "../lib/github"
 import { describeSymbol, getWeather } from "../lib/yr"
 
@@ -105,7 +106,7 @@ async function Github() {
 export default function Page() {
   return (
     <PageLayout>
-      <PageHeader title="God dag" lead={day.format(new Date())} />
+      <PageHeader title="God dag" lead={day.format(new Date())} actions={<Install />} />
       <Grid columns="sections" gap="xl">
         <Github />
         <Weather />
