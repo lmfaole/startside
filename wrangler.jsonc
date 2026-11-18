@@ -4,6 +4,7 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "routes": [{ "pattern": "lmfaole.party/start*", "zone_name": "lmfaole.party" }],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "vars": {
     "WEATHER_PLACE": "Oslo",
