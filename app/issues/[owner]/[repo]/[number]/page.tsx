@@ -7,6 +7,7 @@ import { StatusLine, type Status } from "@lmfaole/designsystem/components/status
 import { Text } from "@lmfaole/designsystem/components/text"
 import { notFound } from "next/navigation"
 
+import { AiSummary } from "../../../../../components/ai-summary"
 import { About, LatestComments } from "../../../../../components/detail"
 import { GITHUB, Shell } from "../../../../../components/shell"
 import { getIssue } from "../../../../../lib/detail"
@@ -42,6 +43,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">
+          <AiSummary kind="issue" input={{ title: issue.title, body: issue.body.text, comments: issue.comments.latest.map((comment) => `${comment.author}: ${comment.text}`) }} />
           <About body={issue.body} />
           <PageSection id="facts" title="Fakta" icon="info">
             <FactList facts={[["Etiketter", issue.labels], ["Tildelt", issue.assignees]]} />

@@ -36,6 +36,7 @@ the summary, in the morning, the workday, the evening and the weekend, but not a
 
 | Source | What | Config |
 | --- | --- | --- |
+| Cloudflare Workers AI (`@cf/meta/llama-3.1-8b-instruct-fp8`, the `AI` binding) | A short Norwegian summary at the top of a pull request, an issue, a discussion and the alerts. Cheap by design: a small model, the text cut to a few thousand characters, ~200 tokens out, one call per version of the text (kept a week in the edge cache under a fingerprint), made while the page streams, and left out on any failure | `ai` in `wrangler.jsonc` |
 | Entur (Journey Planner v3, through the relay) | Departures from the stops nearby and trips compared with walking | `WORK_NAME`, `WORK_LAT`, `WORK_LON` in `wrangler.jsonc` |
 | Yr (MET Norway `locationforecast`) | The forecast for the rest of the day | `WEATHER_PLACE`, `WEATHER_LAT`, `WEATHER_LON` in `wrangler.jsonc` |
 | GitHub | Pull requests awaiting your review, your open pull requests, issues assigned to you | secret `GITHUB_TOKEN` on `startside-upstream` |

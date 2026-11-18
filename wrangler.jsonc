@@ -7,6 +7,8 @@
   // Only the route: no workers.dev or preview address that would get round Cloudflare Access.
   "workers_dev": false,
   "preview_urls": false,
+  // Workers AI, for the summaries (lib/ai.ts); without it the pages simply have none.
+  "ai": { "binding": "AI" },
   "observability": { "enabled": true },
   "routes": [{ "pattern": "lmfaole.party/start*", "zone_name": "lmfaole.party" }],
   "vars": {
