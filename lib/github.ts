@@ -8,13 +8,14 @@ export interface Item {
   href: string
   title: string
   repo: string
+  created: string
   updated: string
   /** For a pull request: its checks, review and so on. */
   status?: PullStatus
 }
 
 interface SearchResult {
-  items: { id: number; html_url: string; title: string; repository_url: string; updated_at: string }[]
+  items: { id: number; html_url: string; title: string; repository_url: string; created_at: string; updated_at: string }[]
 }
 
 async function search(token: string | undefined, query: string): Promise<Item[]> {
@@ -29,6 +30,7 @@ async function search(token: string | undefined, query: string): Promise<Item[]>
     href: item.html_url,
     title: item.title,
     repo: item.repository_url.replace("https://api.github.com/repos/", ""),
+    created: item.created_at,
     updated: item.updated_at,
   }))
 }
@@ -37,7 +39,7 @@ const PULLS = `query ($q: String!) {
   search(query: $q, type: ISSUE, first: 15) {
     nodes {
       ... on PullRequest {
-        databaseId url title updatedAt isDraft reviewDecision mergeable
+        databaseId url title updatedAt isDraft reviewDecision mergeable additions deletions changedFiles
         repository { nameWithOwner }
         author { login }
         commits(last: 1) { nodes { commit { statusCheckRollup { state } } } }
@@ -74,11 +76,16 @@ function token(): string | undefined {
   return value
 }
 
-/** Pull requests that wait for your review (public repositories only, see `scope`). */
-export const getReviews = (): Promise<Item[]> => pulls(token(), `is:open review-requested:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`)
-
-/** Your own open pull requests. */
-export const getMine = (): Promise<Item[]> => pulls(token(), `is:open author:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`)
+/** Your pull requests and the ones waiting for your review (public repositories only, see `scope`); `mine` leaves the reviews out. */
+export async function getPulls(which: "all" | "mine"): Promise<{ reviews: Item[]; mine: Item[] }> {
+  const limit = scope(env("GITHUB_EXCLUDE_ORGS"))
+  const accessToken = token()
+  const [reviews, mine] = await Promise.all([
+    which === "all" ? pulls(accessToken, `is:open review-requested:@me archived:false ${limit}`) : Promise.resolve([]),
+    pulls(accessToken, `is:open author:@me archived:false ${limit}`),
+  ])
+  return { reviews, mine }
+}
 
 /** Issues assigned to you. */
 export const getIssues = (): Promise<Item[]> => search(token(), `is:open is:issue assignee:@me archived:false ${scope(env("GITHUB_EXCLUDE_ORGS"))}`)

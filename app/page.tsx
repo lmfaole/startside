@@ -11,9 +11,10 @@ import { cookies } from "next/headers"
 
 import { PositionControl } from "../components/position"
 import { dayOf, now, type Day } from "../lib/day"
-import { getIssues, getMine, getReviews, type Item } from "../lib/github"
-import { statusLabels } from "../lib/pr-status"
-import { planFor, type SectionId } from "../lib/plan"
+import { getIssues, getPulls, type Item } from "../lib/github"
+import { ageLabels, statusLabels, type Label } from "../lib/pr-status"
+import { groupPulls } from "../lib/pulls"
+import { planFor, type Plan, type SectionId } from "../lib/plan"
 import { parsePosition, POSITION_COOKIE, type Position } from "../lib/position"
 import { describeSymbol, getWeather } from "../lib/yr"
 
@@ -62,8 +63,8 @@ async function Weather({ window, day, instant, position }: { window: "today" | "
   }
 }
 
-function itemRows(items: Item[], whose: "mine" | "theirs"): RowData[] {
-  return items.map((item) => ({
+function row(item: Item, labels: Label[]): RowData {
+  return {
     key: item.key,
     body: (
       <Stack gap="xs">
@@ -71,9 +72,9 @@ function itemRows(items: Item[], whose: "mine" | "theirs"): RowData[] {
         <Text size="xs" tone="muted">
           {item.repo}
         </Text>
-        {item.status === undefined ? null : (
+        {labels.length === 0 ? null : (
           <Inline gap="sm">
-            {statusLabels(item.status, whose).map((label) => (
+            {labels.map((label) => (
               <Text key={label.text} as="span" size="xs" tone={label.tone} weight={label.tone === "destructive" ? "medium" : "normal"}>
                 {label.text}
               </Text>
@@ -83,41 +84,71 @@ function itemRows(items: Item[], whose: "mine" | "theirs"): RowData[] {
       </Stack>
     ),
     trailing: short.format(new Date(item.updated)),
-  }))
+  }
 }
 
-const LISTS = {
-  reviews: { title: "Venter på din review", empty: "Ingen å se på.", load: getReviews },
-  mine: { title: "Dine åpne pull requests", empty: "Ingen åpne.", load: getMine },
-  issues: { title: "Tildelt deg", empty: "Ingen saker.", load: getIssues },
-} as const
+const COLUMNS = { name: "Tittel", value: "Sist oppdatert" } as const
 
-async function GithubList({ id }: { id: keyof typeof LISTS }) {
-  const list = LISTS[id]
+/** Pull requests in sections by what needs you most (lib/pulls.ts): blocked, ready to merge, waiting for your review, and so on. */
+async function Pulls({ which, instant }: { which: "all" | "mine"; instant: Date }) {
   try {
-    const items = await list.load()
-    return (
-      <PageSection id={id} title={list.title}>
-        {items.length === 0 ? (
+    const groups = groupPulls(await getPulls(which))
+    if (groups.length === 0) {
+      return (
+        <PageSection id="pulls" title="Pull requests">
           <Text size="sm" tone="muted">
-            {list.empty}
+            Ingen åpne pull requests.
           </Text>
-        ) : (
-          <Rows rows={itemRows(items, id === "reviews" ? "theirs" : "mine")} columns={{ name: "Tittel", value: "Sist oppdatert" }} />
-        )}
-      </PageSection>
+        </PageSection>
+      )
+    }
+    return (
+      <>
+        {groups.map((group) => (
+          <PageSection key={group.id} id={`pulls-${group.id}`} title={group.title}>
+            <Rows
+              rows={group.entries.map(({ item, whose }) => row(item, [...(item.status === undefined ? [] : statusLabels(item.status, whose)), ...ageLabels(item, whose, instant)]))}
+              columns={COLUMNS}
+            />
+          </PageSection>
+        ))}
+      </>
     )
   } catch (error) {
     return (
-      <PageSection id={id} title={list.title}>
+      <PageSection id="pulls" title="Pull requests">
         <ErrorMessage error={asError(error)}>Kunne ikke hente GitHub</ErrorMessage>
       </PageSection>
     )
   }
 }
 
-function Section({ id, window, day, instant, position }: { id: SectionId; window: "today" | "tomorrow"; day: Day; instant: Date; position: Position | null }) {
-  return id === "weather" ? <Weather window={window} day={day} instant={instant} position={position} /> : <GithubList id={id} />
+async function Issues() {
+  try {
+    const items = await getIssues()
+    return (
+      <PageSection id="issues" title="Tildelt deg">
+        {items.length === 0 ? (
+          <Text size="sm" tone="muted">
+            Ingen saker.
+          </Text>
+        ) : (
+          <Rows rows={items.map((item) => row(item, []))} columns={COLUMNS} />
+        )}
+      </PageSection>
+    )
+  } catch (error) {
+    return (
+      <PageSection id="issues" title="Tildelt deg">
+        <ErrorMessage error={asError(error)}>Kunne ikke hente GitHub</ErrorMessage>
+      </PageSection>
+    )
+  }
+}
+
+function Section({ id, plan, day, instant, position }: { id: SectionId; plan: Plan; day: Day; instant: Date; position: Position | null }) {
+  if (id === "weather") return <Weather window={plan.weatherWindow} day={day} instant={instant} position={position} />
+  return id === "pulls" ? <Pulls which={plan.pulls} instant={instant} /> : <Issues />
 }
 
 export default async function Page() {
@@ -131,7 +162,7 @@ export default async function Page() {
       <PageHeader title={plan.greeting} lead={dateLine.format(instant)} actions={<PositionControl current={position} />} />
       <Grid columns="sections" gap="xl">
         {plan.sections.map((id) => (
-          <Section key={id} id={id} window={plan.weatherWindow} day={day} instant={instant} position={position} />
+          <Section key={id} id={id} plan={plan} day={day} instant={instant} position={position} />
         ))}
       </Grid>
     </PageLayout>

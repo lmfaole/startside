@@ -8,6 +8,8 @@ export interface PullStatus {
   /** Review conversations that are still open. */
   openThreads: number
   author: string | null
+  /** How much there is to read: lines added and removed, and files. */
+  size: { additions: number; deletions: number; files: number } | null
 }
 
 export interface Label {
@@ -23,6 +25,7 @@ export interface Label {
 export function statusLabels(status: PullStatus, whose: "mine" | "theirs"): Label[] {
   const labels: Label[] = []
   if (whose === "theirs" && status.author !== null) labels.push({ text: `av ${status.author}`, tone: "muted" })
+  if (whose === "theirs" && status.size !== null) labels.push({ text: `+${status.size.additions} −${status.size.deletions} · ${status.size.files} ${status.size.files === 1 ? "fil" : "filer"}`, tone: "muted" })
   if (status.draft) labels.push({ text: "Utkast", tone: "muted" })
   if (status.checks === "FAILURE" || status.checks === "ERROR") labels.push({ text: "Tester feilet", tone: "destructive" })
   else if (status.checks === "PENDING" || status.checks === "EXPECTED") labels.push({ text: "Tester kjører", tone: "muted" })
@@ -50,6 +53,9 @@ export interface PullNode {
   author: { login: string } | null
   commits: { nodes: { commit: { statusCheckRollup: { state: NonNullable<PullStatus["checks"]> } | null } }[] }
   reviewThreads: { nodes: { isResolved: boolean }[] }
+  additions: number
+  deletions: number
+  changedFiles: number
 }
 
 export function toStatus(node: PullNode): PullStatus {
@@ -60,6 +66,7 @@ export function toStatus(node: PullNode): PullStatus {
     mergeable: node.mergeable,
     openThreads: node.reviewThreads.nodes.filter((thread) => !thread.isResolved).length,
     author: node.author?.login ?? null,
+    size: { additions: node.additions, deletions: node.deletions, files: node.changedFiles },
   }
 }
 
@@ -82,4 +89,22 @@ export function withStatus<Item extends { href: string }>(items: readonly Item[]
     const status = statuses.get(item.href)
     return status === undefined ? item : { ...item, status }
   })
+}
+
+const DAY = 86_400_000
+
+const daysSince = (iso: string, now: Date): number => Math.max(0, Math.floor((now.getTime() - new Date(iso).getTime()) / DAY))
+
+/**
+ * How long it has been: a pull request that waits for your review says for how long (red from three days), one of yours
+ * says when nothing has happened to it for three days or more.
+ */
+export function ageLabels(item: { created: string; updated: string }, whose: "mine" | "theirs", now: Date): Label[] {
+  if (whose === "theirs") {
+    const days = daysSince(item.created, now)
+    if (days === 0) return [{ text: "Ny i dag", tone: "muted" }]
+    return [{ text: days === 1 ? "Venter 1 dag" : `Venter ${days} dager`, tone: days >= 3 ? "destructive" : "default" }]
+  }
+  const quiet = daysSince(item.updated, now)
+  return quiet >= 3 ? [{ text: `Stille i ${quiet} dager`, tone: "muted" }] : []
 }

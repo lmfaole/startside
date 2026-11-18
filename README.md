@@ -14,7 +14,11 @@ server on every request. Next.js (App Router, SSR) on Cloudflare Workers through
 GitHub is limited to public repositories, and can leave out organisations with `GITHUB_EXCLUDE_ORGS` (comma-separated, in
 `wrangler.jsonc`; none now): `lib/github-query.ts`.
 
-Pull requests also show their status (draft, checks, review decision, conflicts, open conversations; `lib/pr-status.ts`).
+Pull requests are in sections by what needs you most (`lib/pulls.ts`), empty ones left out: **Blokkert, krever deg** (yours:
+red checks, conflicts, changes asked for, open conversations), **Klar til merge** (approved and green), **Venter på din
+review** (oldest first, with how long it has waited and how big it is), **Venter på andre**, **Ikke klar for review**
+(drafts and red ones waiting for you), **Dine utkast**, and **Dine åpne** (the ones GitHub gave no status for). Pull requests
+also show their status (draft, checks, review decision, conflicts, open conversations; `lib/pr-status.ts`).
 The list comes from the search and the status from GitHub's GraphQL (one call for all of them, through the relay, which
 allows POST only to `api.github.com/graphql`). An organisation can allow the one and block the other (SpareBank 1 blocks
 GraphQL for fine-grained tokens that live longer than 366 days), so the list never depends on it: what GraphQL could not
@@ -28,8 +32,8 @@ The page follows the time of day in Oslo (`lib/day.ts`, the plan in `lib/plan.ts
 
 | | Greeting | Shown, in order | Forecast |
 | --- | --- | --- | --- |
-| Morning 05–09 | God morgen | weather, reviews, own pull requests, assigned issues | rest of today |
-| Workday 09–16 | God dag | reviews, own pull requests, assigned issues, weather | rest of today |
+| Morning 05–09 | God morgen | weather, pull requests (reviews and own), assigned issues | rest of today |
+| Workday 09–16 | God dag | pull requests (reviews and own), assigned issues, weather | rest of today |
 | Evening 16–22 | God kveld | own pull requests, weather | tomorrow |
 | Night 22–05 | God natt | weather | tomorrow |
 | Weekend | as above | weather, own pull requests (night: weather) | today by day, tomorrow in the evening |

@@ -30,6 +30,9 @@ export function PositionControl({ current }: { current: Position | null }) {
   const router = useRouter()
   const [message, setMessage] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  // Known only in the browser (Node has a `navigator` too, without `geolocation`), so the control appears once the page is hydrated.
+  const [supported, setSupported] = useState(false)
+  useEffect(() => setSupported("geolocation" in navigator), [])
 
   useEffect(() => {
     if (current === null || !("geolocation" in navigator) || !("permissions" in navigator)) return
@@ -69,7 +72,7 @@ export function PositionControl({ current }: { current: Position | null }) {
     router.refresh()
   }
 
-  if (typeof navigator !== "undefined" && !("geolocation" in navigator)) return null
+  if (!supported) return null
   return (
     <Inline gap="sm">
       {message === null ? null : (

@@ -1,9 +1,9 @@
 import { strict as assert } from "node:assert"
 import { test } from "node:test"
 
-import { pullNodes, readStatuses, statusLabels, toStatus, withStatus, type PullNode, type PullStatus } from "./pr-status.ts"
+import { ageLabels, pullNodes, readStatuses, statusLabels, toStatus, withStatus, type PullNode, type PullStatus } from "./pr-status.ts"
 
-const base: PullStatus = { draft: false, checks: null, review: null, mergeable: "MERGEABLE", openThreads: 0, author: "kari" }
+const base: PullStatus = { draft: false, checks: null, review: null, mergeable: "MERGEABLE", openThreads: 0, author: "kari", size: null }
 const texts = (status: Partial<PullStatus>, whose: "mine" | "theirs") => statusLabels({ ...base, ...status }, whose).map((label) => label.text)
 
 test("my pull request: checks, conflicts, review and open conversations", () => {
@@ -37,8 +37,9 @@ test("GraphQL's answer becomes a status", () => {
     repository: { nameWithOwner: "o/r" }, author: { login: "ola" },
     commits: { nodes: [{ commit: { statusCheckRollup: { state: "SUCCESS" } } }] },
     reviewThreads: { nodes: [{ isResolved: true }, { isResolved: false }, { isResolved: false }] },
+    additions: 120, deletions: 30, changedFiles: 8,
   }
-  assert.deepEqual(toStatus(node), { draft: false, checks: "SUCCESS", review: "APPROVED", mergeable: "UNKNOWN", openThreads: 2, author: "ola" })
+  assert.deepEqual(toStatus(node), { draft: false, checks: "SUCCESS", review: "APPROVED", mergeable: "UNKNOWN", openThreads: 2, author: "ola", size: { additions: 120, deletions: 30, files: 8 } })
   assert.equal(toStatus({ ...node, commits: { nodes: [] }, author: null }).checks, null)
   assert.equal(toStatus({ ...node, commits: { nodes: [{ commit: { statusCheckRollup: null } }] } }).checks, null)
 })
@@ -51,7 +52,7 @@ test("hidden results (null) and results that are not pull requests are left out"
 
 const node = (n: number): PullNode => ({
   databaseId: n, url: `https://github.com/o/r/pull/${n}`, title: `T${n}`, updatedAt: "2026-11-18T10:00:00Z", isDraft: n === 2, reviewDecision: null, mergeable: "MERGEABLE",
-  repository: { nameWithOwner: "o/r" }, author: null, commits: { nodes: [] }, reviewThreads: { nodes: [] },
+  repository: { nameWithOwner: "o/r" }, author: null, commits: { nodes: [] }, reviewThreads: { nodes: [] }, additions: 0, deletions: 0, changedFiles: 0,
 })
 
 test("the list comes from the search, and GraphQL adds a status where it could read the pull request", () => {
@@ -64,4 +65,22 @@ test("the list comes from the search, and GraphQL adds a status where it could r
 test("an answer without data leaves every item as it was", () => {
   const items = [{ href: "https://github.com/o/r/pull/1" }]
   assert.deepEqual(withStatus(items, readStatuses({})), items)
+})
+
+test("how big a pull request waiting for review is", () => {
+  assert.deepEqual(texts({ size: { additions: 120, deletions: 30, files: 8 } }, "theirs"), ["av kari", "+120 −30 · 8 filer"])
+  assert.deepEqual(texts({ size: { additions: 1, deletions: 0, files: 1 }, author: null }, "theirs"), ["+1 −0 · 1 fil"])
+  assert.deepEqual(texts({ size: { additions: 5, deletions: 5, files: 2 } }, "mine"), [])
+})
+
+test("how long a review has waited, and how long one of mine has been quiet", () => {
+  const now = new Date("2026-11-18T12:00:00Z")
+  const ago = (days: number) => new Date(now.getTime() - days * 86_400_000).toISOString()
+  const waited = (days: number) => ageLabels({ created: ago(days), updated: ago(0) }, "theirs", now)[0]
+  assert.deepEqual(waited(0), { text: "Ny i dag", tone: "muted" })
+  assert.deepEqual(waited(1), { text: "Venter 1 dag", tone: "default" })
+  assert.deepEqual(waited(2), { text: "Venter 2 dager", tone: "default" })
+  assert.deepEqual(waited(3), { text: "Venter 3 dager", tone: "destructive" })
+  assert.deepEqual(ageLabels({ created: ago(9), updated: ago(2) }, "mine", now), [])
+  assert.deepEqual(ageLabels({ created: ago(9), updated: ago(4) }, "mine", now), [{ text: "Stille i 4 dager", tone: "muted" }])
 })
