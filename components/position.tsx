@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { Button } from "@lmfaole/designsystem/components/button"
+import { Icon } from "@lmfaole/designsystem/components/icon"
 import { Inline } from "@lmfaole/designsystem/components/layout"
 import { Text } from "@lmfaole/designsystem/components/text"
 
@@ -82,10 +83,12 @@ export function PositionControl({ current }: { current: Position | null }) {
       )}
       {current === null ? (
         <Button variant="outline" size="sm" disabled={busy} onClick={use}>
+          <Icon name="place" slot="start" />
           Bruk min posisjon
         </Button>
       ) : (
         <Button variant="outline" size="sm" disabled={busy} onClick={reset}>
+          <Icon name="home" slot="start" />
           Bruk standardsted
         </Button>
       )}

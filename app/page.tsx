@@ -1,11 +1,13 @@
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
-import { Grid, Inline, Stack } from "@lmfaole/designsystem/components/layout"
+import { Grid, Stack } from "@lmfaole/designsystem/components/layout"
 import { PageHeader } from "@lmfaole/designsystem/components/page-header"
 import { PageLayout } from "@lmfaole/designsystem/components/page-layout"
 import { PageSection, SectionGroup, SubSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
+import { StatusLine } from "@lmfaole/designsystem/components/status-line"
 import { Text } from "@lmfaole/designsystem/components/text"
+import type { IconName } from "@lmfaole/designsystem/lib/icons"
 
 import { cookies } from "next/headers"
 
@@ -19,6 +21,7 @@ import { groupIssues } from "../lib/issues"
 import { groupPulls } from "../lib/pulls"
 import { planFor, type Plan, type SectionId } from "../lib/plan"
 import { parsePosition, POSITION_COOKIE, type Position } from "../lib/position"
+import { weatherIcon } from "../lib/forecast"
 import { describeSymbol, getWeather } from "../lib/yr"
 
 // Rendered on the server for every request: the page shows what is true now.
@@ -42,6 +45,7 @@ async function Weather({ window, day, instant, position }: { window: "today" | "
     const { place, hours } = await getWeather(window, day, instant, position)
     const rows: RowData[] = hours.map((hour) => ({
       key: hour.time,
+      icon: weatherIcon(hour.symbol),
       body: (
         <Text as="span" size="sm">
           <Text as="span" size="sm" numeric weight="medium">
@@ -53,8 +57,8 @@ async function Weather({ window, day, instant, position }: { window: "today" | "
       trailing: `${Math.round(hour.temperature)}° · ${number.format(hour.precipitation)} mm · ${number.format(hour.wind)} m/s`,
     }))
     return (
-      <PageSection id="weather" title={`Vær i ${place} ${window === "today" ? "i dag" : "i morgen"}`}>
-        <Rows rows={rows} columns={{ name: "Tid og vær", value: "Temperatur, nedbør og vind" }} />
+      <PageSection id="weather" title={`Vær i ${place} ${window === "today" ? "i dag" : "i morgen"}`} icon="weather">
+        <Rows lead="icon" rows={rows} columns={{ name: "Tid og vær", value: "Temperatur, nedbør og vind" }} />
         <Text size="xs" tone="muted">
           Værdata fra <ExternalLink href="https://www.yr.no">Yr</ExternalLink> (Meteorologisk institutt).
         </Text>
@@ -62,31 +66,33 @@ async function Weather({ window, day, instant, position }: { window: "today" | "
     )
   } catch (error) {
     return (
-      <PageSection id="weather" title="Vær">
+      <PageSection id="weather" title="Vær" icon="weather">
         <ErrorMessage error={asError(error)}>Kunne ikke hente været</ErrorMessage>
       </PageSection>
     )
   }
 }
 
-function row(item: Pick<Item, "key" | "href" | "title" | "repo" | "updated">, labels: Label[]): RowData {
+/** What a row stands for: its icon, what a screen reader hears for it, and `destructive` where it stops something. */
+interface Kind {
+  icon: IconName
+  label?: string
+  tone?: "muted" | "destructive"
+}
+
+function row(item: Pick<Item, "key" | "href" | "title" | "repo" | "updated">, labels: Label[], kind: Kind): RowData {
   return {
     key: item.key,
+    icon: kind.icon,
+    ...(kind.label === undefined ? {} : { iconLabel: kind.label }),
+    ...(kind.tone === undefined ? {} : { iconTone: kind.tone }),
     body: (
       <Stack gap="xs">
         <ExternalLink href={item.href}>{item.title}</ExternalLink>
         <Text size="xs" tone="muted">
           {item.repo}
         </Text>
-        {labels.length === 0 ? null : (
-          <Inline gap="sm">
-            {labels.map((label) => (
-              <Text key={label.text} as="span" size="xs" tone={label.tone} weight={label.tone === "destructive" ? "medium" : "normal"}>
-                {label.text}
-              </Text>
-            ))}
-          </Inline>
-        )}
+        <StatusLine items={labels} />
       </Stack>
     ),
     trailing: short.format(new Date(item.updated)),
@@ -95,13 +101,18 @@ function row(item: Pick<Item, "key" | "href" | "title" | "repo" | "updated">, la
 
 const COLUMNS = { name: "Tittel", value: "Sist oppdatert" } as const
 
+/** What each group of pull requests, issues and discussions is, as an icon in front of its title. */
+const PULL_ICONS = { blocked: "warning", ready: "merge", review: "view", waiting: "waiting", notReady: "pull-request-draft", drafts: "edit", open: "pull-request" } as const satisfies Record<string, IconName>
+const ISSUE_ICONS = { assigned: "tasks", involved: "person", new: "inbox", recent: "time" } as const satisfies Record<string, IconName>
+const DISCUSSION_ICONS = { involved: "person", unanswered: "question", recent: "time" } as const satisfies Record<string, IconName>
+
 /** Pull requests in sections by what needs you most (lib/pulls.ts): blocked, ready to merge, waiting for your review, and so on. */
 async function Pulls({ which, instant }: { which: "all" | "mine"; instant: Date }) {
   try {
     const groups = groupPulls(await getPulls(which))
     if (groups.length === 0) {
       return (
-        <PageSection id="pulls" title="Pull requests">
+        <PageSection id="pulls" title="Pull requests" icon="pull-request">
           <Text size="sm" tone="muted">
             Ingen åpne pull requests.
           </Text>
@@ -109,11 +120,18 @@ async function Pulls({ which, instant }: { which: "all" | "mine"; instant: Date 
       )
     }
     return (
-      <SectionGroup id="pulls" title="Pull requests" width="row">
+      <SectionGroup id="pulls" title="Pull requests" icon="pull-request" width="row">
         {groups.map((group) => (
-          <SubSection key={group.id} id={`pulls-${group.id}`} title={group.title}>
+          <SubSection key={group.id} id={`pulls-${group.id}`} title={group.title} icon={PULL_ICONS[group.id]}>
             <Rows
-              rows={group.entries.map(({ item, whose }) => row(item, [...(item.status === undefined ? [] : statusLabels(item.status, whose)), ...ageLabels(item, whose, instant)]))}
+              lead="icon"
+              rows={group.entries.map(({ item, whose }) =>
+                row(item, [...(item.status === undefined ? [] : statusLabels(item.status, whose)), ...ageLabels(item, whose, instant)], {
+                  icon: item.status?.draft ? "pull-request-draft" : "pull-request",
+                  label: item.status?.draft ? "Utkast" : "Pull request",
+                  ...(group.id === "blocked" ? { tone: "destructive" as const } : {}),
+                }),
+              )}
               columns={COLUMNS}
             />
           </SubSection>
@@ -135,7 +153,7 @@ async function Issues() {
     const groups = groupIssues(await getIssues(), new Date())
     if (groups.length === 0) {
       return (
-        <PageSection id="issues" title="Issues">
+        <PageSection id="issues" title="Issues" icon="issue">
           <Text size="sm" tone="muted">
             Ingen åpne issues.
           </Text>
@@ -143,17 +161,17 @@ async function Issues() {
       )
     }
     return (
-      <SectionGroup id="issues" title="Issues" width="row">
+      <SectionGroup id="issues" title="Issues" icon="issue" width="row">
         {groups.map((group) => (
-          <SubSection key={group.id} id={`issues-${group.id}`} title={group.title}>
-            <Rows rows={group.items.map((item) => row(item, []))} columns={COLUMNS} />
+          <SubSection key={group.id} id={`issues-${group.id}`} title={group.title} icon={ISSUE_ICONS[group.id]}>
+            <Rows lead="icon" rows={group.items.map((item) => row(item, [], { icon: "issue", label: "Issue" }))} columns={COLUMNS} />
           </SubSection>
         ))}
       </SectionGroup>
     )
   } catch (error) {
     return (
-      <PageSection id="issues" title="Issues">
+      <PageSection id="issues" title="Issues" icon="issue">
         <ErrorMessage error={asError(error)}>Kunne ikke hente GitHub</ErrorMessage>
       </PageSection>
     )
@@ -166,11 +184,17 @@ async function Discussions() {
     const groups = groupDiscussions(await getDiscussions())
     if (groups.length === 0) return null
     return (
-      <SectionGroup id="discussions" title="Discussions" width="row">
+      <SectionGroup id="discussions" title="Discussions" icon="discussion" width="row">
         {groups.map((group) => (
-          <SubSection key={group.id} id={`discussions-${group.id}`} title={group.title}>
+          <SubSection key={group.id} id={`discussions-${group.id}`} title={group.title} icon={DISCUSSION_ICONS[group.id]}>
             <Rows
-              rows={group.items.map((item) => row(item, [...(item.category === "" ? [] : [{ text: item.category, tone: "muted" as const }]), { text: item.comments === 1 ? "1 svar" : `${item.comments} svar`, tone: "muted" as const }]))}
+              lead="icon"
+              rows={group.items.map((item) =>
+                row(item, [...(item.category === "" ? [] : [{ text: item.category, tone: "muted" as const, icon: "tag" as const }]), { text: item.comments === 1 ? "1 svar" : `${item.comments} svar`, tone: "muted" as const, icon: "discussion" as const }], {
+                  icon: item.answered === false ? "question" : "discussion",
+                  label: item.answered === false ? "Spørsmål" : "Discussion",
+                }),
+              )}
               columns={COLUMNS}
             />
           </SubSection>
@@ -179,7 +203,7 @@ async function Discussions() {
     )
   } catch (error) {
     return (
-      <PageSection id="discussions" title="Discussions">
+      <PageSection id="discussions" title="Discussions" icon="discussion">
         <ErrorMessage error={asError(error)}>Kunne ikke hente GitHub</ErrorMessage>
       </PageSection>
     )

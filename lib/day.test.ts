@@ -63,7 +63,7 @@ test("NOW stands in for the clock, and nonsense is ignored", () => {
   assert.ok(Math.abs(now(undefined).getTime() - Date.now()) < 5000)
 })
 
-import { pickHours, type Timeseries } from "./forecast.ts"
+import { pickHours, weatherIcon, type Timeseries } from "./forecast.ts"
 
 const series = (isos: string[]): Timeseries[] => isos.map((time) => ({ time, data: { instant: { details: { air_temperature: 1, wind_speed: 1 } } } }))
 const hourly = (from: string, count: number) => series(Array.from({ length: count }, (_, i) => new Date(Date.parse(from) + i * 3_600_000).toISOString().replace(".000Z", "Z")))
@@ -92,4 +92,19 @@ test("a number of days ago, counted in Oslo dates", () => {
   // 23:30 UTC on 17 Nov is 00:30 on 18 Nov in Oslo.
   assert.equal(osloDateDaysAgo(new Date("2026-11-17T23:30:00Z"), 0), "2026-11-18")
   assert.equal(osloDateDaysAgo(new Date("2026-03-02T10:00:00Z"), 7), "2026-02-23")
+})
+
+test("the icon for Yr's symbol codes", () => {
+  assert.equal(weatherIcon("clearsky_day"), "sun")
+  assert.equal(weatherIcon("clearsky_night"), "moon")
+  assert.equal(weatherIcon("fair_day"), "weather")
+  assert.equal(weatherIcon("partlycloudy_night"), "clouds")
+  assert.equal(weatherIcon("cloudy"), "clouds")
+  assert.equal(weatherIcon("lightrain"), "rain")
+  assert.equal(weatherIcon("heavyrainshowers_day"), "rain")
+  assert.equal(weatherIcon("lightsleet"), "snow")
+  assert.equal(weatherIcon("snow"), "snow")
+  assert.equal(weatherIcon("fog"), "fog")
+  assert.equal(weatherIcon("rainandthunder"), "thunder")
+  assert.equal(weatherIcon("lightrainshowersandthunder_day"), "thunder")
 })

@@ -1,3 +1,5 @@
+import type { IconName } from "@lmfaole/designsystem/lib/icons"
+
 import { addDays, osloTime } from "./day.ts"
 
 export interface Timeseries {
@@ -20,4 +22,17 @@ export function pickHours(timeseries: readonly Timeseries[], window: "today" | "
     return osloTime(time).date === target && (window === "tomorrow" || time.getTime() >= instant.getTime() - 3_600_000)
   })
   return window === "today" ? inDay.filter((_, index) => index % 2 === 0) : inDay.filter((entry) => osloTime(new Date(entry.time)).hour % 3 === 0)
+}
+
+/** The icon for one of Yr's symbol codes (`lightrainshowersandthunder_day`): thunder before rain before snow before fog before cloud before clear. */
+export function weatherIcon(code: string): IconName {
+  const base = code.replace(/_(day|night|polartwilight)$/, "")
+  const night = code.endsWith("_night")
+  if (base.includes("thunder")) return "thunder"
+  if (base.includes("sleet") || base.includes("snow")) return "snow"
+  if (base.includes("rain")) return "rain"
+  if (base === "fog") return "fog"
+  if (base === "cloudy") return "clouds"
+  if (base === "clearsky") return night ? "moon" : "sun"
+  return night ? "clouds" : "weather"
 }

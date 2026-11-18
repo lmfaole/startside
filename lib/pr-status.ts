@@ -1,3 +1,5 @@
+import type { IconName } from "@lmfaole/designsystem/lib/icons"
+
 /** What GitHub knows about a pull request, as its GraphQL API words it. */
 export interface PullStatus {
   draft: boolean
@@ -14,6 +16,8 @@ export interface PullStatus {
 
 export interface Label {
   text: string
+  /** What it means, in front of the words (a meaning of the design system's `ICONS`). */
+  icon: IconName
   /** `bad` is for what stops the pull request: failing checks, conflicts, changes asked for. */
   tone: "default" | "muted" | "destructive"
 }
@@ -24,18 +28,18 @@ export interface Label {
  */
 export function statusLabels(status: PullStatus, whose: "mine" | "theirs"): Label[] {
   const labels: Label[] = []
-  if (whose === "theirs" && status.author !== null) labels.push({ text: `av ${status.author}`, tone: "muted" })
-  if (whose === "theirs" && status.size !== null) labels.push({ text: `+${status.size.additions} −${status.size.deletions} · ${status.size.files} ${status.size.files === 1 ? "fil" : "filer"}`, tone: "muted" })
-  if (status.draft) labels.push({ text: "Utkast", tone: "muted" })
-  if (status.checks === "FAILURE" || status.checks === "ERROR") labels.push({ text: "Tester feilet", tone: "destructive" })
-  else if (status.checks === "PENDING" || status.checks === "EXPECTED") labels.push({ text: "Tester kjører", tone: "muted" })
-  else if (status.checks === "SUCCESS") labels.push({ text: "Tester OK", tone: "default" })
-  if (status.mergeable === "CONFLICTING") labels.push({ text: "Konflikter", tone: "destructive" })
+  if (whose === "theirs" && status.author !== null) labels.push({ text: `av ${status.author}`, tone: "muted", icon: "person" })
+  if (whose === "theirs" && status.size !== null) labels.push({ text: `+${status.size.additions} −${status.size.deletions} · ${status.size.files} ${status.size.files === 1 ? "fil" : "filer"}`, tone: "muted", icon: "changes" })
+  if (status.draft) labels.push({ text: "Utkast", tone: "muted", icon: "pull-request-draft" })
+  if (status.checks === "FAILURE" || status.checks === "ERROR") labels.push({ text: "Tester feilet", tone: "destructive", icon: "failure" })
+  else if (status.checks === "PENDING" || status.checks === "EXPECTED") labels.push({ text: "Tester kjører", tone: "muted", icon: "pending" })
+  else if (status.checks === "SUCCESS") labels.push({ text: "Tester OK", tone: "default", icon: "success" })
+  if (status.mergeable === "CONFLICTING") labels.push({ text: "Konflikter", tone: "destructive", icon: "warning" })
   if (whose === "mine") {
-    if (status.review === "CHANGES_REQUESTED") labels.push({ text: "Endringer ønskes", tone: "destructive" })
-    else if (status.review === "APPROVED") labels.push({ text: "Godkjent", tone: "default" })
-    else if (status.review === "REVIEW_REQUIRED" && !status.draft) labels.push({ text: "Venter på review", tone: "muted" })
-    if (status.openThreads > 0) labels.push({ text: status.openThreads === 1 ? "1 åpen kommentar" : `${status.openThreads} åpne kommentarer`, tone: "destructive" })
+    if (status.review === "CHANGES_REQUESTED") labels.push({ text: "Endringer ønskes", tone: "destructive", icon: "changes" })
+    else if (status.review === "APPROVED") labels.push({ text: "Godkjent", tone: "default", icon: "success" })
+    else if (status.review === "REVIEW_REQUIRED" && !status.draft) labels.push({ text: "Venter på review", tone: "muted", icon: "waiting" })
+    if (status.openThreads > 0) labels.push({ text: status.openThreads === 1 ? "1 åpen kommentar" : `${status.openThreads} åpne kommentarer`, tone: "destructive", icon: "discussion" })
   }
   return labels
 }
@@ -102,9 +106,9 @@ const daysSince = (iso: string, now: Date): number => Math.max(0, Math.floor((no
 export function ageLabels(item: { created: string; updated: string }, whose: "mine" | "theirs", now: Date): Label[] {
   if (whose === "theirs") {
     const days = daysSince(item.created, now)
-    if (days === 0) return [{ text: "Ny i dag", tone: "muted" }]
-    return [{ text: days === 1 ? "Venter 1 dag" : `Venter ${days} dager`, tone: days >= 3 ? "destructive" : "default" }]
+    if (days === 0) return [{ text: "Ny i dag", tone: "muted", icon: "time" }]
+    return [{ text: days === 1 ? "Venter 1 dag" : `Venter ${days} dager`, tone: days >= 3 ? "destructive" : "default", icon: "time" }]
   }
   const quiet = daysSince(item.updated, now)
-  return quiet >= 3 ? [{ text: `Stille i ${quiet} dager`, tone: "muted" }] : []
+  return quiet >= 3 ? [{ text: `Stille i ${quiet} dager`, tone: "muted", icon: "time" }] : []
 }

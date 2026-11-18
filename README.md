@@ -62,6 +62,13 @@ and direct reads for longer ones).
 **Discussions** (`lib/discussions.ts`, GraphQL only) in the watched repositories, morning and workday: **Du er med i**,
 **Ubesvarte spørsmål** (only categories with answers can be unanswered) and **Nylig aktive**, at most ten each.
 
+## Icons
+
+The page asks the design system (5.2) for icons by what they mean (`<Icon name="failure" />`, `icon` on sections and rows,
+`StatusLine`): section titles, the kind of each row (pull request, draft, issue, discussion, the weather), every status
+(`lib/pr-status.ts` gives each label its icon) and the position button. The weather's icon is chosen from Yr's symbol code
+(`weatherIcon` in `lib/forecast.ts`).
+
 ## Live updates
 
 An open page keeps itself fresh (`components/refresh.tsx`): every 60 seconds, and at once when the window comes back into view
