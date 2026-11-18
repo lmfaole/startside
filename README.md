@@ -29,8 +29,8 @@ Served at `lmfaole.party/start` through a Cloudflare route (`wrangler.jsonc`), w
 
 The page installs as an app (PWA): `app/manifest.ts`, the icons (`public/icons`, `app/icon.png`, `app/apple-icon.png`,
 drawn by `scripts/icons.mjs`), and a service worker (`app/sw.js/route.ts`) that keeps the built files and the last copy
-of the page, so it opens without network. `components/install.tsx` shows an install button where the browser allows
-one, and a hint on iPhone and iPad. The manifest and icons are outside Cloudflare Access (the application «Startside –
+of the page, so it opens without network (registered by `components/service-worker.tsx`). Installing is the browser's own
+(the install icon in the address bar, «Legg til på Hjem-skjerm»). The manifest and icons are outside Cloudflare Access (the application «Startside –
 app-filer», a bypass policy), since browsers fetch them without the login cookie.
 
 ## Deploy
