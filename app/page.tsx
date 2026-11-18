@@ -7,9 +7,13 @@ import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Text } from "@lmfaole/designsystem/components/text"
 
+import { cookies } from "next/headers"
+
+import { PositionControl } from "../components/position"
 import { dayOf, now, type Day } from "../lib/day"
 import { getIssues, getMine, getReviews, type Item } from "../lib/github"
 import { planFor, type SectionId } from "../lib/plan"
+import { parsePosition, POSITION_COOKIE, type Position } from "../lib/position"
 import { describeSymbol, getWeather } from "../lib/yr"
 
 // Rendered on the server for every request: the page shows what is true now.
@@ -25,9 +29,9 @@ function asError(error: unknown): Error {
   return error instanceof Error ? error : new Error(String(error))
 }
 
-async function Weather({ window, day, instant }: { window: "today" | "tomorrow"; day: Day; instant: Date }) {
+async function Weather({ window, day, instant, position }: { window: "today" | "tomorrow"; day: Day; instant: Date; position: Position | null }) {
   try {
-    const { place, hours } = await getWeather(window, day, instant)
+    const { place, hours } = await getWeather(window, day, instant, position)
     const rows: RowData[] = hours.map((hour) => ({
       key: hour.time,
       body: (
@@ -102,21 +106,22 @@ async function GithubList({ id }: { id: keyof typeof LISTS }) {
   }
 }
 
-function Section({ id, window, day, instant }: { id: SectionId; window: "today" | "tomorrow"; day: Day; instant: Date }) {
-  return id === "weather" ? <Weather window={window} day={day} instant={instant} /> : <GithubList id={id} />
+function Section({ id, window, day, instant, position }: { id: SectionId; window: "today" | "tomorrow"; day: Day; instant: Date; position: Position | null }) {
+  return id === "weather" ? <Weather window={window} day={day} instant={instant} position={position} /> : <GithubList id={id} />
 }
 
-export default function Page() {
+export default async function Page() {
   // What the page shows follows the time of day (lib/plan.ts); what is left out is not fetched either.
   const instant = now()
   const day = dayOf(instant)
   const plan = planFor(day)
+  const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
   return (
     <PageLayout>
-      <PageHeader title={plan.greeting} lead={dateLine.format(instant)} />
+      <PageHeader title={plan.greeting} lead={dateLine.format(instant)} actions={<PositionControl current={position} />} />
       <Grid columns="sections" gap="xl">
         {plan.sections.map((id) => (
-          <Section key={id} id={id} window={plan.weatherWindow} day={day} instant={instant} />
+          <Section key={id} id={id} window={plan.weatherWindow} day={day} instant={instant} position={position} />
         ))}
       </Grid>
     </PageLayout>

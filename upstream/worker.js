@@ -3,7 +3,7 @@
 // Only GET, only the hosts below, and only with the key the page and this Worker share (UPSTREAM_KEY).
 // GITHUB_TOKEN lives here, so the page never holds it.
 
-const HOSTS = new Set(["api.met.no", "api.github.com"])
+const HOSTS = new Set(["api.met.no", "api.github.com", "nominatim.openstreetmap.org"])
 const USER_AGENT = "startside github.com/lmfaole/startside"
 
 export default {

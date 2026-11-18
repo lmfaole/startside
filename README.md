@@ -29,13 +29,22 @@ Before 05:00 it is still the day before, so the night after Friday is a weekday 
 What is not shown is not fetched. In `next dev`, `NOW=2026-11-18T07:00:00+01:00 npm run dev` stands in for the clock;
 it is never read in production. `npm test` covers the parts of the day, their edges, the clocks changing and the forecast windows.
 
+## Position
+
+«Bruk min posisjon» (next to the title) asks the browser for the device's position, on a tap and never on load. The position
+is kept in the cookie `startside-pos` (`lat,lon`, two decimals, about a kilometre, path `/start`, a year) and read by the
+server, which fetches the forecast for it and names the place (OpenStreetMap's Nominatim, through the relay, cached for a
+day). Once the browser has allowed it, the page follows the device and refreshes when it has moved about two kilometres.
+«Bruk standardsted» removes the cookie and goes back to `WEATHER_*`. The position is used for the forecast only; GitHub and
+the rest do not see it. `lib/position.ts` is tested.
+
 ## How it runs
 
 - **`startside`** (`worker.mjs`, `wrangler.jsonc`): the page, on the route `lmfaole.party/start*`. The static files are
   embedded in the script (`scripts/embed-assets.mjs`), so a deploy is one upload.
 - **`startside-upstream`** (`upstream/`): a relay on workers.dev. A Worker on the `lmfaole.party` zone gets 525 on every
   fetch to an origin outside Cloudflare, while workers.dev works, so the page fetches Yr and GitHub through it. It takes
-  only GET, only those hosts, and only with the shared secret `UPSTREAM_KEY` (set on both Workers). It holds `GITHUB_TOKEN`.
+  only GET, only those hosts (Yr, GitHub, Nominatim), and only with the shared secret `UPSTREAM_KEY` (set on both Workers). It holds `GITHUB_TOKEN`.
 
 In `next dev` there is no `UPSTREAM_URL`, so the page fetches the sources directly.
 

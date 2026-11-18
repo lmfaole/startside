@@ -1,6 +1,8 @@
 import type { Day } from "./day.ts"
 import { env } from "./env"
 import { pickHours, type Timeseries } from "./forecast.ts"
+import { placeName } from "./place"
+import type { Position } from "./position.ts"
 import { upstream } from "./upstream"
 
 export interface Hour {
@@ -44,10 +46,11 @@ export function describeSymbol(code: string): string {
 }
 
 /** The forecast from MET Norway (the data Yr shows) for the rest of the day or for the day after. */
-export async function getWeather(window: "today" | "tomorrow", day: Day, instant: Date = new Date()): Promise<Weather> {
-  const place = env("WEATHER_PLACE") ?? "Oslo"
-  const lat = env("WEATHER_LAT") ?? "59.91"
-  const lon = env("WEATHER_LON") ?? "10.75"
+export async function getWeather(window: "today" | "tomorrow", day: Day, instant: Date = new Date(), position: Position | null = null): Promise<Weather> {
+  // The device's position when there is one, otherwise the place in the settings.
+  const lat = position?.lat ?? env("WEATHER_LAT") ?? "59.91"
+  const lon = position?.lon ?? env("WEATHER_LON") ?? "10.75"
+  const place = position === null ? (env("WEATHER_PLACE") ?? "Oslo") : ((await placeName(position.lat, position.lon)) ?? "din posisjon")
   const response = await upstream(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`, {
     // MET's terms ask for an identifying User-Agent.
     headers: { "User-Agent": "startside github.com/lmfaole/startside" },
