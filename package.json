@@ -16,7 +16,7 @@
     "ds:bump": "designsystem-bump"
   },
   "dependencies": {
-    "@lmfaole/designsystem": "github:lmfaole/designsystem#543dd108a0d7c8686eec74cc56f3810d373c9323",
+    "@lmfaole/designsystem": "github:lmfaole/designsystem#84ff9a92a1b16460b7c27bdc8a3f23109be02dd3",
     "@opennextjs/cloudflare": "^1.20.17",
     "next": "^16.4.6",
     "react": "^19.2.8",
