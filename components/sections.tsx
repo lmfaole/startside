@@ -1,3 +1,4 @@
+import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Stack } from "@lmfaole/designsystem/components/layout"
@@ -5,12 +6,13 @@ import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { StatusLine } from "@lmfaole/designsystem/components/status-line"
 import { Text, TextLink } from "@lmfaole/designsystem/components/text"
+import { Time } from "@lmfaole/designsystem/components/time"
 import type { IconName } from "@lmfaole/designsystem/lib/icons"
 
 import { groupDiscussions, type DiscussionGroupId } from "../lib/discussions"
 import { takeFirst } from "../lib/digest"
 import { replyText, type CiFailure, type Reply } from "../lib/alerts"
-import { clock, degrees, number, short } from "../lib/format"
+import { clock, degrees, number } from "../lib/format"
 import { hoursOf, type Forecast } from "../lib/yr"
 import { weatherIcon } from "../lib/forecast"
 import type { Item } from "../lib/github"
@@ -19,7 +21,7 @@ import { internalHref, withBase } from "../lib/links"
 import { ageLabels, compactLabels, statusLabels, type Label } from "../lib/pr-status"
 import { groupPulls, type GroupId } from "../lib/pulls"
 import type { Settled } from "../lib/settle"
-import type { Day } from "../lib/day"
+import { now, type Day } from "../lib/day"
 import { describeSymbol } from "../lib/yr"
 import type { DiscussionItem } from "../lib/discussions"
 
@@ -62,7 +64,7 @@ function row(item: Pick<Item, "key" | "href" | "title" | "repo" | "updated">, la
         <StatusLine items={compact ? compactLabels(labels, COMPACT_LABELS) : labels} />
       </Stack>
     ),
-    trailing: short.format(new Date(item.updated)),
+    trailing: <Time value={item.updated} now={now()} />,
   }
 }
 
@@ -77,9 +79,7 @@ function Failed({ id, title, icon, error }: { id: string; title: string; icon: I
 function Quiet({ id, title, icon, children }: { id: string; title: string; icon: IconName; children: string }) {
   return (
     <PageSection id={id} title={title} icon={icon}>
-      <Text size="sm" tone="muted">
-        {children}
-      </Text>
+      <EmptyState title={children} />
     </PageSection>
   )
 }
@@ -234,7 +234,7 @@ const ciRow = (failure: CiFailure): RowData => ({
       <StatusLine items={[{ text: `Feilet på ${failure.branch}`, tone: "destructive", icon: "failure" }]} />
     </Stack>
   ),
-  trailing: short.format(new Date(failure.committed)),
+  trailing: <Time value={failure.committed} now={now()} />,
 })
 
 const replyRow = (reply: Reply): RowData =>

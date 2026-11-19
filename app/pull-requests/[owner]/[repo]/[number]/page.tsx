@@ -6,6 +6,7 @@ import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows } from "@lmfaole/designsystem/components/rows"
 import { StatusLine, type Status } from "@lmfaole/designsystem/components/status-line"
 import { Text } from "@lmfaole/designsystem/components/text"
+import { Time } from "@lmfaole/designsystem/components/time"
 import { notFound } from "next/navigation"
 
 import { AiSummary } from "../../../../../components/ai-summary"
@@ -14,6 +15,7 @@ import { GitHubPerson } from "../../../../../components/person"
 import { Byline } from "../../../../../components/byline"
 import { GITHUB, Shell } from "../../../../../components/shell"
 import { getPull } from "../../../../../lib/detail"
+import { now } from "../../../../../lib/day"
 import { long } from "../../../../../lib/format"
 import { parseRef } from "../../../../../lib/links"
 import { checkLook, reviewStateText, statusLabels } from "../../../../../lib/pr-status"
@@ -75,7 +77,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
           <LatestComments comments={pull.comments} />
         </Stack>
         <Text size="xs" tone="muted">
-          Sist endret {long.format(new Date(pull.updated))}.
+          Sist endret <Time value={pull.updated} now={now()} format="datetime" />.
         </Text>
         <div>
           <LinkButton href={pull.url} external>

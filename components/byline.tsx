@@ -1,5 +1,7 @@
+import { Time } from "@lmfaole/designsystem/components/time"
+
 import { GitHubPerson } from "./person"
-import { long } from "../lib/format"
+import { now } from "../lib/day"
 import type { Ref } from "../lib/links"
 
 /** The line under the title of a thing on GitHub: where it lives, who made it (with their picture) and when. */
@@ -14,7 +16,7 @@ export function Byline({ at: where, author, created }: { at: Ref; author: string
         </>
       )}
       {" · opprettet "}
-      {long.format(new Date(created))}
+      <Time value={created} now={now()} />
     </>
   )
 }

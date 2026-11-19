@@ -5,6 +5,7 @@ import { LinkButton } from "@lmfaole/designsystem/components/link-button"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { StatusLine, type Status } from "@lmfaole/designsystem/components/status-line"
 import { Text } from "@lmfaole/designsystem/components/text"
+import { Time } from "@lmfaole/designsystem/components/time"
 import { notFound } from "next/navigation"
 
 import { AiSummary } from "../../../../../components/ai-summary"
@@ -13,6 +14,7 @@ import { GitHubPerson } from "../../../../../components/person"
 import { Byline } from "../../../../../components/byline"
 import { GITHUB, Shell } from "../../../../../components/shell"
 import { getIssue } from "../../../../../lib/detail"
+import { now } from "../../../../../lib/day"
 import { long } from "../../../../../lib/format"
 import { parseRef } from "../../../../../lib/links"
 import { settle } from "../../../../../lib/settle"
@@ -53,7 +55,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
           <LatestComments comments={issue.comments} />
         </Stack>
         <Text size="xs" tone="muted">
-          Sist endret {long.format(new Date(issue.updated))}.
+          Sist endret <Time value={issue.updated} now={now()} format="datetime" />.
         </Text>
         <div>
           <LinkButton href={issue.url} external>

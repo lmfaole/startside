@@ -1,3 +1,4 @@
+import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
@@ -98,11 +99,7 @@ export function DeparturesSection({ data, mode, instant }: { data: Around; mode:
 function Departures({ stops, instant, limit }: { stops: Stop[]; instant: Date; limit: number }) {
   const departures = nextDepartures(stops, instant, limit)
   if (departures.length === 0) {
-    return (
-      <Text size="sm" tone="muted">
-        Ingen avganger du rekker de neste halvannen timen.
-      </Text>
-    )
+    return <EmptyState title="Ingen avganger du rekker" description="Ingenting går de neste halvannen timen som du rekker å gå til." />
   }
   return <Rows lead="icon" rows={departures.map((departure) => departureRow(departure, instant))} columns={{ name: "Avgang", value: "Om" }} />
 }

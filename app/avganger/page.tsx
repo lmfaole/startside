@@ -1,3 +1,5 @@
+import { Banner } from "@lmfaole/designsystem/components/banner"
+import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Text } from "@lmfaole/designsystem/components/text"
@@ -29,17 +31,13 @@ export default async function Page() {
       <Stack gap="xl">
         {around === null ? (
           <PageSection id="departures" title="Avganger" icon="bus">
-            <Text size="sm" tone="muted">
-              Sett hjemstedet (knappen «Her er hjemme» når du er hjemme), eller bruk posisjonen din, for å se avganger.
-            </Text>
+            <EmptyState title="Vi vet ikke hvor du er" description="Trykk «Her er hjemme» når du er hjemme, eller bruk posisjonen din, for å se avganger." icon="place" />
           </PageSection>
         ) : (
           <DeparturesSection data={around} mode="full" instant={instant} />
         )}
         {home === null && around !== null ? (
-          <Text size="xs" tone="muted">
-            Hjemstedet er ikke satt, så reiseforslag vises bare når du er et annet sted enn jobb.
-          </Text>
+          <Banner title="Hjemstedet er ikke satt">Reiseforslag vises bare når du er et annet sted enn jobb.</Banner>
         ) : null}
         <Text size="xs" tone="muted">
           Avganger og reiseforslag fra <ExternalLink href="https://entur.no">Entur</ExternalLink>.

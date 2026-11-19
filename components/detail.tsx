@@ -2,11 +2,13 @@ import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { Markdown } from "@lmfaole/designsystem/components/markdown"
+import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { Text } from "@lmfaole/designsystem/components/text"
+import { Time } from "@lmfaole/designsystem/components/time"
 
 import type { Body, Comment } from "../lib/detail"
 import { GitHubPerson } from "./person"
-import { short } from "../lib/format"
+import { now } from "../lib/day"
 
 /** The last few comments of a thing: who, when and a short text of each; the whole conversation is where it lives, at the end. */
 export function LatestComments({ comments, title = "Siste kommentarer" }: { comments: { total: number; latest: Comment[] }; title?: string }) {
@@ -28,7 +30,7 @@ export function LatestComments({ comments, title = "Siste kommentarer" }: { comm
         )}
       </Stack>
     ),
-    trailing: short.format(new Date(comment.created)),
+    trailing: <Time value={comment.created} now={now()} />,
   }))
   return (
     <PageSection id="comments" title={`${title} (${comments.total})`} icon="discussion">
@@ -42,7 +44,7 @@ export function About({ body }: { body: Body }) {
   return (
     <PageSection id="about" title="Beskrivelse" icon="info">
       {body.text === "" ? (
-        <Text tone="muted">Ingen beskrivelse.</Text>
+        <EmptyState title="Ingen beskrivelse." />
       ) : (
         <Markdown source={body.text} />
       )}
