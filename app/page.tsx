@@ -1,3 +1,4 @@
+import { Freshness } from "@lmfaole/designsystem/components/freshness"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { SummaryBar } from "@lmfaole/designsystem/components/summary-bar"
 
@@ -9,7 +10,7 @@ import { getContext } from "../lib/context"
 import { dayOf, now } from "../lib/day"
 import { getAround } from "../lib/getaround"
 import { groupDiscussions } from "../lib/discussions"
-import { clock, dateLine } from "../lib/format"
+import { dateLine } from "../lib/format"
 import { getCiFailures, getDependabot, getDiscussions, getIssues, getPulls, getReplies } from "../lib/github"
 import { groupIssues } from "../lib/issues"
 import { BASE } from "../lib/links"
@@ -19,6 +20,9 @@ import { groupPulls } from "../lib/pulls"
 import { settle } from "../lib/settle"
 import { summaryItems } from "../lib/summary"
 import { getForecast } from "../lib/yr"
+
+/** The page renews itself every minute (components/shell.tsx); after three missed renewals it says its data may be old. */
+const STALE_AFTER = 180
 
 // Rendered on the server for every request: the page shows what is true now.
 export const dynamic = "force-dynamic"
@@ -55,7 +59,7 @@ export default async function Page() {
   })
 
   return (
-    <Shell current="front" title={plan.greeting} lead={`${dateLine.format(instant)} · oppdatert ${clock.format(instant)}`} actions={<PositionControl current={position} />}>
+    <Shell current="front" title={plan.greeting} lead={<>{dateLine.format(instant)} · <Freshness at={instant.toISOString()} now={instant.toISOString()} staleAfterSeconds={STALE_AFTER} /></>} actions={<PositionControl current={position} />}>
       <Stack gap="xl">
         <SummaryBar label="Oversikt" items={summary} />
         {plan.sections.map((id) => {

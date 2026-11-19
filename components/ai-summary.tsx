@@ -1,6 +1,6 @@
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Text } from "@lmfaole/designsystem/components/text"
-import { Suspense } from "react"
+import { StreamedSection } from "@lmfaole/designsystem/components/streamed-section"
 
 import { summarize } from "../lib/ai"
 import type { SummaryInput, SummaryKind } from "../lib/summarize"
@@ -21,8 +21,8 @@ async function Summary({ kind, input }: { kind: SummaryKind; input: SummaryInput
 /** The summary at the top of a page: made while the rest of the page is sent, so it never holds the page back, and left out if it cannot be made. */
 export function AiSummary({ kind, input }: { kind: SummaryKind; input: SummaryInput }) {
   return (
-    <Suspense fallback={null}>
+    <StreamedSection title="oppsummering" lines={1}>
       <Summary kind={kind} input={input} />
-    </Suspense>
+    </StreamedSection>
   )
 }

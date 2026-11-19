@@ -1,3 +1,4 @@
+import { ConnectionBanner } from "@lmfaole/designsystem/components/connection-banner"
 import { Breadcrumbs } from "@lmfaole/designsystem/components/breadcrumbs"
 import { NavBar } from "@lmfaole/designsystem/components/nav-bar"
 import { PageHeader } from "@lmfaole/designsystem/components/page-header"
@@ -32,6 +33,7 @@ export function Shell({ current, trail, crumb, title, lead, actions, children }:
   return (
     <PageLayout nav={<NavBar label="Hovedmeny" title="Startside" items={PLACES.map((place) => ({ key: place.key, label: place.label, href: withBase(place.path), icon: place.icon, current: place.key === current }))} />}>
       <Refresh everySeconds={REFRESH_SECONDS} />
+      <ConnectionBanner />
       {trail === undefined ? null : <Breadcrumbs items={[{ label: "Startside", href: withBase("") }, ...trail.map((page) => ({ label: page.label, href: withBase(page.path) })), { label: crumb ?? title, href: "#" }]} />}
       <PageHeader title={title} lead={lead} actions={actions} />
       {children}

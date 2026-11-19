@@ -1,5 +1,5 @@
 // The service worker, at /start/sw.js. Its scope is /start (the page itself has no trailing slash), which is wider than
-// the folder it is in, so it says so with Service-Worker-Allowed.
+// the folder it is in, so it says so with Service-Worker-Allowed. It handles /start and what is under /start/, never /startfoo; a page is kept by its address with the query.
 
 const SCRIPT = String.raw`
 const STATIC = "startside-static-v1"
@@ -26,7 +26,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const request = event.request
   const url = new URL(request.url)
-  if (request.method !== "GET" || url.origin !== location.origin || !url.pathname.startsWith("/start")) return
+  if (request.method !== "GET" || url.origin !== location.origin || !(url.pathname === "/start" || url.pathname.startsWith("/start/"))) return
 
   // The built files never change under one name: from the cache when there, else fetched and kept.
   if (url.pathname.startsWith("/start/_next/static/") || url.pathname.startsWith("/start/icons/")) {
@@ -50,13 +50,13 @@ self.addEventListener("fetch", (event) => {
         .then((response) => {
           if (response.ok && response.type === "basic" && url.pathname !== OFFLINE) {
             const copy = response.clone()
-            caches.open(PAGES).then((cache) => cache.put(url.pathname, copy))
+            caches.open(PAGES).then((cache) => cache.put(url.pathname + url.search, copy))
           }
           return response
         })
         .catch(async () => {
           const cache = await caches.open(PAGES)
-          return (await cache.match(url.pathname)) ?? (await cache.match("/start")) ?? (await cache.match(OFFLINE)) ?? Response.error()
+          return (await cache.match(url.pathname + url.search)) ?? (await cache.match("/start")) ?? (await cache.match(OFFLINE)) ?? Response.error()
         }),
     )
   }
