@@ -12,10 +12,11 @@
     "deploy": "npm run build:worker && wrangler deploy",
     "build:worker": "opennextjs-cloudflare build && node scripts/embed-assets.mjs",
     "skills": "designsystem-skills",
-    "skills:check": "designsystem-skills --check"
+    "skills:check": "designsystem-skills --check",
+    "ds:bump": "designsystem-bump"
   },
   "dependencies": {
-    "@lmfaole/designsystem": "github:lmfaole/designsystem#539d9b3459c393cfb5d974d9af90c8d756c1f86b",
+    "@lmfaole/designsystem": "github:lmfaole/designsystem#1b6328c2b413c93250031321a5f0e86bc1e77c45",
     "@opennextjs/cloudflare": "^1.20.17",
     "next": "^16.4.6",
     "react": "^19.2.8",

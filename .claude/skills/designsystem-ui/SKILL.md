@@ -41,7 +41,7 @@ fits, the markup becomes a component in the design system, named for what it is,
 
 ## Charts
 
-Colour is not the code: a chart in the grey palette is told apart by direct labels, then pattern, dash and marker, never by shade alone. Marks meet 3:1 against the background (the two lightest default steps, 36 and 24 %, are 2.7 and 1.9:1, so they are never the only difference: name the series), neighbouring parts are separated by a thin gap, and values use tabular numbers. Limits per chart and the table behind it are in `designsystem-accessibility` (Charts). `destructive` marks only the one value that stops something, with a symbol and a word.
+Colour is not the code: a chart in the grey palette is told apart by direct labels, then pattern, dash and marker, never by shade alone. Marks meet 3:1 against the background (the default grey steps, 100, 66 and 44 % of the foreground, keep 3:1 on the page and the card; a fourth series takes a `series-*` colour), neighbouring parts are separated by a thin gap, and values use tabular numbers. Limits per chart and the table behind it are in `designsystem-accessibility` (Charts). `destructive` marks only the one value that stops something, with a symbol and a word.
 
 ## Cards
 
@@ -59,7 +59,7 @@ with a list, a table, a `dl` or `Text`. Cards are not nested (rule 8).
 
 ## Charts
 
-- **Ask the question first** (guide «Data visualisation»): one number is a `SummaryBar`, a number and its movement is a `Sparkline`, a trend is `AreaChart`, a few categories `ColumnChart`, a ranking `RankedBarChart`, parts over time `StackedColumnChart`, a whole in five parts or fewer `DonutChart`. Not drawn: 3D, radial gauges, more than five slices, two value axes, a truncated bar axis, colour as size, fewer than three points.
+- **Ask the question first** (guide «Data visualisation»): one number is a `SummaryBar`, a number and its movement is a `Sparkline`, a trend is `AreaChart`, a few categories `ColumnChart`, a ranking `RankedBarChart`, parts over time `StackedColumnChart`, a whole in five parts or fewer `DonutChart`, two measures that may go together `ScatterChart`, many values of one thing `Histogram`, spread across groups `BoxPlot`, rhythm over days `CalendarHeatmap`, two categories meeting `Heatmap`, change between two moments `DumbbellChart`. Not drawn: 3D, radial gauges, more than five slices, two value axes, a truncated bar axis, colour as size, fewer than three points.
 - A bar chart starts at zero. The title states the message; the subtitle gives what is counted, the unit and the period (`ChartCard`).
 - Name the series on the chart before a legend. Numbers are formatted `nb-NO` (`formatChartValue`), never the runtime's default.
 - A chart has its **height reserved** from the first paint, says why when it has no data (`emptyMessage`), and is a `StreamedSection` when its source is slow.

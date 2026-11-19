@@ -23,4 +23,4 @@ Before building or changing anything a person sees, use the skills in `.claude/s
   (`npm test`, node's runner; a module that imports `env`, `upstream` or the design system's components cannot be imported by a test).
 - Plain `<a>` links in the design system's components do not get the base path: write `/start/...` (`withBase` in `lib/links.ts`).
 - A row links to the app's own page for the thing; a link out to GitHub is the last action on the detail page.
-- The design system is pinned to a commit in `package.json`; after changing the pin, run `npm run skills`.
+- The design system is pinned to a commit in `package.json`; move it with `npm run ds:bump` (the latest `main`, or `-- <sha|v8.16.0>`), which also brings the lockfile and the skills in step.
