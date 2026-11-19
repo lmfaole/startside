@@ -10,6 +10,7 @@ import { notFound } from "next/navigation"
 
 import { AiSummary } from "../../../../../components/ai-summary"
 import { About, LatestComments } from "../../../../../components/detail"
+import { GitHubPerson } from "../../../../../components/person"
 import { GITHUB, Shell } from "../../../../../components/shell"
 import { getPull } from "../../../../../lib/detail"
 import { long } from "../../../../../lib/format"
@@ -53,8 +54,8 @@ export default async function Page({ params }: { params: Promise<{ owner: string
                 ["Gren", `${pull.head} → ${pull.base}`],
                 ["Størrelse", `+${pull.size.additions} −${pull.size.deletions} · ${pull.size.files} ${pull.size.files === 1 ? "fil" : "filer"}`],
                 ["Etiketter", pull.labels],
-                ["Venter på review fra", pull.requested],
-                ["Reviews", pull.reviews.map((review) => `${review.author}: ${reviewStateText(review.state)}`)],
+                ["Venter på review fra", pull.requested.map((login) => <GitHubPerson key={login} login={login} />)],
+                ["Reviews", pull.reviews.map((review) => <span key={review.author}><GitHubPerson login={review.author} /> · {reviewStateText(review.state)}</span>)],
               ]}
             />
           </PageSection>

@@ -9,6 +9,7 @@ import { notFound } from "next/navigation"
 
 import { AiSummary } from "../../../../../components/ai-summary"
 import { About, LatestComments } from "../../../../../components/detail"
+import { GitHubPerson } from "../../../../../components/person"
 import { GITHUB, Shell } from "../../../../../components/shell"
 import { getIssue } from "../../../../../lib/detail"
 import { long } from "../../../../../lib/format"
@@ -46,7 +47,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
           <AiSummary kind="issue" input={{ title: issue.title, body: issue.body.text, comments: issue.comments.latest.map((comment) => `${comment.author}: ${comment.text}`) }} />
           <About body={issue.body} />
           <PageSection id="facts" title="Fakta" icon="info">
-            <FactList facts={[["Etiketter", issue.labels], ["Tildelt", issue.assignees]]} />
+            <FactList facts={[["Etiketter", issue.labels], ["Tildelt", issue.assignees.map((login) => <GitHubPerson key={login} login={login} />)]]} />
           </PageSection>
           <LatestComments comments={issue.comments} />
         </Stack>

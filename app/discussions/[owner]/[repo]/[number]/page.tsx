@@ -9,6 +9,7 @@ import { notFound } from "next/navigation"
 
 import { AiSummary } from "../../../../../components/ai-summary"
 import { About, LatestComments } from "../../../../../components/detail"
+import { GitHubPerson } from "../../../../../components/person"
 import { GITHUB, Shell } from "../../../../../components/shell"
 import { getDiscussion } from "../../../../../lib/detail"
 import { long } from "../../../../../lib/format"
@@ -46,13 +47,13 @@ export default async function Page({ params }: { params: Promise<{ owner: string
           <AiSummary kind="discussion" input={{ title: discussion.title, body: discussion.body.text, comments: discussion.comments.latest.map((comment) => `${comment.author}: ${comment.text}`) }} />
           <About body={discussion.body} />
           <PageSection id="facts" title="Fakta" icon="info">
-            <FactList facts={[["Kategori", discussion.category], ["Besvart av", discussion.answer?.author ?? ""]]} />
+            <FactList facts={[["Kategori", discussion.category], ["Besvart av", discussion.answer === null ? "" : <GitHubPerson login={discussion.answer.author} />]]} />
           </PageSection>
           {discussion.answer === null ? null : (
             <PageSection id="answer" title="Svaret" icon="success">
               <Stack width="prose">
                 <Text size="sm" tone="muted">
-                  {discussion.answer.author}
+                  <GitHubPerson login={discussion.answer.author} />
                 </Text>
                 <Text>{discussion.answer.text}</Text>
               </Stack>

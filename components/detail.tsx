@@ -5,6 +5,7 @@ import { Markdown } from "@lmfaole/designsystem/components/markdown"
 import { Text } from "@lmfaole/designsystem/components/text"
 
 import type { Body, Comment } from "../lib/detail"
+import { GitHubPerson } from "./person"
 import { short } from "../lib/format"
 
 /** The last few comments of a thing: who, when and a short text of each; the whole conversation is where it lives, at the end. */
@@ -16,7 +17,7 @@ export function LatestComments({ comments, title = "Siste kommentarer" }: { comm
     body: (
       <Stack gap="xs">
         <Text size="sm" weight="medium">
-          {comment.author}
+          <GitHubPerson login={comment.author} />
         </Text>
         {comment.text === "" ? (
           <Text size="sm" tone="muted">
