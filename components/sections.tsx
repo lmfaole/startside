@@ -26,7 +26,7 @@ import { describeSymbol } from "../lib/yr"
 import type { DiscussionItem } from "../lib/discussions"
 
 /** How many a section of the front page shows: the digest of a longer list, which has a page of its own. */
-export const DIGEST = { pulls: 3, issues: 3, discussions: 3, weather: 4, alerts: 4 } as const
+export const DIGEST = { pulls: 3, issues: 2, discussions: 2, weather: 4, alerts: 4 } as const
 
 /** A row in the digest is compact: no repository line and at most two statuses; the whole of it is on the page of the thing. */
 const COMPACT_LABELS = 2
@@ -193,14 +193,19 @@ export function hourRows(forecast: Forecast, window: "today" | "tomorrow", day: 
     key: hour.time,
     icon: weatherIcon(hour.symbol),
     body: (
-      <Text as="span" size="sm">
-        <Text as="span" size="sm" numeric weight="medium">
-          {clock.format(new Date(hour.time))}
-        </Text>{" "}
-        {describeSymbol(hour.symbol)}
-      </Text>
+      <Stack gap="xs">
+        <Text as="span" size="sm">
+          <Text as="span" size="sm" numeric weight="medium">
+            {clock.format(new Date(hour.time))}
+          </Text>{" "}
+          {describeSymbol(hour.symbol)}
+        </Text>
+        <Text size="xs" tone="muted">
+          {number.format(hour.precipitation)} mm · {number.format(hour.wind)} m/s
+        </Text>
+      </Stack>
     ),
-    trailing: `${degrees(hour.temperature)} · ${number.format(hour.precipitation)} mm · ${number.format(hour.wind)} m/s`,
+    trailing: degrees(hour.temperature),
   }))
 }
 
@@ -231,7 +236,7 @@ const ciRow = (failure: CiFailure): RowData => ({
       <Text size="xs" tone="muted">
         {failure.headline}
       </Text>
-      <StatusLine items={[{ text: `Feilet på ${failure.branch}`, tone: "destructive", icon: "failure" }]} />
+      <StatusLine items={[{ text: `Feilet på ${failure.branch}`, icon: "failure" }]} />
     </Stack>
   ),
   trailing: <Time value={failure.committed} now={now()} />,

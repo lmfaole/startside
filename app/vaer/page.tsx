@@ -1,3 +1,4 @@
+import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
@@ -25,17 +26,19 @@ export default async function Page() {
   const day = dayOf(instant)
   const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
   const forecast = await settle(getForecast(position))
-  const columns = { name: "Tid og vær", value: "Temperatur, nedbør og vind" }
+  const columns = { name: "Tid og vær", value: "Temperatur" }
+
+  const today = forecast.ok ? hourRows(forecast.value, "today", day, instant) : []
 
   return (
     <Shell current="weather" title={forecast.ok ? `Vær i ${forecast.value.place}` : "Vær"} lead="Meldingen fra Yr: i dag, i morgen og de neste dagene." actions={<PositionControl current={position} />}>
       <Stack gap="xl">
-      {!forecast.ok ? (
-        <ErrorMessage error={forecast.error}>Kunne ikke hente været</ErrorMessage>
-      ) : (
-        <Stack gap="xl">
+        {!forecast.ok ? (
+          <ErrorMessage error={forecast.error}>Kunne ikke hente været</ErrorMessage>
+        ) : (
+          <>
           <PageSection id="today" title="Resten av i dag" icon="weather">
-            <Rows lead="icon" rows={hourRows(forecast.value, "today", day, instant)} columns={columns} />
+            {today.length === 0 ? <EmptyState title="Ingen flere timer i dag" /> : <Rows lead="icon" rows={today} columns={columns} />}
           </PageSection>
           <PageSection id="tomorrow" title="I morgen" icon="calendar">
             <Rows lead="icon" rows={hourRows(forecast.value, "tomorrow", day, instant)} columns={columns} />
@@ -47,23 +50,28 @@ export default async function Page() {
                 key: outlook.date,
                 icon: weatherIcon(outlook.symbol),
                 body: (
-                  <Text as="span" size="sm">
-                    <Text as="span" size="sm" weight="medium">
-                      {dateLine.format(new Date(`${outlook.date}T12:00:00Z`))}
-                    </Text>{" "}
-                    {describeSymbol(outlook.symbol)}
-                  </Text>
+                  <Stack gap="xs">
+                    <Text as="span" size="sm">
+                      <Text as="span" size="sm" weight="medium">
+                        {dateLine.format(new Date(`${outlook.date}T12:00:00Z`))}
+                      </Text>{" "}
+                      {describeSymbol(outlook.symbol)}
+                    </Text>
+                    <Text size="xs" tone="muted">
+                      {number.format(outlook.precipitation)} mm nedbør
+                    </Text>
+                  </Stack>
                 ),
-                trailing: `${degrees(outlook.min)} / ${degrees(outlook.max)} · ${number.format(outlook.precipitation)} mm`,
+                trailing: `${degrees(outlook.min)} / ${degrees(outlook.max)}`,
               }))}
-              columns={{ name: "Dag og vær", value: "Laveste og høyeste temperatur, og nedbør" }}
+              columns={{ name: "Dag og vær", value: "Laveste og høyeste temperatur" }}
             />
           </PageSection>
-        </Stack>
-      )}
-      <Text size="xs" tone="muted">
-        Værdata fra <ExternalLink href="https://www.yr.no">Yr</ExternalLink> (Meteorologisk institutt).
-      </Text>
+          </>
+        )}
+        <Text size="xs" tone="muted">
+          Værdata fra <ExternalLink href="https://www.yr.no">Yr</ExternalLink> (Meteorologisk institutt).
+        </Text>
       </Stack>
     </Shell>
   )

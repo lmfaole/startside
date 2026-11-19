@@ -1,7 +1,7 @@
 import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { Stack } from "@lmfaole/designsystem/components/layout"
-import { PageSection } from "@lmfaole/designsystem/components/page-section"
+import { PageSection, SectionGroup, SubSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { Text } from "@lmfaole/designsystem/components/text"
 import type { IconName } from "@lmfaole/designsystem/lib/icons"
@@ -81,18 +81,28 @@ export function DeparturesSection({ data, mode, instant }: { data: Around; mode:
       ? []
       : [{ key: "walk", icon: "walk", body: <Text as="span" size="sm" weight="medium">Gå hele veien</Text>, trailing: `${comparison.walkMinutes} min` }]
 
+  const next = data.stops.ok ? <Departures stops={data.stops.value} instant={instant} limit={size.departures} /> : <ErrorMessage error={data.stops.error}>Kunne ikke hente avganger fra Entur</ErrorMessage>
+  if (trips === null) {
+    return (
+      <PageSection id="departures" title={title} icon="bus" {...(more === undefined ? {} : { more })}>
+        {next}
+      </PageSection>
+    )
+  }
+  // Two groups with a title each: the way to where the reader is going, and what leaves from the stops around them.
   return (
-    <PageSection id="departures" title={title} icon="bus" {...(more === undefined ? {} : { more })}>
-      <Stack gap="lg">
-        {trips !== null && !trips.ok ? <ErrorMessage error={trips.error}>Kunne ikke hente reiseforslag fra Entur</ErrorMessage> : null}
-        {comparison === null ? null : <Rows lead="icon" rows={[...walk, ...comparison.options.map(optionRow)]} columns={{ name: "Reisemåte", value: "Tid og ankomst" }} />}
-        {data.stops.ok ? (
-          <Departures stops={data.stops.value} instant={instant} limit={size.departures} />
+    <SectionGroup id="departures" title={title} icon="bus" {...(more === undefined ? {} : { more })}>
+      <SubSection id="departures-trip" title="Reisetid" icon="walk">
+        {comparison === null ? (
+          !trips.ok ? <ErrorMessage error={trips.error}>Kunne ikke hente reiseforslag fra Entur</ErrorMessage> : null
         ) : (
-          <ErrorMessage error={data.stops.error}>Kunne ikke hente avganger fra Entur</ErrorMessage>
+          <Rows lead="icon" rows={[...walk, ...comparison.options.map(optionRow)]} columns={{ name: "Reisemåte", value: "Tid og ankomst" }} />
         )}
-      </Stack>
-    </PageSection>
+      </SubSection>
+      <SubSection id="departures-next" title="Neste avganger" icon="bus">
+        {next}
+      </SubSection>
+    </SectionGroup>
   )
 }
 
