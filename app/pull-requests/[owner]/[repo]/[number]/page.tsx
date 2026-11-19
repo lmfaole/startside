@@ -63,7 +63,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
             />
           </PageSection>
           {pull.checkLines.length === 0 ? null : (
-            <PageSection id="checks" title="Tester" icon="success">
+            <PageSection id="checks" title="Tester" icon="tasks">
               <Rows
                 lead="icon"
                 rows={pull.checkLines.map((check) => {

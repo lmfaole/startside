@@ -37,7 +37,7 @@ the summary, in the morning, the workday, the evening and the weekend, but not a
 | Source | What | Config |
 | --- | --- | --- |
 | Cloudflare Workers AI (`@cf/meta/llama-3.1-8b-instruct-fp8`, the `AI` binding) | A short Norwegian summary at the top of a pull request, an issue, a discussion and the alerts. Cheap by design: a small model, the text cut to a few thousand characters, ~200 tokens out, one call per version of the text (kept a week in the edge cache under a fingerprint), made while the page streams, and left out on any failure | `ai` in `wrangler.jsonc` |
-| Design system 8.10 (`EmptyState`, `Banner`, `Time`, `Freshness`, `ConnectionBanner`, `StreamedSection`) | Empty states, the hint on departures and every time (rows, comments, «opprettet», «sist endret») use them: relative when recent, a date later, the exact time in `title` | none |
+| Design system 8.11 (`EmptyState`, `Banner`, `Time`, `Freshness`, `ConnectionBanner`, `StreamedSection`) | Empty states, the hint on departures and every time (rows, comments, «opprettet», «sist endret») use them: relative when recent, a date later, the exact time in `title` | none |
 | github.com (`<login>.png`, fetched by the browser) | The picture of each person next to their name on the detail pages (`Person` from the design system, `lib/avatar.ts`): reviewers, assignees, who answered, who commented. No token, nothing through the relay | none |
 | Entur (Journey Planner v3, through the relay) | Departures from the stops nearby and trips compared with walking | `WORK_NAME`, `WORK_LAT`, `WORK_LON` in `wrangler.jsonc` |
 | Yr (MET Norway `locationforecast`) | The forecast for the rest of the day | `WEATHER_PLACE`, `WEATHER_LAT`, `WEATHER_LON` in `wrangler.jsonc` |

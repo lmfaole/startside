@@ -40,7 +40,7 @@ export default async function Page() {
           <PageSection id="today" title="Resten av i dag" icon="weather">
             {today.length === 0 ? <EmptyState title="Ingen flere timer i dag" /> : <Rows lead="icon" rows={today} columns={columns} />}
           </PageSection>
-          <PageSection id="tomorrow" title="I morgen" icon="calendar">
+          <PageSection id="tomorrow" title="I morgen" icon="time">
             <Rows lead="icon" rows={hourRows(forecast.value, "tomorrow", day, instant)} columns={columns} />
           </PageSection>
           <PageSection id="outlook" title="Kommende dager" icon="calendar">

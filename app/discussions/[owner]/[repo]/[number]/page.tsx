@@ -53,7 +53,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
             <FactList facts={[["Kategori", discussion.category], ["Besvart av", discussion.answer === null ? "" : <GitHubPerson login={discussion.answer.author} />]]} />
           </PageSection>
           {discussion.answer === null ? null : (
-            <PageSection id="answer" title="Svaret" icon="success">
+            <PageSection id="answer" title="Svaret" icon="discussion">
               <Stack width="prose">
                 <Text size="sm" tone="muted">
                   <GitHubPerson login={discussion.answer.author} />
