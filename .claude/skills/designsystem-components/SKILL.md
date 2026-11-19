@@ -23,6 +23,7 @@ description: Use when choosing which design system component to use for somethin
 | A time | `Time` (relative when recent, a date later, the exact time always at hand) |
 | Code | `Code` (inline or a block), `CopyButton` for a value to copy; long content out of the way `Disclosure` |
 | A form (rare) | `TextField`, `SearchField`, `FormErrorSummary`; a choice from a list `NativeSelect`; a sort `SortHeader` |
+| A number's shape over time | `Sparkline` beside the number; a chart `AreaChart`, `ColumnChart`, `RankedBarChart`, `StackedColumnChart`, `DonutChart` in a `ChartCard` |
 | A value against a goal | `Progress`; pages of a long list with addresses `Pagination` |
 | The way between pages | top-level pages `NavBar` (bar at the foot on a phone, rail from tablet width; given to `PageLayout` as `nav`); where you are and the way back `Breadcrumbs`; the pages under this page `SubPages`; narrowing a list `FilterChips`; a view switch `SegmentedToggle` |
 | An icon | `Icon` (a meaning from `ICONS` in `src/lib/icons.ts`) |
@@ -61,8 +62,8 @@ If the thing is not here, **add a component**; do not style in the project.
 
 ## Add an icon meaning
 
-Look in the Catalogue first. If it is missing, add it to `ICONS` in `src/lib/icons.ts`, named for the **meaning**, under its group,
-and to the Catalogue story (it does not compile until it is there). Two meanings may not share a glyph.
+The set is **complete on purpose**: a read-mostly dashboard's meanings (work, state, people and time, place and weather, getting around, content, home and devices, money, data, actions, direction) are all there, so a page never waits for an icon. Look in the Catalogue first.
+If a meaning really is missing, **add it at once**, without waiting for a second use: put it in its group in `scripts/icon-set.mjs` (named for the meaning, one Lucide glyph for it) and run `npm run icons`; the Catalogue, the types and the tests follow. Two meanings may not share a glyph, and a glyph with no meaning is decoration and does not belong.
 
 ## Release
 
