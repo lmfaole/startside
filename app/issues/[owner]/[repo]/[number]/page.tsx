@@ -41,7 +41,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="github" trail={trail} crumb={`#${ref.number}`} title={issue.title} lead={<Byline ref={ref} author={issue.author} created={issue.created} />}>
+    <Shell current="github" trail={trail} crumb={`#${ref.number}`} title={issue.title} lead={<Byline at={ref} author={issue.author} created={issue.created} />}>
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">
