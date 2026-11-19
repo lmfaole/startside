@@ -10,6 +10,7 @@ import { notFound } from "next/navigation"
 import { AiSummary } from "../../../../../components/ai-summary"
 import { About, LatestComments } from "../../../../../components/detail"
 import { GitHubPerson } from "../../../../../components/person"
+import { Byline } from "../../../../../components/byline"
 import { GITHUB, Shell } from "../../../../../components/shell"
 import { getDiscussion } from "../../../../../lib/detail"
 import { long } from "../../../../../lib/format"
@@ -40,7 +41,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="github" trail={trail} crumb={`#${ref.number}`} title={discussion.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${discussion.author === null ? "" : ` · av ${discussion.author}`} · opprettet ${long.format(new Date(discussion.created))}`}>
+    <Shell current="github" trail={trail} crumb={`#${ref.number}`} title={discussion.title} lead={<Byline ref={ref} author={discussion.author} created={discussion.created} />}>
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">

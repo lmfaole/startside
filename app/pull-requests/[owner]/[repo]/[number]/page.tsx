@@ -11,6 +11,7 @@ import { notFound } from "next/navigation"
 import { AiSummary } from "../../../../../components/ai-summary"
 import { About, LatestComments } from "../../../../../components/detail"
 import { GitHubPerson } from "../../../../../components/person"
+import { Byline } from "../../../../../components/byline"
 import { GITHUB, Shell } from "../../../../../components/shell"
 import { getPull } from "../../../../../lib/detail"
 import { long } from "../../../../../lib/format"
@@ -42,7 +43,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="github" trail={trail} crumb={`#${ref.number}`} title={pull.title} lead={`${ref.owner}/${ref.repo} #${ref.number}${pull.author === null ? "" : ` · av ${pull.author}`} · opprettet ${long.format(new Date(pull.created))}`}>
+    <Shell current="github" trail={trail} crumb={`#${ref.number}`} title={pull.title} lead={<Byline ref={ref} author={pull.author} created={pull.created} />}>
       <Stack gap="xl">
         <StatusLine items={status} />
         <Stack gap="xl">
