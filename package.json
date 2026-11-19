@@ -15,7 +15,7 @@
     "skills:check": "designsystem-skills --check"
   },
   "dependencies": {
-    "@lmfaole/designsystem": "github:lmfaole/designsystem#953da06a20eebd7f86e305b92596813f31d53ca3",
+    "@lmfaole/designsystem": "github:lmfaole/designsystem#74ec3c3a3b05da356bae2803160ca99b832e3693",
     "@opennextjs/cloudflare": "^1.20.17",
     "next": "^16.4.6",
     "react": "^19.2.8",
