@@ -1,6 +1,6 @@
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { FactList } from "@lmfaole/designsystem/components/fact-list"
-import { Stack } from "@lmfaole/designsystem/components/layout"
+import { Split, Stack } from "@lmfaole/designsystem/components/layout"
 import { LinkButton } from "@lmfaole/designsystem/components/link-button"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows } from "@lmfaole/designsystem/components/rows"
@@ -45,37 +45,41 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="github" trail={trail} crumb={`#${ref.number}`} title={pull.title} lead={<Byline at={ref} author={pull.author} created={pull.created} />}>
-      <Stack gap="xl">
-        <StatusLine items={status} />
-        <Stack gap="xl">
-          <AiSummary kind="pull request" input={{ title: pull.title, body: pull.body.text, comments: pull.comments.latest.map((comment) => `${comment.author}: ${comment.text}`) }} />
-          <About body={pull.body} />
-          <PageSection id="facts" title="Fakta" icon="info">
-            <FactList
-              facts={[
-                ["Gren", `${pull.head} → ${pull.base}`],
-                ["Størrelse", `+${pull.size.additions} −${pull.size.deletions} · ${pull.size.files} ${pull.size.files === 1 ? "fil" : "filer"}`],
-                ["Etiketter", pull.labels],
-                ["Venter på review fra", pull.requested.map((login) => <GitHubPerson key={login} login={login} />)],
-                ["Reviews", pull.reviews.map((review) => <span key={review.author}><GitHubPerson login={review.author} /> · {reviewStateText(review.state)}</span>)],
-              ]}
-            />
-          </PageSection>
-          {pull.checkLines.length === 0 ? null : (
-            <PageSection id="checks" title="Tester" icon="tasks">
-              <Rows
-                lead="icon"
-                rows={pull.checkLines.map((check) => {
-                  const look = checkLook(check.state)
-                  return { key: check.name, icon: look.icon, iconLabel: look.text, iconTone: look.tone, body: check.name, trailing: look.text }
-                })}
-                columns={{ name: "Test", value: "Status" }}
+    <Shell current="github" width="pane" trail={trail} crumb={`#${ref.number}`} title={pull.title} lead={<Byline at={ref} author={pull.author} created={pull.created} />}>
+      {/* The status and the facts are the pane: looked up beside what is read on a wide screen, above it on a phone. */}
+      <Split
+        rail={
+          <Stack gap="lg">
+            <StatusLine items={status} />
+            <PageSection id="facts" title="Fakta" icon="info">
+              <FactList
+                facts={[
+                  ["Gren", `${pull.head} → ${pull.base}`],
+                  ["Størrelse", `+${pull.size.additions} −${pull.size.deletions} · ${pull.size.files} ${pull.size.files === 1 ? "fil" : "filer"}`],
+                  ["Etiketter", pull.labels],
+                  ["Venter på review fra", pull.requested.map((login) => <GitHubPerson key={login} login={login} />)],
+                  ["Reviews", pull.reviews.map((review) => <span key={review.author}><GitHubPerson login={review.author} /> · {reviewStateText(review.state)}</span>)],
+                ]}
               />
             </PageSection>
-          )}
-          <LatestComments comments={pull.comments} />
-        </Stack>
+          </Stack>
+        }
+      >
+        <AiSummary kind="pull request" input={{ title: pull.title, body: pull.body.text, comments: pull.comments.latest.map((comment) => `${comment.author}: ${comment.text}`) }} />
+        <About body={pull.body} />
+        {pull.checkLines.length === 0 ? null : (
+          <PageSection id="checks" title="Tester" icon="tasks">
+            <Rows
+              lead="icon"
+              rows={pull.checkLines.map((check) => {
+                const look = checkLook(check.state)
+                return { key: check.name, icon: look.icon, iconLabel: look.text, iconTone: look.tone, body: check.name, trailing: look.text }
+              })}
+              columns={{ name: "Test", value: "Status" }}
+            />
+          </PageSection>
+        )}
+        <LatestComments comments={pull.comments} />
         <Text size="xs" tone="muted">
           Sist endret <Time value={pull.updated} now={now()} format="datetime" />.
         </Text>
@@ -84,7 +88,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
             Åpne på GitHub
           </LinkButton>
         </div>
-      </Stack>
+      </Split>
     </Shell>
   )
 }

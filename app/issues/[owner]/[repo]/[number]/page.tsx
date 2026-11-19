@@ -1,6 +1,6 @@
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { FactList } from "@lmfaole/designsystem/components/fact-list"
-import { Stack } from "@lmfaole/designsystem/components/layout"
+import { Split, Stack } from "@lmfaole/designsystem/components/layout"
 import { LinkButton } from "@lmfaole/designsystem/components/link-button"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { StatusLine, type Status } from "@lmfaole/designsystem/components/status-line"
@@ -43,17 +43,21 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="github" trail={trail} crumb={`#${ref.number}`} title={issue.title} lead={<Byline at={ref} author={issue.author} created={issue.created} />}>
-      <Stack gap="xl">
-        <StatusLine items={status} />
-        <Stack gap="xl">
-          <AiSummary kind="issue" input={{ title: issue.title, body: issue.body.text, comments: issue.comments.latest.map((comment) => `${comment.author}: ${comment.text}`) }} />
-          <About body={issue.body} />
-          <PageSection id="facts" title="Fakta" icon="info">
-            <FactList facts={[["Etiketter", issue.labels], ["Tildelt", issue.assignees.map((login) => <GitHubPerson key={login} login={login} />)]]} />
-          </PageSection>
-          <LatestComments comments={issue.comments} />
-        </Stack>
+    <Shell current="github" width="pane" trail={trail} crumb={`#${ref.number}`} title={issue.title} lead={<Byline at={ref} author={issue.author} created={issue.created} />}>
+      {/* The status and the facts are the pane: looked up beside what is read on a wide screen, above it on a phone. */}
+      <Split
+        rail={
+          <Stack gap="lg">
+            <StatusLine items={status} />
+            <PageSection id="facts" title="Fakta" icon="info">
+              <FactList facts={[["Etiketter", issue.labels], ["Tildelt", issue.assignees.map((login) => <GitHubPerson key={login} login={login} />)]]} />
+            </PageSection>
+          </Stack>
+        }
+      >
+        <AiSummary kind="issue" input={{ title: issue.title, body: issue.body.text, comments: issue.comments.latest.map((comment) => `${comment.author}: ${comment.text}`) }} />
+        <About body={issue.body} />
+        <LatestComments comments={issue.comments} />
         <Text size="xs" tone="muted">
           Sist endret <Time value={issue.updated} now={now()} format="datetime" />.
         </Text>
@@ -62,7 +66,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
             Åpne på GitHub
           </LinkButton>
         </div>
-      </Stack>
+      </Split>
     </Shell>
   )
 }

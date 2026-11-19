@@ -1,6 +1,6 @@
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { FactList } from "@lmfaole/designsystem/components/fact-list"
-import { Stack } from "@lmfaole/designsystem/components/layout"
+import { Split, Stack } from "@lmfaole/designsystem/components/layout"
 import { LinkButton } from "@lmfaole/designsystem/components/link-button"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { StatusLine, type Status } from "@lmfaole/designsystem/components/status-line"
@@ -43,27 +43,31 @@ export default async function Page({ params }: { params: Promise<{ owner: string
   ]
 
   return (
-    <Shell current="github" trail={trail} crumb={`#${ref.number}`} title={discussion.title} lead={<Byline at={ref} author={discussion.author} created={discussion.created} />}>
-      <Stack gap="xl">
-        <StatusLine items={status} />
-        <Stack gap="xl">
-          <AiSummary kind="discussion" input={{ title: discussion.title, body: discussion.body.text, comments: discussion.comments.latest.map((comment) => `${comment.author}: ${comment.text}`) }} />
-          <About body={discussion.body} />
-          <PageSection id="facts" title="Fakta" icon="info">
-            <FactList facts={[["Kategori", discussion.category], ["Besvart av", discussion.answer === null ? "" : <GitHubPerson login={discussion.answer.author} />]]} />
-          </PageSection>
-          {discussion.answer === null ? null : (
-            <PageSection id="answer" title="Svaret" icon="discussion">
-              <Stack width="prose">
-                <Text size="sm" tone="muted">
-                  <GitHubPerson login={discussion.answer.author} />
-                </Text>
-                <Text>{discussion.answer.text}</Text>
-              </Stack>
+    <Shell current="github" width="pane" trail={trail} crumb={`#${ref.number}`} title={discussion.title} lead={<Byline at={ref} author={discussion.author} created={discussion.created} />}>
+      {/* The status and the facts are the pane: looked up beside what is read on a wide screen, above it on a phone. */}
+      <Split
+        rail={
+          <Stack gap="lg">
+            <StatusLine items={status} />
+            <PageSection id="facts" title="Fakta" icon="info">
+              <FactList facts={[["Kategori", discussion.category], ["Besvart av", discussion.answer === null ? "" : <GitHubPerson login={discussion.answer.author} />]]} />
             </PageSection>
-          )}
-          <LatestComments comments={discussion.comments} />
-        </Stack>
+          </Stack>
+        }
+      >
+        <AiSummary kind="discussion" input={{ title: discussion.title, body: discussion.body.text, comments: discussion.comments.latest.map((comment) => `${comment.author}: ${comment.text}`) }} />
+        <About body={discussion.body} />
+        {discussion.answer === null ? null : (
+          <PageSection id="answer" title="Svaret" icon="discussion">
+            <Stack width="prose">
+              <Text size="sm" tone="muted">
+                <GitHubPerson login={discussion.answer.author} />
+              </Text>
+              <Text>{discussion.answer.text}</Text>
+            </Stack>
+          </PageSection>
+        )}
+        <LatestComments comments={discussion.comments} />
         <Text size="xs" tone="muted">
           Sist endret <Time value={discussion.updated} now={now()} format="datetime" />.
         </Text>
@@ -72,7 +76,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
             Åpne på GitHub
           </LinkButton>
         </div>
-      </Stack>
+      </Split>
     </Shell>
   )
 }
