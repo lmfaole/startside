@@ -13,7 +13,7 @@ const hourLabel = (label: string): string => clock.format(new Date(label))
 /** The temperature and the rain hour by hour, one above the other on the same hours. A client component: the charts draw in the browser, and a label formatter cannot be passed from the server. */
 export function ForecastCharts({ hours }: { hours: HourPoint[] }) {
   return (
-    <Stack gap="md">
+    <Stack gap="lg">
       <AreaChart
         data={hours.map((hour) => ({ label: hour.time, value: Math.round(hour.temperature) }))}
         ariaLabel="Temperatur de neste timene"
@@ -28,7 +28,7 @@ export function ForecastCharts({ hours }: { hours: HourPoint[] }) {
           data={hours.map((hour) => ({ label: hour.time, value: hour.precipitation }))}
           ariaLabel="Nedbør de neste timene"
           valueLabel="Nedbør (mm)"
-        color="var(--weather-rain)"
+          color="var(--weather-rain)"
           height={110}
           formatLabel={hourLabel}
           labelEvery={3}
