@@ -1,9 +1,9 @@
+import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { Freshness } from "@lmfaole/designsystem/components/freshness"
 import { InstallPrompt } from "@lmfaole/designsystem/components/install-prompt"
 import { IntroCallout } from "@lmfaole/designsystem/components/intro-callout"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { SummaryBar } from "@lmfaole/designsystem/components/summary-bar"
-import { isSeen } from "@lmfaole/designsystem/lib/onboarding"
 import { cookies } from "next/headers"
 
 import { AlertsOwnerOnly, GithubUserForm } from "../components/github-user"
@@ -16,13 +16,14 @@ import { dateLine } from "../lib/format"
 import { getCiFailures, getDependabot, getDiscussions, getIssues, getPulls, getReplies, isTokenOwner } from "../lib/github"
 import { groupIssues } from "../lib/issues"
 import { BASE } from "../lib/links"
-import { planFor } from "../lib/plan"
+import { chosenSections, planFor } from "../lib/plan"
 import { parsePosition, POSITION_COOKIE } from "../lib/position"
 import { groupPulls } from "../lib/pulls"
 import { settle } from "../lib/settle"
+import { SETTINGS_PAGE } from "../lib/settings"
 import { summaryItems } from "../lib/summary"
 import { formState, type SearchParams } from "../lib/username"
-import { githubPage, SEEN_PATH, seenNotes } from "../lib/visitor"
+import { githubPage, introSeen, SEEN_PATH, visitorPrefs } from "../lib/visitor"
 import { getForecast } from "../lib/yr"
 
 /** The page renews itself every minute (components/shell.tsx); after three missed renewals it says its data may be old. */
@@ -41,9 +42,10 @@ export const dynamic = "force-dynamic"
 export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const instant = now()
   const day = dayOf(instant)
-  const plan = planFor(day)
   const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
-  const [{ user, known, params }, seen] = await Promise.all([githubPage(searchParams), seenNotes()])
+  const [{ user, known, params }, prefs] = await Promise.all([githubPage(searchParams), visitorPrefs()])
+  const planned = planFor(day)
+  const plan = { ...planned, sections: chosenSections(planned.sections, prefs.sections) }
   const asking = user === null
   const owner = user === null ? false : await isTokenOwner(user).catch(() => false)
   const wants = (id: (typeof plan.sections)[number]) => plan.sections.includes(id)
@@ -75,7 +77,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
         {formAt === null ? (
           <IntroCallout
             id="intro-front"
-            seen={isSeen(seen, "intro-front")}
+            seen={await introSeen("intro-front")}
             title="Det du trenger nå, på én side"
             body="Startsiden samler det som venter på deg på GitHub, været og avgangene i nærheten. Hva som vises, følger tiden på døgnet; hver del har en lenke videre til alt."
             icon="home"
@@ -95,7 +97,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
           return null
         })}
         {formAt === "end" ? form : null}
-        <InstallPrompt appName="Startside" seen={isSeen(seen, "install")} cookiePath={SEEN_PATH} />
+        {plan.sections.length === 0 ? <EmptyState title="Ingenting å vise nå" description="Forsiden viser bare delene du har valgt, og bare når de passer tiden på døgnet. Velg flere i innstillingene." icon="settings" action={{ href: `${SETTINGS_PAGE}#forside`, label: "Velg hva forsiden viser" }} /> : null}
+        <InstallPrompt appName="Startside" seen={await introSeen("install")} cookiePath={SEEN_PATH} />
       </Stack>
     </Shell>
   )

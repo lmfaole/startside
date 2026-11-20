@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next"
 import type { ReactNode } from "react"
 
+import { htmlAttributes } from "@lmfaole/designsystem/lib/preferences"
+
+import { visitorPrefs } from "../lib/visitor"
 import { ServiceWorker } from "../components/service-worker"
 import "./globals.css"
 
@@ -21,9 +24,10 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+// The visitor's theme and effects (the `prefs` cookie, chosen in the wizard or under Innstillinger) are on <html> from the first frame.
+export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="nb">
+    <html lang="nb" {...htmlAttributes(await visitorPrefs())}>
       <body>
         {children}
         <ServiceWorker />

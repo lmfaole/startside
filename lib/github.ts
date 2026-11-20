@@ -5,6 +5,7 @@ import { isWatched, parseRepos, repliesQuery, userQueries } from "./github-query
 import { env, mocking } from "./env"
 import { readStatuses, withStatus, type PullStatus, type Statuses } from "./pr-status"
 import { upstream } from "./upstream"
+import { watchedRepoList } from "./visitor"
 import { sameLogin } from "./username"
 
 export interface Item {
@@ -124,14 +125,14 @@ async function repoIssues(token: string | undefined, repo: string): Promise<Item
 
 /**
  * Issues, for `groupIssues`: the ones assigned to the user in any public repository, the ones you are involved in in the
- * watched repositories (`GITHUB_WATCH_REPOS`), and in them the 50 that moved last, from which the new ones nobody owns come.
+ * watched repositories (the `github_repos` cookie), and in them the 50 that moved last, from which the new ones nobody owns come.
  * Searching on a repository or an organisation is blocked by SAML single sign-on for the token, so «involved» searches by
  * you and is filtered to the repositories here, and the repositories' own issues are read straight from them.
  */
 export async function getIssues(user: string): Promise<{ assigned: Item[]; involved: Item[]; recent: Item[] }> {
   const accessToken = token()
   const queries = userQueries(user, env("GITHUB_EXCLUDE_ORGS"))
-  const watchedRepos = env("GITHUB_WATCH_REPOS")
+  const watchedRepos = await watchedRepoList()
   const [assigned, involved, recent] = await Promise.all([
     search(accessToken, queries.assigned),
     search(accessToken, queries.involved, 50).then((items) => items.filter((item) => isWatched(item.repo, watchedRepos))),
@@ -153,7 +154,8 @@ const DISCUSSION = `fragment D on Discussion {
  * and is filtered to the repositories here, and the repositories' own discussions are read straight from them.
  */
 export async function getDiscussions(user: string): Promise<{ involved: DiscussionItem[]; recent: DiscussionItem[] }> {
-  const repos = parseRepos(env("GITHUB_WATCH_REPOS"))
+  const watchedRepos = await watchedRepoList()
+  const repos = parseRepos(watchedRepos)
   if (repos.length === 0) return { involved: [], recent: [] }
   const accessToken = token()
   // The names are checked by `parseRepos` (letters, digits, dots, dashes and underscores), so they can go into the query.
@@ -175,7 +177,7 @@ export async function getDiscussions(user: string): Promise<{ involved: Discussi
     const repo = body.data?.[`r${index}`] as { isPrivate?: boolean; discussions: { nodes: Nodes } } | null
     return repo === null || repo === undefined || repo.isPrivate === true ? [] : repo.discussions.nodes
   })
-  return { involved: discussionNodes(involved).filter((item) => isWatched(item.repo, env("GITHUB_WATCH_REPOS"))), recent: discussionNodes(recent) }
+  return { involved: discussionNodes(involved).filter((item) => isWatched(item.repo, watchedRepos)), recent: discussionNodes(recent) }
 }
 
 async function askGraphql<T>(token: string | undefined, query: string, variables: Record<string, string> = {}, revalidate = 60): Promise<T> {
@@ -197,10 +199,10 @@ function asRepo(value: unknown): RepoNode | null {
   return typeof value === "object" && value !== null && "nameWithOwner" in value && (value as { isPrivate?: boolean }).isPrivate !== true ? (value as RepoNode) : null
 }
 
-/** The repositories whose default branch is red: the user's own public ones that moved last, and the watched public ones (`GITHUB_WATCH_REPOS`). */
+/** The repositories whose default branch is red: the user's own public ones that moved last, and the watched public ones (the `github_repos` cookie). */
 export async function getCiFailures(user: string): Promise<CiFailure[]> {
   const accessToken = token()
-  const watched = parseRepos(env("GITHUB_WATCH_REPOS"))
+  const watched = parseRepos(await watchedRepoList())
   const aliases = watched.map((repo, index) => {
     const [owner, name] = repo.split("/")
     return `w${index}: repository(owner: "${owner}", name: "${name}") { ...R }`

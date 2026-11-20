@@ -2,7 +2,7 @@ import { strict as assert } from "node:assert"
 import { test } from "node:test"
 
 import { addDays, dayOf, now, osloDateDaysAgo, partOfHour } from "./day.ts"
-import { planFor } from "./plan.ts"
+import { chosenSections, planFor } from "./plan.ts"
 
 // 2026-11-18 is a Wednesday, CET (UTC+1); 2026-07-15 is a Wednesday, CEST (UTC+2).
 const at = (iso: string) => dayOf(new Date(iso))
@@ -129,4 +129,11 @@ test("the coming days in one line each, from the day after tomorrow", () => {
   assert.deepEqual(outlook[0], { date: "2026-11-20", min: -4, max: 3, precipitation: 2, symbol: "rain" })
   assert.deepEqual(outlook[1], { date: "2026-11-21", min: 5, max: 6, precipitation: 0.5, symbol: "lightrain" })
   assert.deepEqual(dailyOutlook([], "2026-11-18", 3), [])
+})
+
+test("the front page keeps the plan's order and leaves out the sections the visitor turned off", () => {
+  const plan = planFor({ part: "morgen", weekend: false })
+  assert.deepEqual(chosenSections(plan.sections, undefined), plan.sections)
+  assert.deepEqual(chosenSections(plan.sections, ["pulls", "weather"]), ["weather", "pulls"])
+  assert.deepEqual(chosenSections(plan.sections, []), [])
 })

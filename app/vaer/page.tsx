@@ -7,7 +7,6 @@ import { WeatherStage } from "@lmfaole/designsystem/components/weather-stage"
 import { DumbbellChart } from "@lmfaole/designsystem/components/dumbbell-chart"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Meteogram } from "@lmfaole/designsystem/components/meteogram"
-import { isSeen } from "@lmfaole/designsystem/lib/onboarding"
 import { cookies } from "next/headers"
 
 import { PositionControl, PositionPermission } from "../../components/position"
@@ -17,7 +16,7 @@ import { dailyOutlook, nextHours } from "../../lib/forecast"
 import { dateLine, degrees, number } from "../../lib/format"
 import { parsePosition, POSITION_COOKIE } from "../../lib/position"
 import { settle } from "../../lib/settle"
-import { SEEN_PATH, seenNotes } from "../../lib/visitor"
+import { introSeen, SEEN_PATH } from "../../lib/visitor"
 import { describeSymbol, getForecast } from "../../lib/yr"
 
 export const dynamic = "force-dynamic"
@@ -27,7 +26,7 @@ export const metadata = { title: "Vær · Startside" }
 export default async function Page() {
   const instant = now()
   const day = dayOf(instant)
-  const [position, seen] = await Promise.all([cookies().then((jar) => parsePosition(jar.get(POSITION_COOKIE)?.value)), seenNotes()])
+  const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
   const forecast = await settle(getForecast(position))
 
   const current = forecast.ok ? forecast.value.timeseries[0] : undefined
@@ -45,7 +44,7 @@ export default async function Page() {
       <Stack gap="xl">
         <IntroCallout
           id="intro-weather"
-          seen={isSeen(seen, "intro-weather")}
+          seen={await introSeen("intro-weather")}
           title="Slik leser du været"
           body="Linjen er temperaturen time for time: varm farge over null, kald under, og nullstreken er tegnet inn. Søylene nederst er nedbøren hver time. «Vis tallene» gir alt som tabell."
           icon="weather"

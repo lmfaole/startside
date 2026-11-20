@@ -3,7 +3,6 @@ import { Freshness } from "@lmfaole/designsystem/components/freshness"
 import { IntroCallout } from "@lmfaole/designsystem/components/intro-callout"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { MarkSeen } from "@lmfaole/designsystem/components/mark-seen"
-import { isSeen } from "@lmfaole/designsystem/lib/onboarding"
 import { Text } from "@lmfaole/designsystem/components/text"
 import { cookies } from "next/headers"
 
@@ -14,7 +13,7 @@ import { now } from "../../lib/day"
 import { getStops } from "../../lib/entur"
 import { parsePosition, POSITION_COOKIE } from "../../lib/position"
 import { settle } from "../../lib/settle"
-import { SEEN_PATH, seenNotes } from "../../lib/visitor"
+import { introSeen, SEEN_PATH } from "../../lib/visitor"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Transport · Startside" }
@@ -28,7 +27,7 @@ const RADIUS = 1000
 /** The stations nearest to where the device is and what leaves from them; without the device's position there is nothing to show. */
 export default async function Page() {
   const instant = now()
-  const [position, seen] = await Promise.all([cookies().then((jar) => parsePosition(jar.get(POSITION_COOKIE)?.value)), seenNotes()])
+  const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
   const stops = position === null ? null : await settle(getStops(position, RADIUS))
 
   return (
@@ -37,7 +36,7 @@ export default async function Page() {
       <Stack gap="xl">
         <IntroCallout
           id="intro-transport"
-          seen={isSeen(seen, "intro-transport")}
+          seen={await introSeen("intro-transport")}
           title="Avgangene der du er"
           body="Siden finner stasjonene innen en kilometer fra deg og viser hva som går derfra den nærmeste tiden. Den oppdaterer seg selv hvert minutt, og følger med når du flytter deg."
           icon="bus"

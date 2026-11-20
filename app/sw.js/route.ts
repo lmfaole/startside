@@ -27,8 +27,8 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const request = event.request
   const url = new URL(request.url)
-  // A new GitHub username: the pages kept for the one before are for that name, so they go (all but the offline page).
-  if (request.method === "POST" && url.origin === location.origin && url.pathname === "/start/api/brukernavn") {
+  // A new GitHub username or new settings (repos, theme, sections): the pages kept were drawn for the old ones, so they go (all but the offline page).
+  if (request.method === "POST" && url.origin === location.origin && (url.pathname === "/start/api/brukernavn" || url.pathname === "/start/api/innstillinger")) {
     event.waitUntil(caches.open(PAGES).then(async (cache) => Promise.all((await cache.keys()).filter((key) => new URL(key.url).pathname !== OFFLINE).map((key) => cache.delete(key)))))
     return
   }

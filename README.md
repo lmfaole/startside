@@ -15,7 +15,7 @@ Built after the design system's «Pages and navigation» rules (5.3): three leve
 | `/start/github` | GitHub in one place: the counts of what wants you and the pages under it (varsler, pull requests, issues, discussions), which have GitHub as their first breadcrumb |
 | `/start/transport` | The stations nearest to the device (Entur, within a kilometre, nearest first), each with a departure board (`DepartureBoard`): line, destination, platform, delays and cancellations. Only from the device's position («Bruk min posisjon»); without it the page says so. `/start/avganger` redirects here (`next.config.ts`) |
 | `/start/varsler` | What wants a look: **feilende CI** (a default branch whose last commit is red, in the user's public repositories and the watched ones), **nytt fra andre** (replies and reviews on what the user is in, last three days, where somebody else wrote last) and **Dependabot** (its open pull requests in the user's public repositories, with their checks). Only when the username is the token's owner (see below) |
-| `/start/brukernavn` | The GitHub username form by itself, prefilled: where «Bytt» leads. Empty, it forgets the name |
+| `/start/innstillinger` | **Innstillinger**: the GitHub username and the watched repositories, the position, the front page's sections, the theme, the effects and the tilt, installing, and «Vis introen igjen». Where «Bytt» leads (`#github`); `/start/brukernavn` redirects here |
 | `/start/vaer` | The whole forecast: the rest of today, tomorrow, the coming days |
 | `/start/pull-requests/{owner}/{repo}/{n}`, `/issues/…`, `/discussions/…` | The **detail** of one thing: status, description, facts, checks, last comments, and **«Åpne på GitHub» last** |
 
@@ -45,7 +45,7 @@ alerts (`/varsler` and «Følg opp») are shown only when the name is the token'
 
 No answer is shared between names: the edge cache in `lib/upstream.ts` is keyed by the address and the body, which hold the name; the pages are
 rendered per request (`force-dynamic`, `Cache-Control: private, no-store`); and the service worker empties the pages it keeps when the username form
-is sent. The page shows no Spotify data (Spilles nå and Ny musikk are gone; `/musikk` goes to the front page), so the Spotify secrets and the code that read them are gone.
+or the settings are sent. The page shows no Spotify data (Spilles nå and Ny musikk are gone; `/musikk` goes to the front page), so the Spotify secrets and the code that read them are gone.
 
 ## Alerts
 
@@ -101,7 +101,8 @@ it is never read in production. `npm test` covers the parts of the day, their ed
 Issues are a `SectionGroup` too (`lib/issues.ts`), in the order of what is for you: **Tildelt deg** (any public repository),
 **Du er involvert i** (the watched repositories), **Nye uten eier** (made in the last week, nobody on it) and **Nylig aktive**
 (what moved lately). An issue is in the first group it belongs to, at most ten each. The watched repositories are
-`GITHUB_WATCH_REPOS` in `wrangler.jsonc` (comma-separated `owner/name`; `fremtind/jokul` now). Shown in the morning and
+the visitor's, in the cookie `github_repos` (see «First visits and settings»); `GITHUB_WATCH_REPOS` in `wrangler.jsonc` (comma-separated
+`owner/name`; `fremtind/jokul` now) is only the suggestion the wizard and the settings page start from. Without the cookie no repository is watched. Shown in the morning and
 the workday, not in the evening or the weekend. 
 
 **Discussions** (`lib/discussions.ts`, GraphQL only) in the watched repositories, morning and workday: **Du er med i** and
@@ -157,6 +158,31 @@ a short intro on the front page (left out while the username form is shown: the 
 pull request, an issue or a discussion (`intro-front`, `intro-transport`, `intro-weather`, `intro-detail`), each gone for good once dismissed; «Nytt»
 on Transport in the navigation until `TRANSPORT_NEW_UNTIL` (`lib/visitor.ts`) or until Transport has been opened (`new-transport`; the time is the
 server's); and the offer to install the app on the front page (`install`). An empty list says what would be in it and offers one way on.
+
+## First visits and settings
+
+On a first visit any page (not Innstillinger, the API or the offline page) opens over it the design system's **first-run wizard** (`FirstRun` +
+`FirstRunEnhancer`, `components/first-run.tsx`), drawn open by the server until `first-run@1` is in `seen`, so nothing flashes; the intros and the
+install offer wait until it is done. Eight steps: welcome · GitHub username · watched repositories (prefilled with `GITHUB_WATCH_REPOS`, at most 20) ·
+position · the front page's sections · theme · effects and tilt · install. **Innstillinger** (`app/innstillinger/page.tsx`) has the same fields
+(`components/settings-fields.tsx`) in one form, and «Vis introen igjen».
+
+Both post to `/start/api/innstillinger` (`app/api/innstillinger/route.ts`; pure parts in `lib/settings.ts`, tested), a plain form that works without
+JavaScript:
+
+- `validate=<step>` (the wizard with JavaScript, before «Neste») answers `{ "errors": { "<field>": "<melding>" } }` and keeps nothing.
+- Otherwise it keeps what is valid: `prefs` (the design system's `lib/preferences`: `theme`, `effects`, `tilt`, `sections`; not `HttpOnly`, the
+  page's scripts read it), `github_user` (checked as for `/api/brukernavn`) and `github_repos` (each `owner/name` must be a public repository,
+  `GET /repos/{repo}` with `private: false`; `HttpOnly`). It marks the wizard seen and answers 303 to `back` (the wizard sends none, so the page it
+  was opened on, from the referrer), with `?lagret=1` for the settings page.
+- What GitHub did not have goes back at its step: `?forste-gang=<step>#first-run-<step>` from the wizard (it opens there again), `#github` on the
+  settings page, with the errors and what was written in the short-lived cookie `innstillinger-feil` (two minutes, `HttpOnly`). The wizard is not
+  marked seen then.
+- `skip=1` («Hopp over») only marks it seen; `rerun=1` («Vis introen igjen») removes it from `seen` and goes back.
+
+`<html>` gets `htmlAttributes(prefs)` in `app/layout.tsx` (`data-theme`, `data-effects`, `data-tilt`), and the front page shows only the chosen
+sections (`chosenSections` in `lib/plan.ts`; all ticked is stored as none chosen, so new sections show up). With `MOCK_DATA=1` any username and
+repository is taken.
 
 ## How it runs
 

@@ -78,7 +78,7 @@ function useLocate(current: Position | null) {
 
 function UseButton({ busy, onClick }: { busy: boolean; onClick: () => void }) {
   return (
-    <Button variant="outline" size="sm" disabled={busy} onClick={onClick}>
+    <Button type="button" variant="outline" size="sm" disabled={busy} onClick={onClick}>
       <Icon name="place" slot="start" />
       Bruk min posisjon
     </Button>
@@ -102,7 +102,7 @@ export function PositionControl({ current }: { current: Position | null }) {
       {current === null ? (
         <UseButton busy={busy} onClick={use} />
       ) : (
-        <Button variant="outline" size="sm" disabled={busy} onClick={reset}>
+        <Button type="button" variant="outline" size="sm" disabled={busy} onClick={reset}>
           <Icon name="home" slot="start" />
           Bruk standardsted
         </Button>

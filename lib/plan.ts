@@ -28,3 +28,8 @@ export function planFor({ part, weekend }: Pick<Day, "part" | "weekend">): Plan 
   const sections = weekend ? (part === "natt" ? plan.sections : ["weather" as const, "alerts" as const, "pulls" as const]) : plan.sections
   return { greeting: GREETINGS[part], sections, weatherWindow, pulls: weekend ? "mine" : plan.pulls }
 }
+
+/** The plan's sections that the visitor has chosen to see (`prefs`' `sections`; absent is all of them), in the plan's order. */
+export function chosenSections(sections: readonly SectionId[], chosen?: readonly string[]): SectionId[] {
+  return chosen === undefined ? [...sections] : sections.filter((id) => chosen.includes(id))
+}

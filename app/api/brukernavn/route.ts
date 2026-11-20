@@ -1,19 +1,5 @@
-import { env, mocking } from "../../../lib/env"
-import { upstream } from "../../../lib/upstream"
+import { githubLogin } from "../../../lib/github-check"
 import { parseLogin, safeBack, userCookie, withError } from "../../../lib/username"
-
-/** The login as GitHub writes it, or `null` where there is no such user: asked with the server's token (through the relay, which adds it). */
-async function githubLogin(login: string): Promise<string | null> {
-  if (mocking()) return login
-  const token = env("GITHUB_TOKEN")
-  const response = await upstream(`https://api.github.com/users/${login}`, {
-    headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), Accept: "application/vnd.github+json", "User-Agent": "startside", "X-GitHub-Api-Version": "2022-11-28" },
-    revalidate: 3600,
-  })
-  if (!response.ok) return null
-  const user = (await response.json()) as { login?: unknown; type?: unknown }
-  return user.type === "User" ? parseLogin(user.login) : null
-}
 
 const redirect = (location: string, cookie?: string): Response =>
   new Response(null, { status: 303, headers: { Location: location, "Cache-Control": "no-store", ...(cookie === undefined ? {} : { "Set-Cookie": cookie }) } })

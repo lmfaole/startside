@@ -4,21 +4,19 @@ import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Markdown } from "@lmfaole/designsystem/components/markdown"
 import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { IntroCallout } from "@lmfaole/designsystem/components/intro-callout"
-import { isSeen } from "@lmfaole/designsystem/lib/onboarding"
 import { Text } from "@lmfaole/designsystem/components/text"
 import { Timeline, type TimelineEvent } from "@lmfaole/designsystem/components/timeline"
 
 import type { Body } from "../lib/detail"
 import type { DurationSpan, GitHubEvent } from "../lib/timeline"
-import { SEEN_PATH, seenNotes } from "../lib/visitor"
+import { introSeen, SEEN_PATH } from "../lib/visitor"
 
 /** The first time a pull request, an issue or a discussion is opened: what the parts of the page say. One for all three. */
 export async function DetailIntro() {
-  const seen = await seenNotes()
   return (
     <IntroCallout
       id="intro-detail"
-      seen={isSeen(seen, "intro-detail")}
+      seen={await introSeen("intro-detail")}
       title="Hele historien på én side"
       body="Stegene øverst viser hvor saken står og hva som gjenstår. «Tid i hver tilstand» viser hvor lenge den har ventet på hva, og historikken lister alt som har skjedd, det nyeste først."
       icon="history"
