@@ -3,7 +3,6 @@ import { FirstRunEnhancer } from "@lmfaole/designsystem/components/first-run-enh
 import { InstallPrompt } from "@lmfaole/designsystem/components/install-prompt"
 import { Text } from "@lmfaole/designsystem/components/text"
 import { cookies } from "next/headers"
-import { Suspense } from "react"
 
 import { parsePosition, POSITION_COOKIE } from "../lib/position"
 import { FIRST_RUN, SETTINGS_ENDPOINT } from "../lib/settings"
@@ -19,9 +18,8 @@ export async function FirstRunWizard() {
   if (!(await firstRunOpen())) return null
   const [state, position] = await Promise.all([settingsState(), cookies().then((jar) => parsePosition(jar.get(POSITION_COOKIE)?.value))])
   const fields = settingsFields({ ...state, position })
-  // The design system's error <template> does not hydrate as it was drawn; its own boundary keeps React's redraw to the wizard.
   return (
-    <Suspense>
+    <>
       <FirstRun
         id={FIRST_RUN}
         open
@@ -60,6 +58,6 @@ export async function FirstRunWizard() {
         ]}
       />
       <FirstRunEnhancer id={FIRST_RUN} />
-    </Suspense>
+    </>
   )
 }

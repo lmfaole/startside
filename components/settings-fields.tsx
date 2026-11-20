@@ -68,39 +68,33 @@ export function settingsFields({ user, repos, prefs, problems, position }: Setti
         legend="Tema"
         value={prefs.theme}
         options={[
-          { value: "system", label: "Som enheten", description: "Lyst om dagen og mørkt om kvelden, som enheten er stilt inn.", icon: "settings", preview: <ThemeSample theme="system" /> },
-          { value: "light", label: "Lyst", icon: "sun", preview: <ThemeSample theme="light" /> },
-          { value: "dark", label: "Mørkt", icon: "moon", preview: <ThemeSample theme="dark" /> },
+          { value: "system", label: "Som enheten", description: "Lyst om dagen og mørkt om kvelden, som enheten er stilt inn.", icon: "settings", preview: <ThemeSample theme="system" size="lg" /> },
+          { value: "light", label: "Lyst", icon: "sun", preview: <ThemeSample theme="light" size="lg" /> },
+          { value: "dark", label: "Mørkt", icon: "moon", preview: <ThemeSample theme="dark" size="lg" /> },
         ]}
       />
     ),
     effects: (
-      <>
-        <ChoiceCards
-          name="effects"
-          legend="Effekter"
-          value={prefs.effects}
-          options={[
-            { value: "on", label: "På", description: "Bakgrunnen og bildene tegnes i 3D og følger lyset." },
-            { value: "off", label: "Av", description: "Flatt og stille. Bruker mindre strøm." },
-          ]}
-        />
-        <EffectsPreview name="effects" value={prefs.effects} />
-      </>
+      <ChoiceCards
+        name="effects"
+        legend="Effekter"
+        value={prefs.effects}
+        options={[
+          { value: "on", label: "Med effekter", description: "Bakgrunnen og bildene tegnes i 3D og følger lyset.", preview: <EffectsPreview mode="on" /> },
+          { value: "off", label: "Uten effekter", description: "Flatt og stille. Bruker mindre strøm.", preview: <EffectsPreview mode="off" /> },
+        ]}
+      />
     ),
     tilt: (
-      <>
-        <ChoiceCards
-          name="tilt"
-          legend="Lyset følger telefonen"
-          value={prefs.tilt}
-          options={[
-            { value: "on", label: "På", description: "Vipp telefonen, så flytter lyset seg." },
-            { value: "off", label: "Av", description: "Lyset står stille." },
-          ]}
-        />
-        <TiltPreview name="tilt" />
-      </>
+      <ChoiceCards
+        name="tilt"
+        legend="Lyset"
+        value={prefs.tilt}
+        options={[
+          { value: "on", label: "Følg telefonen", description: "Vipp telefonen, så flytter lyset seg. Telefonen kan spørre om lov først.", preview: <TiltPreview mode="follow" /> },
+          { value: "off", label: "Fast lys", description: "Lyset står stille.", preview: <TiltPreview mode="still" /> },
+        ]}
+      />
     ),
   }
 }
