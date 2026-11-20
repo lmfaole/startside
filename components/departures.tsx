@@ -1,6 +1,8 @@
+import { DepartureBoard } from "@lmfaole/designsystem/components/departure-board"
 import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
-import { Stack } from "@lmfaole/designsystem/components/layout"
+import { Grid, Stack } from "@lmfaole/designsystem/components/layout"
+import { LineBadge } from "@lmfaole/designsystem/components/line-badge"
 import { PageSection, SectionGroup, SubSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { Text } from "@lmfaole/designsystem/components/text"
@@ -9,13 +11,13 @@ import type { IconName } from "@lmfaole/designsystem/lib/icons"
 import { clock } from "../lib/format"
 import type { Around } from "../lib/getaround"
 import { withBase } from "../lib/links"
-import { compare, leaveIn, MODE_NAME, minutesUntil, nextDepartures, walkMinutesOver, type Departure, type Mode, type Option, type Stop } from "../lib/transit"
+import { compare, leaveIn, minutesUntil, nextDepartures, toBoard, walkMinutesOver, type Departure, type Mode, type Option, type Stop } from "../lib/transit"
 
-const MODE_ICON = { walk: "walk", bus: "bus", tram: "tram", metro: "metro", rail: "route", ferry: "ferry", other: "place" } as const satisfies Record<Mode, IconName>
+const MODE_ICON = { walk: "walk", bus: "bus", tram: "tram", metro: "metro", rail: "rail", ferry: "ferry", other: "place" } as const satisfies Record<Mode, IconName>
 
-/** How many a digest shows: the next departures, and the trips compared with walking. */
+/** How many a digest shows: the next departures, and the trips compared with walking; the full page shows rows (a line to one destination) per stop. */
 const DIGEST = { departures: 4, options: 2 } as const
-const FULL = { departures: 12, options: 4 } as const
+const FULL = { departures: 5, options: 4 } as const
 
 const when = (time: string, instant: Date): string => {
   const left = minutesUntil(time, instant)
@@ -26,13 +28,10 @@ function departureRow(departure: Departure, instant: Date): RowData {
   const leave = leaveIn(departure, instant)
   return {
     key: `${departure.stop}-${departure.line}-${departure.time}`,
-    icon: MODE_ICON[departure.mode],
+    lead: <LineBadge line={departure.line} mode={toBoard(departure).mode} />,
     body: (
       <Stack gap="xs">
-        <Text as="span" size="sm">
-          <Text as="span" size="sm" weight="medium">
-            {MODE_NAME[departure.mode]} {departure.line}
-          </Text>{" "}
+        <Text as="span" size="sm" weight="medium">
           {departure.destination}
         </Text>
         <Text size="xs" tone="muted">
@@ -81,7 +80,9 @@ export function DeparturesSection({ data, mode, instant }: { data: Around; mode:
       ? []
       : [{ key: "walk", icon: "walk", body: <Text as="span" size="sm" weight="medium">Gå hele veien</Text>, trailing: `${comparison.walkMinutes} min` }]
 
-  const next = data.stops.ok ? <Departures stops={data.stops.value} instant={instant} limit={size.departures} /> : <ErrorMessage error={data.stops.error}>Kunne ikke hente avganger fra Entur</ErrorMessage>
+  const next = !data.stops.ok ? (
+    <ErrorMessage error={data.stops.error}>Kunne ikke hente avganger fra Entur</ErrorMessage>
+  ) : mode === "full" ? <Boards stops={data.stops.value} instant={instant} limit={size.departures} headingLevel={trips === null ? 3 : 4} /> : <Departures stops={data.stops.value} instant={instant} limit={size.departures} />
   if (trips === null) {
     return (
       <PageSection id="departures" title={title} icon="bus" {...(more === undefined ? {} : { more })}>
@@ -96,10 +97,12 @@ export function DeparturesSection({ data, mode, instant }: { data: Around; mode:
         {comparison === null ? (
           !trips.ok ? <ErrorMessage error={trips.error}>Kunne ikke hente reiseforslag fra Entur</ErrorMessage> : null
         ) : (
-          <Rows lead="icon" rows={[...walk, ...comparison.options.map(optionRow)]} columns={{ name: "Reisemåte", value: "Tid og ankomst" }} />
+          <Stack width="reading">
+            <Rows lead="icon" rows={[...walk, ...comparison.options.map(optionRow)]} columns={{ name: "Reisemåte", value: "Tid og ankomst" }} />
+          </Stack>
         )}
       </SubSection>
-      <SubSection id="departures-next" title="Neste avganger" icon="bus">
+      <SubSection id="departures-next" title={mode === "full" ? "Avganger fra stoppene" : "Neste avganger"} icon="bus">
         {next}
       </SubSection>
     </SectionGroup>
@@ -111,5 +114,20 @@ function Departures({ stops, instant, limit }: { stops: Stop[]; instant: Date; l
   if (departures.length === 0) {
     return <EmptyState title="Ingen avganger du rekker" description="Ingenting går de neste halvannen timen som du rekker å gå til." />
   }
-  return <Rows lead="icon" rows={departures.map((departure) => departureRow(departure, instant))} columns={{ name: "Avgang", value: "Om" }} />
+  return <Rows lead="poster" rows={departures.map((departure) => departureRow(departure, instant))} columns={{ name: "Avgang", value: "Om" }} />
+}
+
+/** The full page: a departure board for each stop around the reader with anything leaving from it, the nearest first. */
+function Boards({ stops, instant, limit, headingLevel }: { stops: Stop[]; instant: Date; limit: number; headingLevel: 3 | 4 }) {
+  const shown = stops.filter((stop) => stop.departures.length > 0).toSorted((a, b) => a.distance - b.distance)
+  if (shown.length === 0) {
+    return <EmptyState title="Ingen avganger" description="Ingenting går fra stoppene rundt deg den nærmeste tiden." />
+  }
+  return (
+    <Grid columns="charts">
+      {shown.map((stop) => (
+        <DepartureBoard key={stop.id} stop={stop.name} now={instant.toISOString()} departures={stop.departures.map((departure) => toBoard(departure))} walkMinutes={walkMinutesOver(stop.distance)} distance={stop.distance} headingLevel={headingLevel} limit={limit} />
+      ))}
+    </Grid>
+  )
 }

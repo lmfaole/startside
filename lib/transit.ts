@@ -1,3 +1,5 @@
+import type { BoardDeparture } from "@lmfaole/designsystem/lib/departures"
+
 export type Mode = "walk" | "bus" | "tram" | "metro" | "rail" | "ferry" | "other"
 
 export interface Departure {
@@ -61,25 +63,6 @@ export function modeOf(value: string | null | undefined): Mode {
 }
 
 export const MODE_NAME: Record<Mode, string> = { walk: "Gå", bus: "Buss", tram: "Trikk", metro: "T-bane", rail: "Tog", ferry: "Båt", other: "Annet" }
-
-/** The modes of a departure board: no walking there. */
-export type TransitMode = "bus" | "tram" | "metro" | "rail" | "ferry" | "other"
-
-/** A departure the way the design system's departure board takes it (to be replaced by its own type). */
-export interface BoardDeparture {
-  key: string
-  line: string
-  mode: TransitMode
-  destination: string
-  /** ISO time of the expected departure. */
-  expected: string
-  /** ISO time in the timetable. */
-  aimed?: string
-  realtime: boolean
-  cancelled?: boolean
-  notice?: string
-  quay?: string
-}
 
 /** A departure for the departure board, keyed by its stop, line, destination and time unless a key is given. */
 export function toBoard(departure: Departure, key = `${departure.stop}-${departure.line}-${departure.destination}-${departure.aimed}`): BoardDeparture {

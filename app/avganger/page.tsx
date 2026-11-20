@@ -1,4 +1,5 @@
 import { Banner } from "@lmfaole/designsystem/components/banner"
+import { Freshness } from "@lmfaole/designsystem/components/freshness"
 import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
@@ -19,6 +20,9 @@ import { journeyFor } from "../../lib/places"
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Avganger · Startside" }
 
+/** The page renews itself every minute (components/shell.tsx): after three missed renewals the departures may have changed. */
+const STALE_AFTER = 180
+
 /** Getting around: the way to where the reader is going compared with walking, and the next departures from the stops around them. */
 export default async function Page() {
   const instant = now()
@@ -27,7 +31,7 @@ export default async function Page() {
   const around = journey === null ? null : await getAround(journey)
 
   return (
-    <Shell current="departures" title="Avganger" lead="Buss, trikk og T-bane fra der du er, mot gange." actions={<Stack gap="sm"><PositionControl current={position} /><HomeControl isSet={(await cookies()).has(HOME_COOKIE)} /></Stack>}>
+    <Shell current="departures" width="wide" title="Avganger" lead={<>Buss, trikk, T-bane, tog og båt fra der du er, mot gange · <Freshness at={instant.toISOString()} now={instant.toISOString()} staleAfterSeconds={STALE_AFTER} /></>} actions={<Stack gap="sm"><PositionControl current={position} /><HomeControl isSet={(await cookies()).has(HOME_COOKIE)} /></Stack>}>
       <Stack gap="xl">
         {around === null ? (
           <PageSection id="departures" title="Avganger" icon="bus">
