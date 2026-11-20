@@ -3,7 +3,8 @@ import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows } from "@lmfaole/designsystem/components/rows"
-import { Text } from "@lmfaole/designsystem/components/text"
+import { Heading, Text } from "@lmfaole/designsystem/components/text"
+import { WeatherStage } from "@lmfaole/designsystem/components/weather-stage"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { cookies } from "next/headers"
 
@@ -28,6 +29,8 @@ export default async function Page() {
   const forecast = await settle(getForecast(position))
   const columns = { name: "Tid og vær", value: "Temperatur" }
 
+  const current = forecast.ok ? forecast.value.timeseries[0] : undefined
+  const symbol = current?.data.next_1_hours?.summary.symbol_code ?? current?.data.next_6_hours?.summary.symbol_code
   const today = forecast.ok ? hourRows(forecast.value, "today", day, instant) : []
 
   return (
@@ -37,6 +40,19 @@ export default async function Page() {
           <ErrorMessage error={forecast.error}>Kunne ikke hente været</ErrorMessage>
         ) : (
           <>
+          {current && symbol ? (
+            <WeatherStage symbol={symbol}>
+              <Stack gap="xs">
+                <Text size="sm" weight="medium">
+                  {forecast.value.place} · nå
+                </Text>
+                <Heading level={2}>{degrees(current.data.instant.details.air_temperature)}</Heading>
+                <Text size="sm">
+                  {describeSymbol(symbol)}, vind {number.format(current.data.instant.details.wind_speed)} m/s
+                </Text>
+              </Stack>
+            </WeatherStage>
+          ) : null}
           <PageSection id="today" title="Resten av i dag" icon="weather">
             {today.length === 0 ? <EmptyState title="Ingen flere timer i dag" /> : <Rows lead="icon" rows={today} columns={columns} />}
           </PageSection>
