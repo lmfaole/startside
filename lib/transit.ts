@@ -1,8 +1,15 @@
-export type Mode = "walk" | "bus" | "tram" | "metro" | "other"
+export type Mode = "walk" | "bus" | "tram" | "metro" | "rail" | "ferry" | "other"
 
 export interface Departure {
   /** ISO time of the expected departure. */
   time: string
+  /** ISO time of the departure in the timetable. */
+  aimed: string
+  cancelled: boolean
+  /** The platform or bay at the stop (`A`, `2`), when it has one. */
+  quay: string | null
+  /** A deviation for the departure (Entur's situation), in Norwegian when there is one. */
+  notice: string | null
   line: string
   destination: string
   mode: Mode
@@ -36,11 +43,66 @@ export interface Trip {
 }
 
 export function modeOf(value: string | null | undefined): Mode {
-  if (value === "foot") return "walk"
-  return value === "bus" || value === "tram" || value === "metro" ? value : "other"
+  switch (value) {
+    case "foot":
+      return "walk"
+    case "bus":
+    case "coach":
+      return "bus"
+    case "tram":
+    case "metro":
+    case "rail":
+      return value
+    case "water":
+      return "ferry"
+    default:
+      return "other"
+  }
 }
 
-export const MODE_NAME: Record<Mode, string> = { walk: "Gå", bus: "Buss", tram: "Trikk", metro: "T-bane", other: "Tog" }
+export const MODE_NAME: Record<Mode, string> = { walk: "Gå", bus: "Buss", tram: "Trikk", metro: "T-bane", rail: "Tog", ferry: "Båt", other: "Annet" }
+
+/** The modes of a departure board: no walking there. */
+export type TransitMode = "bus" | "tram" | "metro" | "rail" | "ferry" | "other"
+
+/** A departure the way the design system's departure board takes it (to be replaced by its own type). */
+export interface BoardDeparture {
+  key: string
+  line: string
+  mode: TransitMode
+  destination: string
+  /** ISO time of the expected departure. */
+  expected: string
+  /** ISO time in the timetable. */
+  aimed?: string
+  realtime: boolean
+  cancelled?: boolean
+  notice?: string
+  quay?: string
+}
+
+/** A departure for the departure board, keyed by its stop, line, destination and time unless a key is given. */
+export function toBoard(departure: Departure, key = `${departure.stop}-${departure.line}-${departure.destination}-${departure.aimed}`): BoardDeparture {
+  return {
+    key,
+    line: departure.line,
+    mode: departure.mode === "walk" ? "other" : departure.mode,
+    destination: departure.destination,
+    expected: departure.time,
+    aimed: departure.aimed,
+    realtime: departure.realtime,
+    ...(departure.cancelled ? { cancelled: true } : {}),
+    ...(departure.notice === null ? {} : { notice: departure.notice }),
+    ...(departure.quay === null ? {} : { quay: departure.quay }),
+  }
+}
+
+/** The first deviation of a departure (Entur's situations), in Norwegian when it is written in Norwegian, else in its first language. */
+export function noticeOf(situations: readonly { summary: readonly { value: string; language: string | null }[] }[]): string | null {
+  const summaries = situations.flatMap((situation) => situation.summary).filter((summary) => summary.value.trim() !== "")
+  const norwegian = summaries.find((summary) => summary.language === "nob" || summary.language === "no" || summary.language === "nb")
+  return (norwegian ?? summaries[0])?.value.trim() ?? null
+}
 
 /** Whole minutes from `instant` to `time`, never below zero. */
 export function minutesUntil(time: string, instant: Date): number {
@@ -61,11 +123,11 @@ export function leaveIn(departure: Departure, instant: Date): number {
   return Math.round((new Date(departure.time).getTime() - instant.getTime()) / 60_000) - walkMinutesOver(departure.distance)
 }
 
-/** The departures of all the stops that can still be caught on foot, soonest first, with a limit. */
+/** The departures of all the stops that can still be caught on foot and are not cancelled, soonest first, with a limit. */
 export function nextDepartures(stops: readonly Stop[], instant: Date, limit: number): Departure[] {
   return stops
     .flatMap((stop) => stop.departures)
-    .filter((departure) => leaveIn(departure, instant) >= 0)
+    .filter((departure) => !departure.cancelled && leaveIn(departure, instant) >= 0)
     .sort((a, b) => a.time.localeCompare(b.time))
     .slice(0, limit)
 }

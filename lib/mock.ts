@@ -219,12 +219,62 @@ function githubAnswer(target: URL, init: MockInit): Response {
 
 const near = (lat: number, lon: number, spot: { lat: number; lon: number }): number => (lat - spot.lat) ** 2 + (lon - spot.lon) ** 2
 
+interface Call {
+  expectedDepartureTime: string
+  aimedDepartureTime: string
+  cancellation: boolean
+  realtime: boolean
+  quay: { publicCode: string | null } | null
+  situations: { summary: { value: string; language: string }[] }[]
+  destinationDisplay: { frontText: string } | null
+  serviceJourney: { line: { publicCode: string | null; transportMode: string | null } }
+}
+interface Nearest { nearest: { edges: { node: { distance: number; place: { id?: string; name?: string; estimatedCalls?: Call[] } } }[] } }
+
+const MINUTE = 60_000
+const at = (now: number, minutes: number): string => new Date(now + minutes * MINUTE).toISOString()
+const notice = (value: string) => [{ summary: [{ value: `${value} `, language: "en" }, { value, language: "no" }] }]
+
+function call(now: number, minutes: number, line: string, mode: string, destination: string, quay: string, late = 0): Call {
+  return { expectedDepartureTime: at(now, minutes + late), aimedDepartureTime: at(now, minutes), cancellation: false, realtime: true, quay: { publicCode: quay }, situations: [], destinationDisplay: { frontText: destination }, serviceJourney: { line: { publicCode: line, transportMode: mode } } }
+}
+
+/**
+ * What the departure board has to show that a real capture seldom has: the captured answer near home with, at the nearest stop, a departure 4 minutes late, a
+ * cancelled one with a notice, one only by the timetable and the platforms; and a made-up stop at the edge of the search with metro and trains, several of each
+ * line within the hour, the first ones gone before the reader could walk there.
+ */
+export function enturHome(captured: Nearest, now: number): Nearest {
+  const edges = captured.nearest.edges.map((edge, index) => {
+    const calls = edge.node.place.estimatedCalls
+    if (index !== 0 || calls === undefined) return edge
+    const estimatedCalls = calls.map((original, position): Call => {
+      const dressed = { ...original, quay: { publicCode: original.quay?.publicCode || (position % 2 === 0 ? "A" : "B") } }
+      if (position === 1) return { ...dressed, realtime: true, cancellation: false, expectedDepartureTime: new Date(Date.parse(original.aimedDepartureTime) + 4 * MINUTE).toISOString() }
+      if (position === 2) return { ...dressed, cancellation: true, situations: notice("Innstilt på grunn av mangel på førere.") }
+      if (position === 3) return { ...dressed, realtime: false, expectedDepartureTime: original.aimedDepartureTime }
+      return dressed
+    })
+    estimatedCalls.sort((a, b) => a.expectedDepartureTime.localeCompare(b.expectedDepartureTime))
+    return { node: { ...edge.node, place: { ...edge.node.place, estimatedCalls } } }
+  })
+  const station = [
+    ...[2, 9, 17, 24, 32, 39, 47, 54].map((minutes) => call(now, minutes, "5", "metro", "Vestli", "1")),
+    ...[4, 19, 34, 49].map((minutes) => call(now, minutes, "L1", "rail", "Spikkestad", "4")),
+    call(now, 12, "R14", "rail", "Kongsberg", "8", 4),
+    { ...call(now, 42, "R14", "rail", "Kongsberg", "8"), realtime: false },
+    { ...call(now, 27, "RE11", "rail", "Skien", "9"), cancellation: true, situations: notice("Toget er innstilt på grunn av sporarbeid. Buss for tog fra Oslo S.") },
+  ].sort((a, b) => a.expectedDepartureTime.localeCompare(b.expectedDepartureTime))
+  edges.push({ node: { distance: 590, place: { id: "MOCK:StopPlace:grunerlokka-stasjon", name: "Grünerløkka stasjon", estimatedCalls: station } } })
+  return { nearest: { edges } }
+}
+
 function entur(query: string): Response {
   const moved = shift(enturData, Date.now() - Date.parse(enturData.capturedAt))
   const { home, work } = moved.spots
   if (query.includes("nearest(")) {
     const [, lat, lon] = /latitude:([\d.-]+),longitude:([\d.-]+)/.exec(query) ?? []
-    return reply({ data: near(Number(lat), Number(lon), work) < near(Number(lat), Number(lon), home) ? moved.nearest.work : moved.nearest.home })
+    return reply({ data: near(Number(lat), Number(lon), work) < near(Number(lat), Number(lon), home) ? moved.nearest.work : enturHome(moved.nearest.home as Nearest, Date.now()) })
   }
   const [, lat, lon] = /from:\{coordinates:\{latitude:([\d.-]+),longitude:([\d.-]+)/.exec(query) ?? []
   return reply({ data: near(Number(lat), Number(lon), work) < near(Number(lat), Number(lon), home) ? moved.trips.workHome : moved.trips.homeWork })

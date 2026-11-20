@@ -62,6 +62,20 @@ test("the forecast starts no later than now and runs on; Entur's departures and 
   assert.ok(trips.data.transit.tripPatterns.length > 0)
 })
 
+test("the departures near home show a delay, a cancellation with a notice, a timetable-only departure, platforms and trains", async () => {
+  const near = (await mockFetch("https://api.entur.io/journey-planner/v3/graphql", { json: { query: "{ nearest(latitude:59.9226,longitude:10.7586,maximumDistance:600" } }).json()) as { data: { nearest: { edges: { node: { distance: number; place: { estimatedCalls: { expectedDepartureTime: string; aimedDepartureTime: string; cancellation: boolean; realtime: boolean; quay: { publicCode: string } | null; situations: unknown[]; serviceJourney: { line: { publicCode: string; transportMode: string } } }[] } } }[] } } }
+  const calls = near.data.nearest.edges.flatMap((edge) => edge.node.place.estimatedCalls)
+  assert.ok(calls.some((c) => Date.parse(c.expectedDepartureTime) - Date.parse(c.aimedDepartureTime) === 4 * 60_000))
+  assert.ok(calls.some((c) => c.cancellation && c.situations.length > 0))
+  assert.ok(calls.some((c) => !c.realtime))
+  assert.ok(calls.some((c) => c.quay?.publicCode))
+  const modes = new Set(calls.map((c) => c.serviceJourney.line.transportMode))
+  for (const mode of ["tram", "metro", "rail"]) assert.ok(modes.has(mode), mode)
+  const far = near.data.nearest.edges.at(-1)!.node
+  assert.ok(far.place.estimatedCalls.filter((c) => c.serviceJourney.line.publicCode === "5").length > 3)
+  assert.ok(Date.parse(far.place.estimatedCalls[0]!.expectedDepartureTime) - Date.now() < (far.distance / 60) * 60_000)
+})
+
 test("Nominatim answers with a place, and an unknown host is a 404", async () => {
   const place = (await mockFetch("https://nominatim.openstreetmap.org/reverse?lat=59.92&lon=10.76").json()) as { address: { city: string } }
   assert.equal(place.address.city, "Oslo")

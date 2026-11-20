@@ -11,7 +11,7 @@ import type { Around } from "../lib/getaround"
 import { withBase } from "../lib/links"
 import { compare, leaveIn, MODE_NAME, minutesUntil, nextDepartures, walkMinutesOver, type Departure, type Mode, type Option, type Stop } from "../lib/transit"
 
-const MODE_ICON = { walk: "walk", bus: "bus", tram: "tram", metro: "metro", other: "place" } as const satisfies Record<Mode, IconName>
+const MODE_ICON = { walk: "walk", bus: "bus", tram: "tram", metro: "metro", rail: "route", ferry: "ferry", other: "place" } as const satisfies Record<Mode, IconName>
 
 /** How many a digest shows: the next departures, and the trips compared with walking. */
 const DIGEST = { departures: 4, options: 2 } as const

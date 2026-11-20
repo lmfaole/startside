@@ -1,6 +1,6 @@
 import { upstream } from "./upstream"
 import type { Spot } from "./places"
-import { modeOf, type Departure, type Leg, type Stop, type Trip } from "./transit"
+import { modeOf, noticeOf, type Departure, type Leg, type Stop, type Trip } from "./transit"
 
 const JOURNEY_PLANNER = "https://api.entur.io/journey-planner/v3/graphql"
 const HEADERS = { "ET-Client-Name": "lmfaole-startside" }
@@ -13,20 +13,48 @@ async function ask<T>(query: string, revalidate: number): Promise<T> {
   return body.data
 }
 
+interface Call {
+  expectedDepartureTime: string
+  aimedDepartureTime: string
+  cancellation: boolean
+  realtime: boolean
+  quay: { publicCode: string | null } | null
+  situations: { summary: { value: string; language: string | null }[] }[]
+  destinationDisplay: { frontText: string } | null
+  serviceJourney: { line: { publicCode: string | null; transportMode: string | null } }
+}
+
 interface NearestResult {
-  nearest: { edges: { node: { distance: number; place: { id?: string; name?: string; estimatedCalls?: { expectedDepartureTime: string; realtime: boolean; destinationDisplay: { frontText: string } | null; serviceJourney: { line: { publicCode: string | null; transportMode: string | null } } }[] } } }[] }
+  nearest: { edges: { node: { distance: number; place: { id?: string; name?: string; estimatedCalls?: Call[] } } }[] }
+}
+
+function departureOf(call: Call, stop: string, distance: number): Departure {
+  const quay = call.quay?.publicCode?.trim() ?? ""
+  return {
+    time: call.expectedDepartureTime,
+    aimed: call.aimedDepartureTime,
+    cancelled: call.cancellation,
+    quay: quay === "" ? null : quay,
+    notice: noticeOf(call.situations),
+    line: call.serviceJourney.line.publicCode ?? "",
+    destination: call.destinationDisplay?.frontText ?? "",
+    mode: modeOf(call.serviceJourney.line.transportMode),
+    realtime: call.realtime,
+    stop,
+    distance,
+  }
 }
 
 /** The stops around a place with their next departures (Entur's Journey Planner), the nearest first. Stops with nothing leaving are left out. */
 export async function getStops(spot: Spot, radius = 600): Promise<Stop[]> {
   const data = await ask<NearestResult>(
-    `{ nearest(latitude:${spot.lat},longitude:${spot.lon},maximumDistance:${radius},maximumResults:8,filterByPlaceTypes:[stopPlace]){ edges{ node{ distance place{ ... on StopPlace{ id name estimatedCalls(numberOfDepartures:12,timeRange:3600){ expectedDepartureTime realtime destinationDisplay{frontText} serviceJourney{ line{publicCode transportMode} } } } } } } } }`,
+    `{ nearest(latitude:${spot.lat},longitude:${spot.lon},maximumDistance:${radius},maximumResults:8,filterByPlaceTypes:[stopPlace]){ edges{ node{ distance place{ ... on StopPlace{ id name estimatedCalls(numberOfDepartures:20,timeRange:3600){ expectedDepartureTime aimedDepartureTime cancellation realtime quay{publicCode} situations{ summary{value language} } destinationDisplay{frontText} serviceJourney{ line{publicCode transportMode} } } } } } } } }`,
     30,
   )
   return data.nearest.edges.flatMap(({ node }): Stop[] => {
     const { id, name, estimatedCalls } = node.place
     if (id === undefined || name === undefined || estimatedCalls === undefined || estimatedCalls.length === 0) return []
-    const departures = estimatedCalls.map((call): Departure => ({ time: call.expectedDepartureTime, line: call.serviceJourney.line.publicCode ?? "", destination: call.destinationDisplay?.frontText ?? "", mode: modeOf(call.serviceJourney.line.transportMode), realtime: call.realtime, stop: name, distance: node.distance }))
+    const departures = estimatedCalls.map((call) => departureOf(call, name, node.distance))
     return [{ id, name, distance: node.distance, departures }]
   })
 }

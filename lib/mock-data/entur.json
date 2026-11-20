@@ -1,5 +1,5 @@
 {
- "capturedAt": "2026-11-20T16:59:04.076Z",
+ "capturedAt": "2026-11-20T19:05:37.091Z",
  "spots": {
   "home": {
    "lat": 59.9226,
@@ -22,47 +22,33 @@
         "name": "Olaf Ryes plass",
         "estimatedCalls": [
          {
-          "expectedDepartureTime": "2026-11-20T17:59:47+01:00",
+          "expectedDepartureTime": "2026-11-20T20:05:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:02:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
-           "frontText": "Gaustadalléen"
+           "frontText": "Majorstuen"
           },
           "serviceJourney": {
            "line": {
-            "publicCode": "18",
+            "publicCode": "15",
             "transportMode": "tram"
            }
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:02:09+01:00",
+          "expectedDepartureTime": "2026-11-20T20:05:57+01:00",
+          "aimedDepartureTime": "2026-11-20T20:02:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
+          "quay": {
+           "publicCode": ""
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:59+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:04:25+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Storo-Grefsen st."
           },
@@ -74,10 +60,16 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:05:14+01:00",
+          "expectedDepartureTime": "2026-11-20T20:09:44+01:00",
+          "aimedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
-           "frontText": "Majorstuen"
+           "frontText": "Kjelsås"
           },
           "serviceJourney": {
            "line": {
@@ -87,47 +79,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:05:40+01:00",
+          "expectedDepartureTime": "2026-11-20T20:11:17+01:00",
+          "aimedDepartureTime": "2026-11-20T20:07:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kjelsås"
+          "quay": {
+           "publicCode": ""
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "12",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:06:19+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:07:15+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Stortorvet"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:07:56+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Majorstuen"
           },
@@ -139,8 +98,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:09:05+01:00",
+          "expectedDepartureTime": "2026-11-20T20:12:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Gaustadalléen"
           },
@@ -152,10 +117,16 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:10:00+01:00",
-          "realtime": false,
+          "expectedDepartureTime": "2026-11-20T20:13:01+01:00",
+          "aimedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
-           "frontText": "Disen"
+           "frontText": "Storo-Grefsen st."
           },
           "serviceJourney": {
            "line": {
@@ -165,14 +136,267 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:11:37+01:00",
+          "expectedDepartureTime": "2026-11-20T20:16:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:15:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:18:16+01:00",
+          "aimedDepartureTime": "2026-11-20T20:17:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Majorstuen"
           },
           "serviceJourney": {
            "line": {
             "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:19:24+01:00",
+          "aimedDepartureTime": "2026-11-20T20:19:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:22:53+01:00",
+          "aimedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:25:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:29:45+01:00",
+          "aimedDepartureTime": "2026-11-20T20:29:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:30:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:30:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:32:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:32:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:34:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:34:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:37:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:37:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:39:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:39:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:42:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:42:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
             "transportMode": "tram"
            }
           }
@@ -183,105 +407,20 @@
      },
      {
       "node": {
-       "distance": 222.1776476673264,
+       "distance": 222.17855111314813,
        "place": {
         "id": "NSR:StopPlace:58259",
         "name": "Schous plass",
         "estimatedCalls": [
          {
-          "expectedDepartureTime": "2026-11-20T17:59:26+01:00",
+          "expectedDepartureTime": "2026-11-20T20:06:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:03:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Majorstuen"
+          "quay": {
+           "publicCode": ""
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "12",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:00:47+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Gaustadalléen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:01:09+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:02:59+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:25+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Storo-Grefsen st."
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:04:40+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kjelsås"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "12",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:05:19+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:06:14+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Majorstuen"
           },
@@ -293,10 +432,35 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:08:15+01:00",
+          "expectedDepartureTime": "2026-11-20T20:08:44+01:00",
+          "aimedDepartureTime": "2026-11-20T20:08:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
-           "frontText": "Stortorvet"
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:12:01+01:00",
+          "aimedDepartureTime": "2026-11-20T20:11:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
           },
           "serviceJourney": {
            "line": {
@@ -306,8 +470,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:08:56+01:00",
+          "expectedDepartureTime": "2026-11-20T20:12:17+01:00",
+          "aimedDepartureTime": "2026-11-20T20:08:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Majorstuen"
           },
@@ -319,10 +489,16 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:09:00+01:00",
-          "realtime": false,
+          "expectedDepartureTime": "2026-11-20T20:13:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:13:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
-           "frontText": "Disen"
+           "frontText": "Gaustadalléen"
           },
           "serviceJourney": {
            "line": {
@@ -332,14 +508,286 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:10:05+01:00",
+          "expectedDepartureTime": "2026-11-20T20:15:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:14:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:18:24+01:00",
+          "aimedDepartureTime": "2026-11-20T20:18:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:19:16+01:00",
+          "aimedDepartureTime": "2026-11-20T20:18:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:21:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:21:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:23:53+01:00",
+          "aimedDepartureTime": "2026-11-20T20:23:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:24:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:28:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:28:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Gaustadalléen"
           },
           "serviceJourney": {
            "line": {
             "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:28:45+01:00",
+          "aimedDepartureTime": "2026-11-20T20:28:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:29:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:29:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:33:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:33:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:33:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:33:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:38:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:38:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:38:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:38:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:43:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:43:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:43:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:43:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
             "transportMode": "tram"
            }
           }
@@ -356,10 +804,16 @@
         "name": "Sofienbergparken",
         "estimatedCalls": [
          {
-          "expectedDepartureTime": "2026-11-20T18:00:09+01:00",
+          "expectedDepartureTime": "2026-11-20T20:09:28+01:00",
+          "aimedDepartureTime": "2026-11-20T20:07:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
-           "frontText": "Bygdøy via Bygdøynes"
+           "frontText": "Nydalen"
           },
           "serviceJourney": {
            "line": {
@@ -369,21 +823,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:03:13+01:00",
+          "expectedDepartureTime": "2026-11-20T20:10:02+01:00",
+          "aimedDepartureTime": "2026-11-20T20:10:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Bygdøy via Bygdøynes"
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:17+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Bygdøy"
           },
@@ -395,8 +842,33 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:06:02+01:00",
+          "expectedDepartureTime": "2026-11-20T20:22:03+01:00",
+          "aimedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Nydalen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "30",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Bygdøy"
           },
@@ -408,8 +880,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:07:46+01:00",
+          "expectedDepartureTime": "2026-11-20T20:38:05+01:00",
+          "aimedDepartureTime": "2026-11-20T20:36:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Nydalen"
           },
@@ -421,21 +899,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:08:20+01:00",
+          "expectedDepartureTime": "2026-11-20T20:40:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:40:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Nydalen"
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:15:00+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Bygdøy"
           },
@@ -447,8 +918,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:16:01+01:00",
+          "expectedDepartureTime": "2026-11-20T20:51:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:51:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Nydalen"
           },
@@ -460,47 +937,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:23:32+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Nydalen"
+          "expectedDepartureTime": "2026-11-20T20:55:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:55:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:25:00+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Bygdøy"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:32:10+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Nydalen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:35:00+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Bygdøy"
           },
@@ -517,53 +961,20 @@
      },
      {
       "node": {
-       "distance": 434.1623735137222,
+       "distance": 434.16126687889016,
        "place": {
         "id": "NSR:StopPlace:59675",
         "name": "Herslebs gate",
         "estimatedCalls": [
          {
-          "expectedDepartureTime": "2026-11-20T18:02:09+01:00",
+          "expectedDepartureTime": "2026-11-20T20:08:28+01:00",
+          "aimedDepartureTime": "2026-11-20T20:06:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Bygdøy via Bygdøynes"
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:05:13+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Bygdøy via Bygdøynes"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:05:17+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Bygdøy"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:06:46+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Nydalen"
           },
@@ -575,21 +986,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:07:20+01:00",
+          "expectedDepartureTime": "2026-11-20T20:12:02+01:00",
+          "aimedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Nydalen"
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:08:02+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Bygdøy"
           },
@@ -601,8 +1005,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:15:01+01:00",
+          "expectedDepartureTime": "2026-11-20T20:21:03+01:00",
+          "aimedDepartureTime": "2026-11-20T20:21:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Nydalen"
           },
@@ -614,8 +1024,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:17:00+01:00",
+          "expectedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Bygdøy"
           },
@@ -627,8 +1043,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:22:32+01:00",
+          "expectedDepartureTime": "2026-11-20T20:37:05+01:00",
+          "aimedDepartureTime": "2026-11-20T20:35:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Nydalen"
           },
@@ -640,8 +1062,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:27:00+01:00",
+          "expectedDepartureTime": "2026-11-20T20:42:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:42:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Bygdøy"
           },
@@ -653,8 +1081,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:31:10+01:00",
+          "expectedDepartureTime": "2026-11-20T20:50:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:50:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Nydalen"
           },
@@ -666,10 +1100,35 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:37:00+01:00",
-          "realtime": true,
+          "expectedDepartureTime": "2026-11-20T20:57:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:57:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Bygdøy"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "30",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T21:05:00+01:00",
+          "aimedDepartureTime": "2026-11-20T21:05:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Nydalen"
           },
           "serviceJourney": {
            "line": {
@@ -684,118 +1143,39 @@
      },
      {
       "node": {
-       "distance": 469.9064790922709,
+       "distance": 469.9073825395988,
        "place": {
         "id": "NSR:StopPlace:61989",
         "name": "Nybrua",
         "estimatedCalls": [
          {
-          "expectedDepartureTime": "2026-11-20T17:59:09+01:00",
+          "expectedDepartureTime": "2026-11-20T20:06:44+01:00",
+          "aimedDepartureTime": "2026-11-20T20:06:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:00:59+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:01:25+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Storo-Grefsen st."
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:01:26+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Majorstuen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "12",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:02:40+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Kjelsås"
           },
           "serviceJourney": {
            "line": {
-            "publicCode": "12",
+            "publicCode": "15",
             "transportMode": "tram"
            }
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:02:47+01:00",
+          "expectedDepartureTime": "2026-11-20T20:07:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:07:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Gaustadalléen"
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:19+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:07:00+01:00",
-          "realtime": false,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:07:45+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Gaustadalléen"
           },
@@ -807,8 +1187,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:08:14+01:00",
+          "expectedDepartureTime": "2026-11-20T20:08:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:05:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Majorstuen"
           },
@@ -820,8 +1206,52 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:08:46+01:00",
+          "expectedDepartureTime": "2026-11-20T20:10:01+01:00",
+          "aimedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:13:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:14:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:14:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Sinsen-Grefsen st."
           },
@@ -833,14 +1263,267 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:09:30+01:00",
+          "expectedDepartureTime": "2026-11-20T20:14:17+01:00",
+          "aimedDepartureTime": "2026-11-20T20:10:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:15:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:15:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:16:24+01:00",
+          "aimedDepartureTime": "2026-11-20T20:16:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:19:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:19:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:21:16+01:00",
+          "aimedDepartureTime": "2026-11-20T20:20:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:22:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Kjelsås"
           },
           "serviceJourney": {
            "line": {
             "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:24:40+01:00",
+          "aimedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Sinsen-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:25:53+01:00",
+          "aimedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:26:45+01:00",
+          "aimedDepartureTime": "2026-11-20T20:26:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:28:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:28:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Sinsen-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:30:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:30:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:31:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:31:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
             "transportMode": "tram"
            }
           }
@@ -851,107 +1534,22 @@
      },
      {
       "node": {
-       "distance": 534.4209397454747,
+       "distance": 534.4199481164967,
        "place": {
         "id": "NSR:StopPlace:58357",
         "name": "Birkelunden",
         "estimatedCalls": [
          {
-          "expectedDepartureTime": "2026-11-20T18:01:02+01:00",
+          "expectedDepartureTime": "2026-11-20T20:07:39+01:00",
+          "aimedDepartureTime": "2026-11-20T20:07:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Kjelsås"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "15",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:02:13+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Bygdøy via Bygdøynes"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:02:17+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Bygdøy"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:14+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Majorstuen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "15",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:04:09+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:05:02+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Bygdøy"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "30",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:05:15+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Stortorvet"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:05:56+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Majorstuen"
           },
           "serviceJourney": {
            "line": {
@@ -961,21 +1559,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:05:59+01:00",
+          "expectedDepartureTime": "2026-11-20T20:07:57+01:00",
+          "aimedDepartureTime": "2026-11-20T20:04:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
+          "quay": {
+           "publicCode": ""
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:06:25+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Storo-Grefsen st."
           },
@@ -987,8 +1578,52 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:07:05+01:00",
+          "expectedDepartureTime": "2026-11-20T20:09:02+01:00",
+          "aimedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Bygdøy"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "30",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:09:17+01:00",
+          "aimedDepartureTime": "2026-11-20T20:05:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:10:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:10:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Gaustadalléen"
           },
@@ -1000,8 +1635,90 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:07:40+01:00",
+          "expectedDepartureTime": "2026-11-20T20:11:28+01:00",
+          "aimedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Nydalen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "30",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:11:44+01:00",
+          "aimedDepartureTime": "2026-11-20T20:11:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:15:01+01:00",
+          "aimedDepartureTime": "2026-11-20T20:14:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:16:16+01:00",
+          "aimedDepartureTime": "2026-11-20T20:15:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:18:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:17:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Kjelsås"
           },
@@ -1011,6 +1728,196 @@
             "transportMode": "tram"
            }
           }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:20:53+01:00",
+          "aimedDepartureTime": "2026-11-20T20:20:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:21:24+01:00",
+          "aimedDepartureTime": "2026-11-20T20:21:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Bygdøy"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "30",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:24:03+01:00",
+          "aimedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Nydalen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "30",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:27:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:30:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:30:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:31:45+01:00",
+          "aimedDepartureTime": "2026-11-20T20:31:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:32:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:32:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
          }
         ]
        }
@@ -1018,40 +1925,20 @@
      },
      {
       "node": {
-       "distance": 551.3389720387714,
+       "distance": 551.368133472885,
        "place": {
         "id": "NSR:StopPlace:6440",
         "name": "Møllerveien",
         "estimatedCalls": [
          {
-          "expectedDepartureTime": "2026-11-20T18:02:11+01:00",
+          "expectedDepartureTime": "2026-11-20T20:07:14+01:00",
+          "aimedDepartureTime": "2026-11-20T20:06:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kjelsås stasjon"
+          "quay": {
+           "publicCode": ""
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "54",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:04:19+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kjelsås stasjon"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "54",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:06:05+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Tåsen"
           },
@@ -1063,34 +1950,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:06:10+01:00",
+          "expectedDepartureTime": "2026-11-20T20:11:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:10:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Tåsen"
+          "quay": {
+           "publicCode": ""
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "34",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:06:51+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kværnerbyen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "54",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:10:10+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Ekeberg hageby"
           },
@@ -1102,8 +1969,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:14:15+01:00",
+          "expectedDepartureTime": "2026-11-20T20:16:09+01:00",
+          "aimedDepartureTime": "2026-11-20T20:13:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Kjelsås stasjon"
           },
@@ -1115,8 +1988,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:19:49+01:00",
+          "expectedDepartureTime": "2026-11-20T20:19:09+01:00",
+          "aimedDepartureTime": "2026-11-20T20:17:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Kværnerbyen"
           },
@@ -1128,8 +2007,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:21:00+01:00",
+          "expectedDepartureTime": "2026-11-20T20:21:59+01:00",
+          "aimedDepartureTime": "2026-11-20T20:21:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Tåsen"
           },
@@ -1141,8 +2026,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:25:00+01:00",
-          "realtime": false,
+          "expectedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Ekeberg hageby"
           },
@@ -1154,8 +2045,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:28:00+01:00",
+          "expectedDepartureTime": "2026-11-20T20:28:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:28:00+01:00",
+          "cancellation": false,
           "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Kjelsås stasjon"
           },
@@ -1167,8 +2064,166 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:32:00+01:00",
+          "expectedDepartureTime": "2026-11-20T20:32:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:32:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kværnerbyen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:36:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:36:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Tåsen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:40:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:40:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Ekeberg hageby"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:43:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:43:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås stasjon"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:47:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:47:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kværnerbyen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:51:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:51:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Tåsen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:55:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:55:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Ekeberg hageby"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:58:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:58:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås stasjon"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T21:02:00+01:00",
+          "aimedDepartureTime": "2026-11-20T21:02:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Kværnerbyen"
           },
@@ -1185,14 +2240,20 @@
      },
      {
       "node": {
-       "distance": 581.2724499222793,
+       "distance": 581.2713432876277,
        "place": {
         "id": "NSR:StopPlace:58253",
         "name": "Heimdalsgata",
         "estimatedCalls": [
          {
-          "expectedDepartureTime": "2026-11-20T17:59:17+01:00",
+          "expectedDepartureTime": "2026-11-20T20:06:35+01:00",
+          "aimedDepartureTime": "2026-11-20T20:05:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Sinsen-Grefsen st."
           },
@@ -1204,8 +2265,33 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:05:45+01:00",
+          "expectedDepartureTime": "2026-11-20T20:15:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:15:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Sinsen-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:20:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:20:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Gaustadalléen"
           },
@@ -1217,8 +2303,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:09:46+01:00",
+          "expectedDepartureTime": "2026-11-20T20:25:40+01:00",
+          "aimedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Sinsen-Grefsen st."
           },
@@ -1230,8 +2322,33 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:13:00+01:00",
-          "realtime": true,
+          "expectedDepartureTime": "2026-11-20T20:29:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:29:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Sinsen-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:35:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:35:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Gaustadalléen"
           },
@@ -1243,8 +2360,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:16:15+01:00",
+          "expectedDepartureTime": "2026-11-20T20:40:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:40:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Sinsen-Grefsen st."
           },
@@ -1256,8 +2379,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:23:00+01:00",
+          "expectedDepartureTime": "2026-11-20T20:50:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:50:00+01:00",
+          "cancellation": false,
           "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Gaustadalléen"
           },
@@ -1269,8 +2398,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:25:00+01:00",
-          "realtime": true,
+          "expectedDepartureTime": "2026-11-20T20:55:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:55:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Sinsen-Grefsen st."
           },
@@ -1282,60 +2417,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:33:00+01:00",
+          "expectedDepartureTime": "2026-11-20T21:05:00+01:00",
+          "aimedDepartureTime": "2026-11-20T21:05:00+01:00",
+          "cancellation": false,
           "realtime": false,
-          "destinationDisplay": {
-           "frontText": "Gaustadalléen"
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "17",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:35:00+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Sinsen-Grefsen st."
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "17",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:43:00+01:00",
-          "realtime": false,
-          "destinationDisplay": {
-           "frontText": "Gaustadalléen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "17",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:45:00+01:00",
-          "realtime": false,
-          "destinationDisplay": {
-           "frontText": "Sinsen-Grefsen st."
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "17",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:53:00+01:00",
-          "realtime": false,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Gaustadalléen"
           },
@@ -1374,8 +2463,33 @@
         "name": "Storgata",
         "estimatedCalls": [
          {
-          "expectedDepartureTime": "2026-11-20T17:59:25+01:00",
+          "expectedDepartureTime": "2026-11-20T20:07:07+01:00",
+          "aimedDepartureTime": "2026-11-20T20:06:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kværnerbyen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:08:01+01:00",
+          "aimedDepartureTime": "2026-11-20T20:07:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Storo-Grefsen st."
           },
@@ -1387,407 +2501,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T17:59:45+01:00",
+          "expectedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Majorstuen"
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "15",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:00:19+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kjelsås stasjon"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "54",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:00:40+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kjelsås"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "12",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:01:08+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Stortorvet"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:01:19+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:05+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Tåsen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "34",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:08+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Ekeberg hageby"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "34",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:10+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Tåsen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "34",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:26+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Majorstuen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "12",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:04:47+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Gaustadalléen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:05:00+01:00",
-          "realtime": false,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         }
-        ]
-       }
-      }
-     },
-     {
-      "node": {
-       "distance": 379.4608267925422,
-       "place": {
-        "id": "NSR:StopPlace:6435",
-        "name": "Jakob kirke",
-        "estimatedCalls": [
-         {
-          "expectedDepartureTime": "2026-11-20T18:01:08+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Ekeberg hageby"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "34",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:01:11+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kjelsås stasjon"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "54",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:19+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kjelsås stasjon"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "54",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:05:05+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Tåsen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "34",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:05:10+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Tåsen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "34",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:08:51+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kværnerbyen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "54",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:12:10+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Ekeberg hageby"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "34",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:13:15+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kjelsås stasjon"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "54",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:20:00+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Tåsen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "34",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:21:49+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kværnerbyen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "54",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:27:00+01:00",
-          "realtime": false,
-          "destinationDisplay": {
-           "frontText": "Kjelsås stasjon"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "54",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:27:00+01:00",
-          "realtime": false,
-          "destinationDisplay": {
-           "frontText": "Ekeberg hageby"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "34",
-            "transportMode": "bus"
-           }
-          }
-         }
-        ]
-       }
-      }
-     },
-     {
-      "node": {
-       "distance": 388.56298308940524,
-       "place": {
-        "id": "NSR:StopPlace:58366",
-        "name": "Jernbanetorget",
-        "estimatedCalls": [
-         {
-          "expectedDepartureTime": "2026-11-20T17:59:13+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Skullerud"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "70E",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T17:59:14+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Mortensrud"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "74",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T17:59:16+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Skullerud"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "70E",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T17:59:19+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T17:59:20+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Skullerud"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "70",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T17:59:31+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Kalbakken"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "31E",
-            "transportMode": "bus"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T17:59:36+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Gaustadalléen"
           },
@@ -1799,8 +2520,701 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T17:59:42+01:00",
+          "expectedDepartureTime": "2026-11-20T20:10:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:07:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:11:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:10:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Sinsen-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:12:09+01:00",
+          "aimedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås stasjon"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:14:24+01:00",
+          "aimedDepartureTime": "2026-11-20T20:14:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:15:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:14:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Ekeberg hageby"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:16:17+01:00",
+          "aimedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:17:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:17:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:17:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:17:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:18:59+01:00",
+          "aimedDepartureTime": "2026-11-20T20:18:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Tåsen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:20:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:20:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:22:40+01:00",
+          "aimedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Sinsen-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:23:09+01:00",
+          "aimedDepartureTime": "2026-11-20T20:21:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kværnerbyen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:23:16+01:00",
+          "aimedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås stasjon"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:24:45+01:00",
+          "aimedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         }
+        ]
+       }
+      }
+     },
+     {
+      "node": {
+       "distance": 379.4532215648894,
+       "place": {
+        "id": "NSR:StopPlace:6435",
+        "name": "Jakob kirke",
+        "estimatedCalls": [
+         {
+          "expectedDepartureTime": "2026-11-20T20:06:14+01:00",
+          "aimedDepartureTime": "2026-11-20T20:05:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Tåsen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:13:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Ekeberg hageby"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:15:09+01:00",
+          "aimedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås stasjon"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:20:59+01:00",
+          "aimedDepartureTime": "2026-11-20T20:20:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Tåsen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:21:09+01:00",
+          "aimedDepartureTime": "2026-11-20T20:19:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kværnerbyen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Ekeberg hageby"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås stasjon"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:34:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:34:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kværnerbyen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:35:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:35:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Tåsen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:42:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:42:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Ekeberg hageby"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:42:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:42:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås stasjon"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:49:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:49:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kværnerbyen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:50:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:50:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Tåsen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:57:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:57:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Ekeberg hageby"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:57:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:57:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås stasjon"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T21:04:00+01:00",
+          "aimedDepartureTime": "2026-11-20T21:04:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kværnerbyen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T21:05:00+01:00",
+          "aimedDepartureTime": "2026-11-20T21:05:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Tåsen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "34",
+            "transportMode": "bus"
+           }
+          }
+         }
+        ]
+       }
+      }
+     },
+     {
+      "node": {
+       "distance": 388.5582336787406,
+       "place": {
+        "id": "NSR:StopPlace:58366",
+        "name": "Jernbanetorget",
+        "estimatedCalls": [
+         {
+          "expectedDepartureTime": "2026-11-20T20:05:45+01:00",
+          "aimedDepartureTime": "2026-11-20T20:03:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "A"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Snarøya"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "31",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:05:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:04:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "C"
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Majorstuen"
           },
@@ -1812,21 +3226,52 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T17:59:46+01:00",
+          "expectedDepartureTime": "2026-11-20T20:05:55+01:00",
+          "aimedDepartureTime": "2026-11-20T20:01:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": "N"
+          },
+          "situations": [],
           "destinationDisplay": {
-           "frontText": "Nydalen"
+           "frontText": "Skullerud"
           },
           "serviceJourney": {
            "line": {
-            "publicCode": "30",
+            "publicCode": "70",
             "transportMode": "bus"
            }
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T17:59:54+01:00",
+          "expectedDepartureTime": "2026-11-20T20:06:01+01:00",
+          "aimedDepartureTime": "2026-11-20T20:05:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": "E"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:06:21+01:00",
+          "aimedDepartureTime": "2026-11-20T19:59:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "A"
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Vippetangen"
           },
@@ -1838,27 +3283,286 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:00:00+01:00",
+          "expectedDepartureTime": "2026-11-20T20:06:21+01:00",
+          "aimedDepartureTime": "2026-11-20T20:04:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": "F"
+          },
+          "situations": [],
           "destinationDisplay": {
-           "frontText": "Ulvøya"
+           "frontText": "Gaustadalléen"
           },
           "serviceJourney": {
            "line": {
-            "publicCode": "85",
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:06:24+01:00",
+          "aimedDepartureTime": "2026-11-20T20:05:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "P"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Nationaltheatret"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "70",
             "transportMode": "bus"
            }
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:00:03+01:00",
+          "expectedDepartureTime": "2026-11-20T20:06:31+01:00",
+          "aimedDepartureTime": "2026-11-20T20:04:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": "A"
+          },
+          "situations": [],
           "destinationDisplay": {
-           "frontText": "Fornebu"
+           "frontText": "Nydalen T"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "37",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:08:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:08:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "L"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Mortensrud"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "74",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "D"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Mortensrud"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "74",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "P"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Nationaltheateret"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "70E",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:09:07+01:00",
+          "aimedDepartureTime": "2026-11-20T20:08:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "A"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kværnerbyen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:09:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:08:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "C"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:09:59+01:00",
+          "aimedDepartureTime": "2026-11-20T19:57:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "D"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Grorud T"
           },
           "serviceJourney": {
            "line": {
             "publicCode": "31",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:10:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:10:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "R"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Bjørndal"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "71",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:10:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:10:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": "E"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Sinsen-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:10:09+01:00",
+          "aimedDepartureTime": "2026-11-20T20:07:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "D"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås stasjon"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "54",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:11:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:11:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "F"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:11:25+01:00",
+          "aimedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "A"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Jernbanetorget"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "74",
+            "transportMode": "bus"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:11:48+01:00",
+          "aimedDepartureTime": "2026-11-20T20:11:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": "A"
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Nydalen T"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "37",
             "transportMode": "bus"
            }
           }
@@ -1875,112 +3579,33 @@
         "name": "Nybrua",
         "estimatedCalls": [
          {
-          "expectedDepartureTime": "2026-11-20T17:59:19+01:00",
+          "expectedDepartureTime": "2026-11-20T20:06:44+01:00",
+          "aimedDepartureTime": "2026-11-20T20:06:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:00:59+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:01:25+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Storo-Grefsen st."
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:01:26+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Majorstuen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "12",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:02:40+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Kjelsås"
           },
           "serviceJourney": {
            "line": {
-            "publicCode": "12",
+            "publicCode": "15",
             "transportMode": "tram"
            }
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:02:47+01:00",
+          "expectedDepartureTime": "2026-11-20T20:07:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:07:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Gaustadalléen"
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:19+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:07:00+01:00",
-          "realtime": false,
-          "destinationDisplay": {
-           "frontText": "Disen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:07:45+01:00",
-          "realtime": true,
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Gaustadalléen"
           },
@@ -1992,8 +3617,14 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:08:14+01:00",
+          "expectedDepartureTime": "2026-11-20T20:08:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:05:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Majorstuen"
           },
@@ -2005,8 +3636,52 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:08:46+01:00",
+          "expectedDepartureTime": "2026-11-20T20:10:01+01:00",
+          "aimedDepartureTime": "2026-11-20T20:09:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:13:49+01:00",
+          "aimedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:14:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:14:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Sinsen-Grefsen st."
           },
@@ -2018,14 +3693,267 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:09:30+01:00",
+          "expectedDepartureTime": "2026-11-20T20:14:17+01:00",
+          "aimedDepartureTime": "2026-11-20T20:10:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:15:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:15:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:16:24+01:00",
+          "aimedDepartureTime": "2026-11-20T20:16:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:19:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:19:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:21:16+01:00",
+          "aimedDepartureTime": "2026-11-20T20:20:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:22:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
           "destinationDisplay": {
            "frontText": "Kjelsås"
           },
           "serviceJourney": {
            "line": {
             "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:24:40+01:00",
+          "aimedDepartureTime": "2026-11-20T20:24:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Sinsen-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:25:53+01:00",
+          "aimedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "12",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:26:45+01:00",
+          "aimedDepartureTime": "2026-11-20T20:26:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Kjelsås"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "15",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:27:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:28:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:28:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Sinsen-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:30:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:30:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:31:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:31:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
             "transportMode": "tram"
            }
           }
@@ -2042,60 +3970,27 @@
         "name": "Stortorvet",
         "estimatedCalls": [
          {
-          "expectedDepartureTime": "2026-11-20T17:59:55+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Ljabru"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "19",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:01:00+01:00",
+          "expectedDepartureTime": "2026-11-20T20:08:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:08:00+01:00",
+          "cancellation": false,
           "realtime": false,
-          "destinationDisplay": {
-           "frontText": "Disen"
+          "quay": {
+           "publicCode": ""
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
            }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:01:36+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Gaustadalléen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "17",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:02:42+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Majorstuen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "19",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:02:46+01:00",
-          "realtime": true,
+          ],
           "destinationDisplay": {
            "frontText": "Sinsen-Grefsen st."
           },
@@ -2107,73 +4002,27 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:02:58+01:00",
+          "expectedDepartureTime": "2026-11-20T20:08:21+01:00",
+          "aimedDepartureTime": "2026-11-20T20:06:00+01:00",
+          "cancellation": false,
           "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Majorstuen"
+          "quay": {
+           "publicCode": null
           },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "19",
-            "transportMode": "tram"
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
            }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:03:28+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Ljabru"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "19",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:04:52+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Storo-Grefsen st."
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "18",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:05:11+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Majorstuen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "19",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:08:12+01:00",
-          "realtime": true,
-          "destinationDisplay": {
-           "frontText": "Majorstuen"
-          },
-          "serviceJourney": {
-           "line": {
-            "publicCode": "19",
-            "transportMode": "tram"
-           }
-          }
-         },
-         {
-          "expectedDepartureTime": "2026-11-20T18:08:47+01:00",
-          "realtime": true,
+          ],
           "destinationDisplay": {
            "frontText": "Gaustadalléen"
           },
@@ -2185,8 +4034,571 @@
           }
          },
          {
-          "expectedDepartureTime": "2026-11-20T18:09:15+01:00",
+          "expectedDepartureTime": "2026-11-20T20:08:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:07:00+01:00",
+          "cancellation": false,
           "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "19",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:10:44+01:00",
+          "aimedDepartureTime": "2026-11-20T20:06:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Ljabru"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "19",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:12:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "19",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:13:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:13:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:13:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:13:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:17:02+01:00",
+          "aimedDepartureTime": "2026-11-20T20:16:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Ljabru"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "19",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:18:17+01:00",
+          "aimedDepartureTime": "2026-11-20T20:17:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "19",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:18:40+01:00",
+          "aimedDepartureTime": "2026-11-20T20:18:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Sinsen-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:21:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:21:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:21:50+01:00",
+          "aimedDepartureTime": "2026-11-20T20:21:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "19",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:22:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Sinsen-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:23:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:23:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "19",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:25:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Storo-Grefsen st."
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "18",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:26:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:26:00+01:00",
+          "cancellation": false,
+          "realtime": false,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Ljabru"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "19",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:28:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:28:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Gaustadalléen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "17",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:30:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:30:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": null
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
+          "destinationDisplay": {
+           "frontText": "Majorstuen"
+          },
+          "serviceJourney": {
+           "line": {
+            "publicCode": "19",
+            "transportMode": "tram"
+           }
+          }
+         },
+         {
+          "expectedDepartureTime": "2026-11-20T20:33:00+01:00",
+          "aimedDepartureTime": "2026-11-20T20:33:00+01:00",
+          "cancellation": false,
+          "realtime": true,
+          "quay": {
+           "publicCode": ""
+          },
+          "situations": [
+           {
+            "summary": [
+             {
+              "value": "Holdeplassene Tinghuset, Stortorvet, Lakkegata skole og Ekebergparken egner seg ikke for rullestolbrukere. ",
+              "language": "no"
+             },
+             {
+              "value": "The stops Tinghuset, Stortorvet, Lakkegata skole, and Ekebergparken are not suitable for wheelchair users ",
+              "language": "en"
+             }
+            ]
+           }
+          ],
           "destinationDisplay": {
            "frontText": "Sinsen-Grefsen st."
           },
@@ -2203,7 +4615,7 @@
      },
      {
       "node": {
-       "distance": 541.6140563164016,
+       "distance": 541.6150575930316,
        "place": {
         "id": "NSR:StopPlace:4249",
         "name": "Arne Garborgs plass",
@@ -2227,56 +4639,8 @@
    "transit": {
     "tripPatterns": [
      {
-      "expectedStartTime": "2026-11-20T18:04:02+01:00",
-      "expectedEndTime": "2026-11-20T18:13:06+01:00",
-      "duration": 544,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 72,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "15"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 172,
-        "line": null
-       }
-      ]
-     },
-     {
-      "expectedStartTime": "2026-11-20T18:06:03+01:00",
-      "expectedEndTime": "2026-11-20T18:15:07+01:00",
-      "duration": 544,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 72,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "18"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 172,
-        "line": null
-       }
-      ]
-     },
-     {
-      "expectedStartTime": "2026-11-20T18:06:44+01:00",
-      "expectedEndTime": "2026-11-20T18:15:48+01:00",
+      "expectedStartTime": "2026-11-20T20:10:05+01:00",
+      "expectedEndTime": "2026-11-20T20:19:09+01:00",
       "duration": 544,
       "legs": [
        {
@@ -2299,8 +4663,8 @@
       ]
      },
      {
-      "expectedStartTime": "2026-11-20T18:07:53+01:00",
-      "expectedEndTime": "2026-11-20T18:16:57+01:00",
+      "expectedStartTime": "2026-11-20T20:11:38+01:00",
+      "expectedEndTime": "2026-11-20T20:20:42+01:00",
       "duration": 544,
       "legs": [
        {
@@ -2323,8 +4687,8 @@
       ]
      },
      {
-      "expectedStartTime": "2026-11-20T18:10:08+01:00",
-      "expectedEndTime": "2026-11-20T18:19:12+01:00",
+      "expectedStartTime": "2026-11-20T20:17:04+01:00",
+      "expectedEndTime": "2026-11-20T20:26:08+01:00",
       "duration": 544,
       "legs": [
        {
@@ -2337,6 +4701,54 @@
         "duration": 300,
         "line": {
          "publicCode": "15"
+        }
+       },
+       {
+        "mode": "foot",
+        "duration": 172,
+        "line": null
+       }
+      ]
+     },
+     {
+      "expectedStartTime": "2026-11-20T20:21:41+01:00",
+      "expectedEndTime": "2026-11-20T20:30:45+01:00",
+      "duration": 544,
+      "legs": [
+       {
+        "mode": "foot",
+        "duration": 72,
+        "line": null
+       },
+       {
+        "mode": "tram",
+        "duration": 300,
+        "line": {
+         "publicCode": "12"
+        }
+       },
+       {
+        "mode": "foot",
+        "duration": 172,
+        "line": null
+       }
+      ]
+     },
+     {
+      "expectedStartTime": "2026-11-20T20:25:48+01:00",
+      "expectedEndTime": "2026-11-20T20:34:52+01:00",
+      "duration": 544,
+      "legs": [
+       {
+        "mode": "foot",
+        "duration": 72,
+        "line": null
+       },
+       {
+        "mode": "tram",
+        "duration": 300,
+        "line": {
+         "publicCode": "18"
         }
        },
        {
@@ -2353,39 +4765,15 @@
    "walk": {
     "tripPatterns": [
      {
-      "duration": 989
+      "duration": 988
      }
     ]
    },
    "transit": {
     "tripPatterns": [
      {
-      "expectedStartTime": "2026-11-20T18:02:30+01:00",
-      "expectedEndTime": "2026-11-20T18:11:55+01:00",
-      "duration": 565,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 150,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "18"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 115,
-        "line": null
-       }
-      ]
-     },
-     {
-      "expectedStartTime": "2026-11-20T18:05:00+01:00",
-      "expectedEndTime": "2026-11-20T18:14:25+01:00",
+      "expectedStartTime": "2026-11-20T20:09:19+01:00",
+      "expectedEndTime": "2026-11-20T20:18:44+01:00",
       "duration": 565,
       "legs": [
        {
@@ -2408,8 +4796,8 @@
       ]
      },
      {
-      "expectedStartTime": "2026-11-20T18:05:19+01:00",
-      "expectedEndTime": "2026-11-20T18:14:44+01:00",
+      "expectedStartTime": "2026-11-20T20:11:54+01:00",
+      "expectedEndTime": "2026-11-20T20:21:19+01:00",
       "duration": 565,
       "legs": [
        {
@@ -2432,8 +4820,8 @@
       ]
      },
      {
-      "expectedStartTime": "2026-11-20T18:06:22+01:00",
-      "expectedEndTime": "2026-11-20T18:15:47+01:00",
+      "expectedStartTime": "2026-11-20T20:14:30+01:00",
+      "expectedEndTime": "2026-11-20T20:23:55+01:00",
       "duration": 565,
       "legs": [
        {
@@ -2456,8 +4844,8 @@
       ]
      },
      {
-      "expectedStartTime": "2026-11-20T18:08:09+01:00",
-      "expectedEndTime": "2026-11-20T18:17:34+01:00",
+      "expectedStartTime": "2026-11-20T20:18:20+01:00",
+      "expectedEndTime": "2026-11-20T20:27:45+01:00",
       "duration": 565,
       "legs": [
        {
@@ -2470,6 +4858,30 @@
         "duration": 300,
         "line": {
          "publicCode": "12"
+        }
+       },
+       {
+        "mode": "foot",
+        "duration": 115,
+        "line": null
+       }
+      ]
+     },
+     {
+      "expectedStartTime": "2026-11-20T20:22:15+01:00",
+      "expectedEndTime": "2026-11-20T20:31:40+01:00",
+      "duration": 565,
+      "legs": [
+       {
+        "mode": "foot",
+        "duration": 150,
+        "line": null
+       },
+       {
+        "mode": "tram",
+        "duration": 300,
+        "line": {
+         "publicCode": "15"
         }
        },
        {

@@ -122,7 +122,7 @@ async function entur(query) {
   return (await response.json()).data
 }
 async function captureEntur() {
-  const nearest = (spot) => entur(`{ nearest(latitude:${spot.lat},longitude:${spot.lon},maximumDistance:600,maximumResults:8,filterByPlaceTypes:[stopPlace]){ edges{ node{ distance place{ ... on StopPlace{ id name estimatedCalls(numberOfDepartures:12,timeRange:3600){ expectedDepartureTime realtime destinationDisplay{frontText} serviceJourney{ line{publicCode transportMode} } } } } } } } }`)
+  const nearest = (spot) => entur(`{ nearest(latitude:${spot.lat},longitude:${spot.lon},maximumDistance:600,maximumResults:8,filterByPlaceTypes:[stopPlace]){ edges{ node{ distance place{ ... on StopPlace{ id name estimatedCalls(numberOfDepartures:20,timeRange:3600){ expectedDepartureTime aimedDepartureTime cancellation realtime quay{publicCode} situations{ summary{value language} } destinationDisplay{frontText} serviceJourney{ line{publicCode transportMode} } } } } } } } }`)
   const trips = (from, to) => entur(`{ walk: trip(from:${coordinates(from)}, to:${coordinates(to)}, modes:{directMode:foot, transportModes:[]}, numTripPatterns:1){ tripPatterns{ duration } } transit: trip(from:${coordinates(from)}, to:${coordinates(to)}, modes:{accessMode:foot, egressMode:foot, transportModes:[{transportMode:bus},{transportMode:tram},{transportMode:metro}]}, numTripPatterns:5){ tripPatterns{ expectedStartTime expectedEndTime duration legs{ mode duration line{publicCode} } } } }`)
   save("entur", { capturedAt: new Date().toISOString(), spots: { home: HOME, work: WORK }, nearest: { home: await nearest(HOME), work: await nearest(WORK) }, trips: { homeWork: await trips(HOME, WORK), workHome: await trips(WORK, HOME) } })
 }
