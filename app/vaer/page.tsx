@@ -1,4 +1,3 @@
-import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
@@ -10,7 +9,6 @@ import { cookies } from "next/headers"
 
 import { ForecastCharts } from "../../components/forecast-charts"
 import { PositionControl } from "../../components/position"
-import { hourRows } from "../../components/sections"
 import { Shell } from "../../components/shell"
 import { dayOf, now } from "../../lib/day"
 import { dailyOutlook, nextHours, weatherIcon } from "../../lib/forecast"
@@ -28,16 +26,14 @@ export default async function Page() {
   const day = dayOf(instant)
   const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
   const forecast = await settle(getForecast(position))
-  const columns = { name: "Tid og vær", value: "Temperatur" }
 
   const current = forecast.ok ? forecast.value.timeseries[0] : undefined
   const symbol = current?.data.next_1_hours?.summary.symbol_code ?? current?.data.next_6_hours?.summary.symbol_code
   const chartHours = forecast.ok ? nextHours(forecast.value.timeseries, instant, 24) : []
-  const today = forecast.ok ? hourRows(forecast.value, "today", day, instant) : []
 
   return (
     <WeatherStage symbol={symbol ?? "cloudy"} page>
-    <Shell current="weather" title={forecast.ok ? `Vær i ${forecast.value.place}` : "Vær"} lead="Meldingen fra Yr: i dag, i morgen og de neste dagene." actions={<PositionControl current={position} />}>
+    <Shell current="weather" title={forecast.ok ? `Vær i ${forecast.value.place}` : "Vær"} lead="Meldingen fra Yr: det neste døgnet og de neste dagene." actions={<PositionControl current={position} />}>
       <Stack gap="xl">
         {!forecast.ok ? (
           <ErrorMessage error={forecast.error}>Kunne ikke hente været</ErrorMessage>
@@ -61,12 +57,6 @@ export default async function Page() {
               <ForecastCharts hours={chartHours} />
             </PageSection>
           ) : null}
-          <PageSection id="today" title="Resten av i dag" icon="weather">
-            {today.length === 0 ? <EmptyState title="Ingen flere timer i dag" /> : <Rows lead="icon" rows={today} columns={columns} />}
-          </PageSection>
-          <PageSection id="tomorrow" title="I morgen" icon="time">
-            <Rows lead="icon" rows={hourRows(forecast.value, "tomorrow", day, instant)} columns={columns} />
-          </PageSection>
           <PageSection id="outlook" title="Kommende dager" icon="calendar">
             <Rows
               lead="icon"
