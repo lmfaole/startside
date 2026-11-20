@@ -34,6 +34,7 @@ export default async function Page() {
   const today = forecast.ok ? hourRows(forecast.value, "today", day, instant) : []
 
   return (
+    <WeatherStage symbol={symbol ?? "cloudy"} page>
     <Shell current="weather" title={forecast.ok ? `Vær i ${forecast.value.place}` : "Vær"} lead="Meldingen fra Yr: i dag, i morgen og de neste dagene." actions={<PositionControl current={position} />}>
       <Stack gap="xl">
         {!forecast.ok ? (
@@ -90,5 +91,6 @@ export default async function Page() {
         </Text>
       </Stack>
     </Shell>
+    </WeatherStage>
   )
 }
