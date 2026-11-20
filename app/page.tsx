@@ -3,6 +3,7 @@ import { Stack } from "@lmfaole/designsystem/components/layout"
 import { SummaryBar } from "@lmfaole/designsystem/components/summary-bar"
 
 import { DeparturesSection } from "../components/departures"
+import { NowPlayingSection, ReleasesSection } from "../components/music"
 import { PositionControl } from "../components/position"
 import { AlertsSection, DiscussionsSection, IssuesSection, PullsSection, WeatherDigest } from "../components/sections"
 import { Shell } from "../components/shell"
@@ -19,6 +20,7 @@ import { journeyFor } from "../lib/places"
 import { groupPulls } from "../lib/pulls"
 import { settle } from "../lib/settle"
 import { summaryItems } from "../lib/summary"
+import { getNowPlaying, getReleases } from "../lib/spotify-source"
 import { getForecast } from "../lib/yr"
 
 /** The page renews itself every minute (components/shell.tsx); after three missed renewals it says its data may be old. */
@@ -40,7 +42,7 @@ export default async function Page() {
   const journey = journeyFor({ position, work, home, day })
   const wants = (id: (typeof plan.sections)[number]) => plan.sections.includes(id)
 
-  const [pulls, issues, discussions, forecast, ci, replies, dependabot, around] = await Promise.all([
+  const [pulls, issues, discussions, forecast, ci, replies, dependabot, around, releases, nowPlaying] = await Promise.all([
     wants("pulls") ? settle(getPulls(plan.pulls)) : null,
     wants("issues") ? settle(getIssues()) : null,
     wants("discussions") ? settle(getDiscussions()) : null,
@@ -49,6 +51,9 @@ export default async function Page() {
     wants("alerts") ? settle(getReplies(instant)) : null,
     wants("alerts") ? settle(getDependabot()) : null,
     wants("departures") && journey !== null ? getAround(journey) : null,
+    wants("music") ? settle(getReleases(instant)) : null,
+    // What plays this second: shown whatever the time of day, and nothing where nothing plays or Spotify is not set up.
+    getNowPlaying().catch(() => null),
   ])
 
   const summary = summaryItems(BASE, {
@@ -61,6 +66,7 @@ export default async function Page() {
   return (
     <Shell current="front" title={plan.greeting} lead={<>{dateLine.format(instant)} · <Freshness at={instant.toISOString()} now={instant.toISOString()} staleAfterSeconds={STALE_AFTER} /></>} actions={<PositionControl current={position} />}>
       <Stack gap="xl">
+        <NowPlayingSection now={nowPlaying} />
         <SummaryBar label="Oversikt" items={summary} />
         {plan.sections.map((id) => {
           if (id === "alerts" && ci && replies && dependabot) return <AlertsSection key={id} data={{ ci, replies, dependabot }} mode="digest" instant={instant} />
@@ -68,6 +74,7 @@ export default async function Page() {
           if (id === "issues" && issues) return <IssuesSection key={id} data={issues} mode="digest" instant={instant} />
           if (id === "discussions" && discussions) return <DiscussionsSection key={id} data={discussions} mode="digest" />
           if (id === "departures" && around) return <DeparturesSection key={id} data={around} mode="digest" instant={instant} />
+          if (id === "music" && releases) return <ReleasesSection key={id} data={releases} mode="digest" />
           if (id === "weather" && forecast) return <WeatherDigest key={id} data={forecast} window={plan.weatherWindow} day={day} instant={instant} />
           return null
         })}

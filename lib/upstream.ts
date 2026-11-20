@@ -9,14 +9,18 @@ import { fingerprint } from "./summarize"
  * reach origins outside Cloudflare; straight to the source otherwise, as in `next dev`. Through the relay, the relay
  * adds the GitHub token.
  */
-async function fetchSource(url: string, init: { headers?: Record<string, string>; revalidate: number; /** A JSON body makes it a POST (GitHub's GraphQL, which the relay allows). */ json?: unknown }): Promise<Response> {
+/** The hosts whose `Authorization` goes through the relay with the ask: Spotify's, because the relay has no key of its own for them. */
+const SPOTIFY_HOSTS = new Set(["api.spotify.com", "accounts.spotify.com"])
+
+async function fetchSource(url: string, init: { headers?: Record<string, string>; revalidate: number; /** How long past `revalidate` a kept answer may still be shown while it is asked for anew (default `STALE_SECONDS`; 0 for what must not be old, like what plays now). */ staleFor?: number; /** A JSON body makes it a POST (GitHub's GraphQL, which the relay allows). */ json?: unknown; /** A text body makes it a POST too (Spotify's token, a form); the caller sets its Content-Type. */ body?: string }): Promise<Response> {
   const relay = env("UPSTREAM_URL")
   const key = env("UPSTREAM_KEY")
   const target = new URL(url)
   const headers: Record<string, string> = { ...init.headers, ...(init.json === undefined ? {} : { "Content-Type": "application/json" }) }
-  const post = init.json === undefined ? {} : { method: "POST", body: JSON.stringify(init.json) }
+  const post = init.json !== undefined ? { method: "POST", body: JSON.stringify(init.json) } : init.body !== undefined ? { method: "POST", body: init.body } : {}
   if (relay && key) {
-    delete headers.Authorization
+    // The relay holds GitHub's token; what is asked of Spotify comes with its own (an hour's access token, or the client's sign-in for the token).
+    if (!SPOTIFY_HOSTS.has(target.host)) delete headers.Authorization
     return fetch(`${relay.replace(/\/$/, "")}/${target.host}${target.pathname}${target.search}`, {
       ...post,
       headers: { ...headers, "X-Upstream-Key": key },
@@ -37,19 +41,23 @@ const edgeCache = (): Cache | undefined => (typeof caches === "undefined" ? unde
 export async function upstream(url: string, init: Parameters<typeof fetchSource>[1]): Promise<Response> {
   const cache = edgeCache()
   if (cache === undefined) return fetchSource(url, init)
-  const key = new Request(`https://startside.invalid/upstream/${await fingerprint([url, JSON.stringify(init.json ?? null)])}`)
+  const staleFor = init.staleFor ?? STALE_SECONDS
+  const key = new Request(`https://startside.invalid/upstream/${await fingerprint([url, JSON.stringify(init.json ?? null), init.body ?? ""])}`)
   const refresh = async (): Promise<Response> => {
     const response = await fetchSource(url, init)
     if (!response.ok) return response
-    const body = await response.arrayBuffer()
-    const kept = new Response(body, { status: response.status, headers: { "Content-Type": response.headers.get("Content-Type") ?? "application/json", "X-Fetched-At": String(Date.now()), "Cache-Control": `public, max-age=${init.revalidate + STALE_SECONDS}` } })
+    // 204 («nothing is playing») may not have a body, so it is kept as a 200 that says it was a 204.
+    const empty = response.status === 204
+    const body = empty ? "" : await response.arrayBuffer()
+    const kept = new Response(body, { status: 200, headers: { "Content-Type": response.headers.get("Content-Type") ?? "application/json", "X-Fetched-At": String(Date.now()), "X-Upstream-Status": String(response.status), "Cache-Control": `public, max-age=${init.revalidate + staleFor}` } })
     await cache.put(key, kept)
-    return new Response(body, { status: response.status, headers: { "Content-Type": kept.headers.get("Content-Type") ?? "application/json" } })
+    return empty ? new Response(null, { status: 204 }) : new Response(body, { status: response.status, headers: { "Content-Type": kept.headers.get("Content-Type") ?? "application/json" } })
   }
+  const asKept = (found: Response): Response => (found.headers.get("X-Upstream-Status") === "204" ? new Response(null, { status: 204 }) : found)
   const found = await cache.match(key)
   if (found === undefined) return refresh()
   const age = (Date.now() - Number(found.headers.get("X-Fetched-At"))) / 1000
-  const state = verdict(age, init.revalidate, STALE_SECONDS)
+  const state = verdict(age, init.revalidate, staleFor)
   if (state === "expired") return refresh()
   if (state === "stale") {
     try {
@@ -58,5 +66,5 @@ export async function upstream(url: string, init: Parameters<typeof fetchSource>
       // No execution context to hand it to: the stale answer is shown, and the next ask fetches it.
     }
   }
-  return found
+  return asKept(found)
 }

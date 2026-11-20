@@ -42,6 +42,7 @@ the summary, in the morning, the workday, the evening and the weekend, but not a
 | Entur (Journey Planner v3, through the relay) | Departures from the stops nearby and trips compared with walking | `WORK_NAME`, `WORK_LAT`, `WORK_LON` in `wrangler.jsonc` |
 | Yr (MET Norway `locationforecast`) | The forecast for the rest of the day | `WEATHER_PLACE`, `WEATHER_LAT`, `WEATHER_LON` in `wrangler.jsonc` |
 | GitHub | Pull requests awaiting your review, your open pull requests, issues assigned to you | secret `GITHUB_TOKEN` on `startside-upstream` |
+| Spotify (Web API, through the relay) | **Spilles nå** first on the front page, and **Ny musikk** (albums and singles of the last 60 days by the artists you follow: the 30 first followed) on weekends and weekday evenings, with a page of its own at `/musikk`. It sees what plays and who is followed, nothing that changes the account (`SCOPE` in `lib/spotify.ts`). Spotify's terms are kept: their mark (28 px, one colour) and a link back on every part that shows their content, nothing stored beyond minutes in the edge cache | secrets `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` and `SPOTIFY_REFRESH_TOKEN` on `startside`; the token is made by `npm run spotify:auth` and lasts six months |
 
 GitHub is limited to public repositories, and can leave out organisations with `GITHUB_EXCLUDE_ORGS` (comma-separated, in
 `wrangler.jsonc`; none now): `lib/github-query.ts`.
@@ -154,7 +155,7 @@ Secrets on the Workers, set with `wrangler secret put` or in the dashboard as **
 
 | Worker | Secret |
 | --- | --- |
-| `startside` | `UPSTREAM_KEY` |
+| `startside` | `UPSTREAM_KEY`, and for Spotify (optional: the parts are left out without them) `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REFRESH_TOKEN` |
 | `startside-upstream` | `UPSTREAM_KEY` (the same), `GITHUB_TOKEN` (read access to pull requests and issues) |
 
 ## Develop

@@ -47,7 +47,7 @@ test("the plan for each time of day", () => {
   const weekday = (part: Parameters<typeof planFor>[0]["part"]) => planFor({ part, weekend: false, hour: hours[part] })
   assert.deepEqual(weekday("morgen"), { greeting: "God morgen", sections: ["departures", "weather", "alerts", "pulls", "issues", "discussions"], weatherWindow: "today", pulls: "all" })
   assert.deepEqual(weekday("arbeidsdag"), { greeting: "God dag", sections: ["alerts", "pulls", "issues", "discussions", "weather"], weatherWindow: "today", pulls: "all" })
-  assert.deepEqual(weekday("kveld"), { greeting: "God kveld", sections: ["alerts", "pulls", "weather"], weatherWindow: "tomorrow", pulls: "mine" })
+  assert.deepEqual(weekday("kveld"), { greeting: "God kveld", sections: ["alerts", "pulls", "weather", "music"], weatherWindow: "tomorrow", pulls: "mine" })
   assert.deepEqual(weekday("natt"), { greeting: "God natt", sections: ["weather"], weatherWindow: "tomorrow", pulls: "mine" })
 })
 
@@ -65,9 +65,9 @@ test("departures lead the page only on the way to and from work", () => {
 })
 
 test("a weekend leaves out reviews and assigned issues", () => {
-  assert.deepEqual(planFor({ part: "morgen", weekend: true, hour: 7 }), { greeting: "God morgen", sections: ["weather", "alerts", "pulls"], weatherWindow: "today", pulls: "mine" })
-  assert.deepEqual(planFor({ part: "arbeidsdag", weekend: true, hour: 12 }), { greeting: "God dag", sections: ["weather", "alerts", "pulls"], weatherWindow: "today", pulls: "mine" })
-  assert.deepEqual(planFor({ part: "kveld", weekend: true, hour: 20 }), { greeting: "God kveld", sections: ["weather", "alerts", "pulls"], weatherWindow: "tomorrow", pulls: "mine" })
+  assert.deepEqual(planFor({ part: "morgen", weekend: true, hour: 7 }), { greeting: "God morgen", sections: ["weather", "alerts", "pulls", "music"], weatherWindow: "today", pulls: "mine" })
+  assert.deepEqual(planFor({ part: "arbeidsdag", weekend: true, hour: 12 }), { greeting: "God dag", sections: ["weather", "alerts", "pulls", "music"], weatherWindow: "today", pulls: "mine" })
+  assert.deepEqual(planFor({ part: "kveld", weekend: true, hour: 20 }), { greeting: "God kveld", sections: ["weather", "alerts", "pulls", "music"], weatherWindow: "tomorrow", pulls: "mine" })
   assert.deepEqual(planFor({ part: "natt", weekend: true, hour: 23 }), { greeting: "God natt", sections: ["weather"], weatherWindow: "tomorrow", pulls: "mine" })
 })
 

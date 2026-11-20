@@ -1,6 +1,6 @@
 import type { Day, DayPart } from "./day"
 
-export type SectionId = "departures" | "weather" | "alerts" | "pulls" | "issues" | "discussions"
+export type SectionId = "departures" | "weather" | "alerts" | "pulls" | "issues" | "discussions" | "music"
 
 export interface Plan {
   greeting: string
@@ -17,7 +17,7 @@ const GREETINGS: Record<DayPart, string> = { morgen: "God morgen", arbeidsdag: "
 const WEEKDAY: Record<DayPart, Omit<Plan, "greeting">> = {
   morgen: { sections: ["weather", "alerts", "pulls", "issues", "discussions"], weatherWindow: "today", pulls: "all" },
   arbeidsdag: { sections: ["alerts", "pulls", "issues", "discussions", "weather"], weatherWindow: "today", pulls: "all" },
-  kveld: { sections: ["alerts", "pulls", "weather"], weatherWindow: "tomorrow", pulls: "mine" },
+  kveld: { sections: ["alerts", "pulls", "weather", "music"], weatherWindow: "tomorrow", pulls: "mine" },
   natt: { sections: ["weather"], weatherWindow: "tomorrow", pulls: "mine" },
 }
 
@@ -30,7 +30,7 @@ export function commuting({ hour, weekend }: Pick<Day, "hour" | "weekend">): boo
 export function planFor({ part, weekend, hour }: Pick<Day, "part" | "weekend" | "hour">): Plan {
   const plan = WEEKDAY[part]
   const weatherWindow = weekend && (part === "morgen" || part === "arbeidsdag") ? "today" : plan.weatherWindow
-  const sections = weekend ? (part === "natt" ? plan.sections : ["weather" as const, "alerts" as const, "pulls" as const]) : plan.sections
+  const sections = weekend ? (part === "natt" ? plan.sections : ["weather" as const, "alerts" as const, "pulls" as const, "music" as const]) : plan.sections
   // Departures lead the page only while commuting.
   const lead: SectionId[] = commuting({ hour, weekend }) ? ["departures"] : []
   return { greeting: GREETINGS[part], sections: [...lead, ...sections], weatherWindow, pulls: weekend ? "mine" : plan.pulls }
