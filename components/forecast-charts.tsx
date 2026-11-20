@@ -18,6 +18,7 @@ export function ForecastCharts({ hours }: { hours: HourPoint[] }) {
         data={hours.map((hour) => ({ label: hour.time, value: Math.round(hour.temperature) }))}
         ariaLabel="Temperatur de neste timene"
         valueLabel="Temperatur (°C)"
+        color="var(--weather-accent)"
         height={160}
         formatLabel={hourLabel}
         showTable
@@ -27,6 +28,7 @@ export function ForecastCharts({ hours }: { hours: HourPoint[] }) {
           data={hours.map((hour) => ({ label: hour.time, value: hour.precipitation }))}
           ariaLabel="Nedbør de neste timene"
           valueLabel="Nedbør (mm)"
+        color="var(--weather-rain)"
           height={110}
           formatLabel={hourLabel}
           labelEvery={3}

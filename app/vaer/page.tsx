@@ -71,7 +71,7 @@ export default async function Page() {
                 )}
                 <ForecastCharts hours={chartHours} />
                 <Text as="span" size="xs" tone="muted">
-                  Vind <Sparkline values={chartHours.map((hour) => hour.wind)} label="Vind de neste timene" />
+                  Vind <Sparkline values={chartHours.map((hour) => hour.wind)} label="Vind de neste timene" color="var(--weather-accent)" />
                 </Text>
               </Stack>
             </PageSection>
@@ -84,6 +84,7 @@ export default async function Page() {
               ariaLabel="Laveste og høyeste temperatur de neste dagene"
               formatValue={degrees}
               keepOrder
+              color="var(--weather-accent)"
             />
             <Rows
               lead="icon"
