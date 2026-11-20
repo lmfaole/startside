@@ -22,7 +22,7 @@ description: Use when choosing which design system component to use for somethin
 | A titled part of a page | `PageSection`; a set that belongs together `SectionGroup` + `SubSection`; a link to all of it: `more` |
 | Text, a heading, a link | `Text`, `Heading`, `TextLink`; out to another site `ExternalLink`, `LinkButton external` |
 | Text written in Markdown (a description, a comment) | `Markdown`, never HTML inserted; `size="sm"` for a comment |
-| A list of things | `Rows` (icon / rank / poster lead), `PictureRows`, `EntityRows`, `Tiles`, `HeadlineList`, `StoryList`, `DatedLinkTable` |
+| A list of things | `Rows` (icon / rank / poster lead), `PictureRows`, `RankedRows` (a top list: place, picture, change, bar), `EntityRows`, `Tiles`, `HeadlineList`, `StoryList`, `DatedLinkTable` |
 | Terms and their values (facts about one thing) | `FactList`: one value or several stacked under one term; links on a line `LinkList` |
 | A status | `StatusLine` (under a title), `Badge` (next to a name in a row); a count that links `SummaryBar` |
 | A message about a page or section | `Banner`; a failed query `ErrorMessage`; nothing to show `EmptyState` |
@@ -35,7 +35,7 @@ description: Use when choosing which design system component to use for somethin
 | A value against a goal | `Progress`; pages of a long list with addresses `Pagination` |
 | The way between pages | top-level pages `NavBar` (bar at the foot on a phone, rail from tablet width; given to `PageLayout` as `nav`); where you are and the way back `Breadcrumbs`; the pages under this page `SubPages`; narrowing a list `FilterChips`; a view switch `SegmentedToggle` |
 | An icon | `Icon` (a meaning from `ICONS` in `src/lib/icons.ts`) |
-| A picture | `Picture`, `PictureCard`, `ImageLightbox`, `Logo`, `Logos` |
+| A picture | `Picture`, `PictureCard`, `ImageLightbox`, `Logo`, `Logos`; its shape says what kind of thing it is (`corners`: `round` a person or band, `sharp` a record, `soft` a single, `normal` a poster): one shape for each kind, everywhere that kind shows |
 | A person named (reviewers, authors, who wrote last) | `Person`: the name with their round picture beside it |
 | A card | `Card` (see the cards rule), `ChartCard` for a chart |
 | A chart | `AreaChart`, `ColumnChart`, `StackedColumnChart`, `DonutChart`, `RankedBarChart`, in a `ChartFrame` |

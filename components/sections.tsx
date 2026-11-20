@@ -3,6 +3,7 @@ import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
+import { details } from "@lmfaole/designsystem/components/picture-rows"
 import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { StatusLine } from "@lmfaole/designsystem/components/status-line"
 import { Text, TextLink } from "@lmfaole/designsystem/components/text"
@@ -56,15 +57,12 @@ function row(item: Pick<Item, "key" | "href" | "title" | "repo" | "updated">, la
     body: (
       <Stack gap="xs">
         {own === null ? <ExternalLink href={item.href}>{item.title}</ExternalLink> : <TextLink href={own}>{item.title}</TextLink>}
-        {compact ? null : (
-          <Text size="xs" tone="muted">
-            {item.repo}
-          </Text>
-        )}
+        <Text size="xs" tone="muted">
+          {details([compact ? null : item.repo, <Time key="updated" value={item.updated} now={now()} />])}
+        </Text>
         <StatusLine items={compact ? compactLabels(labels, COMPACT_LABELS) : labels} />
       </Stack>
     ),
-    trailing: <Time value={item.updated} now={now()} />,
   }
 }
 
