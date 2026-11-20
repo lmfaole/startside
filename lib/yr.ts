@@ -2,7 +2,7 @@ import type { Day } from "./day.ts"
 import { env } from "./env"
 import { pickHours, type Timeseries } from "./forecast.ts"
 import { placeName } from "./place"
-import type { Position } from "./position.ts"
+import { coarsePosition, type Position } from "./position.ts"
 import { upstream } from "./upstream"
 
 export interface Hour {
@@ -51,7 +51,8 @@ export interface Forecast {
 }
 
 /** The whole forecast from MET Norway (the data Yr shows) for the device's position, or for the place in the settings. */
-export async function getForecast(position: Position | null = null): Promise<Forecast> {
+export async function getForecast(device: Position | null = null): Promise<Forecast> {
+  const position = device === null ? null : coarsePosition(device)
   const lat = position?.lat ?? env("WEATHER_LAT") ?? "59.91"
   const lon = position?.lon ?? env("WEATHER_LON") ?? "10.75"
   const place = position === null ? (env("WEATHER_PLACE") ?? "Oslo") : ((await placeName(position.lat, position.lon)) ?? "din posisjon")

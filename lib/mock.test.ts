@@ -94,19 +94,17 @@ test("Spotify has a token, a song playing and recent releases, with covers that 
   assert.ok(recentReleases(found, new Date(), 60).length > 0)
 })
 
-test("the forecast starts no later than now and runs on; Entur's departures and trips are around now", async () => {
+test("the forecast starts no later than now and runs on; Entur's departures are around now", async () => {
   const forecast = (await mockFetch("https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.92&lon=10.76").json()) as { properties: { timeseries: { time: string }[] } }
   const times = forecast.properties.timeseries.map((entry) => Date.parse(entry.time))
   assert.ok(times[0]! <= Date.now() && times.at(-1)! > Date.now() + 24 * HOUR)
-  const near = (await mockFetch("https://api.entur.io/journey-planner/v3/graphql", { json: { query: "{ nearest(latitude:59.9226,longitude:10.7586,maximumDistance:600" } }).json()) as { data: { nearest: { edges: { node: { place: { estimatedCalls: { expectedDepartureTime: string }[] } } }[] } } }
+  const near = (await mockFetch("https://api.entur.io/journey-planner/v3/graphql", { json: { query: "{ nearest(latitude:59.9226,longitude:10.7586,maximumDistance:1000" } }).json()) as { data: { nearest: { edges: { node: { place: { estimatedCalls: { expectedDepartureTime: string }[] } } }[] } } }
   const first = near.data.nearest.edges[0]!.node.place.estimatedCalls[0]!
   assert.ok(Math.abs(Date.parse(first.expectedDepartureTime) - Date.now()) < 2 * HOUR)
-  const trips = (await mockFetch("https://api.entur.io/journey-planner/v3/graphql", { json: { query: "{ walk: trip(from:{coordinates:{latitude:59.9226,longitude:10.7586}}, to:{coordinates:{latitude:59.915013,longitude:10.751613}}" } }).json()) as { data: { transit: { tripPatterns: unknown[] } } }
-  assert.ok(trips.data.transit.tripPatterns.length > 0)
 })
 
-test("the departures near home show a delay, a cancellation with a notice, a timetable-only departure, platforms and trains", async () => {
-  const near = (await mockFetch("https://api.entur.io/journey-planner/v3/graphql", { json: { query: "{ nearest(latitude:59.9226,longitude:10.7586,maximumDistance:600" } }).json()) as { data: { nearest: { edges: { node: { distance: number; place: { estimatedCalls: { expectedDepartureTime: string; aimedDepartureTime: string; cancellation: boolean; realtime: boolean; quay: { publicCode: string } | null; situations: unknown[]; serviceJourney: { line: { publicCode: string; transportMode: string } } }[] } } }[] } } }
+test("the stations near Grünerløkka show a delay, a cancellation with a notice, a timetable-only departure, platforms and trains", async () => {
+  const near = (await mockFetch("https://api.entur.io/journey-planner/v3/graphql", { json: { query: "{ nearest(latitude:59.9226,longitude:10.7586,maximumDistance:1000" } }).json()) as { data: { nearest: { edges: { node: { distance: number; place: { estimatedCalls: { expectedDepartureTime: string; aimedDepartureTime: string; cancellation: boolean; realtime: boolean; quay: { publicCode: string } | null; situations: unknown[]; serviceJourney: { line: { publicCode: string; transportMode: string } } }[] } } }[] } } }
   const calls = near.data.nearest.edges.flatMap((edge) => edge.node.place.estimatedCalls)
   assert.ok(calls.some((c) => Date.parse(c.expectedDepartureTime) - Date.parse(c.aimedDepartureTime) === 4 * 60_000))
   assert.ok(calls.some((c) => c.cancellation && c.situations.length > 0))

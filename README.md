@@ -13,7 +13,7 @@ Built after the design system's «Pages and navigation» rules (5.3): three leve
 | `/start` | The **digest**: the state in counts (`SummaryBar`, each a link to its group), then the few things that need you most from each source with «Se alle N». Follows the time of day (`lib/plan.ts`). |
 | `/start/pull-requests`, `/issues`, `/discussions` | The **lists**: everything, in groups by what needs you most. Discussions are under Issues (the bar holds five places) |
 | `/start/github` | GitHub in one place: the counts of what wants you and the pages under it (varsler, pull requests, issues, discussions), which have GitHub as their first breadcrumb |
-| `/start/avganger` | Getting around: from where you are (the workplace, home, or the device's position) the way to where you are likely going, **public transport set against walking** (when to leave, minutes, minutes saved), and the next departures from the stops around you. Home is set on the page (`Her er hjemme`, kept in a cookie in the browser); the workplace is `WORK_*` in `wrangler.jsonc` (Fremtind, Hammersborggata 8). The front page shows a digest of it only on the way to and from work (weekdays 06–09 and 15–18); home is `HOME_LAT`/`HOME_LON` until it is set on the page |
+| `/start/transport` | The stations nearest to the device (Entur, within a kilometre, nearest first), each with a departure board (`DepartureBoard`): line, destination, platform, delays and cancellations. Only from the device's position («Bruk min posisjon»); without it the page says so. `/start/avganger` redirects here (`next.config.ts`) |
 | `/start/varsler` | What wants a look: **feilende CI** (a default branch whose last commit is red, in your public repositories and the watched ones), **nytt fra andre** (replies and reviews on what you are in, last three days, where somebody else wrote last) and **Dependabot** (its open pull requests in your public repositories, with their checks) |
 | `/start/vaer` | The whole forecast: the rest of today, tomorrow, the coming days |
 | `/start/pull-requests/{owner}/{repo}/{n}`, `/issues/…`, `/discussions/…` | The **detail** of one thing: status, description, facts, checks, last comments, and **«Åpne på GitHub» last** |
@@ -37,9 +37,9 @@ the summary, in the morning, the workday, the evening and the weekend, but not a
 | Source | What | Config |
 | --- | --- | --- |
 | Cloudflare Workers AI (`@cf/meta/llama-3.1-8b-instruct-fp8`, the `AI` binding) | A short Norwegian summary at the top of a pull request, an issue, a discussion and the alerts. Cheap by design: a small model, the text cut to a few thousand characters, ~200 tokens out, one call per version of the text (kept a week in the edge cache under a fingerprint), made while the page streams, and left out on any failure | `ai` in `wrangler.jsonc` |
-| Design system 8.13 (`EmptyState`, `Banner`, `Time`, `Freshness`, `ConnectionBanner`, `StreamedSection`) | Empty states, the hint on departures and every time (rows, comments, «opprettet», «sist endret») use them: relative when recent, a date later, the exact time in `title` | none |
+| Design system 8.13 (`EmptyState`, `Time`, `Freshness`, `ConnectionBanner`, `StreamedSection`) | Empty states and every time (rows, comments, «opprettet», «sist endret») use them: relative when recent, a date later, the exact time in `title` | none |
 | github.com (`<login>.png`, fetched by the browser) | The picture of each person next to their name on the detail pages (`Person` from the design system, `lib/avatar.ts`): reviewers, assignees, who answered, who commented. No token, nothing through the relay | none |
-| Entur (Journey Planner v3, through the relay) | Departures from the stops nearby and trips compared with walking | `WORK_NAME`, `WORK_LAT`, `WORK_LON` in `wrangler.jsonc` |
+| Entur (Journey Planner v3, through the relay) | Departures from the stations nearest to the device | none |
 | Yr (MET Norway `locationforecast`) | The forecast for the rest of the day | `WEATHER_PLACE`, `WEATHER_LAT`, `WEATHER_LON` in `wrangler.jsonc` |
 | GitHub | Pull requests awaiting your review, your open pull requests, issues assigned to you | secret `GITHUB_TOKEN` on `startside-upstream` |
 | Spotify (Web API, through the relay) | **Spilles nå** first on the front page, and **Ny musikk** (albums and singles of the last 60 days by the artists you follow: the 30 first followed) on weekends and weekday evenings, with a page of its own at `/musikk`. It sees what plays and who is followed, nothing that changes the account (`SCOPE` in `lib/spotify.ts`). Spotify's terms are kept: their mark (28 px, one colour) and a link back on every part that shows their content, nothing stored beyond minutes in the edge cache | secrets `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` and `SPOTIFY_REFRESH_TOKEN` on `startside`; the token is made by `npm run spotify:auth` and lasts six months |
@@ -119,11 +119,12 @@ navigation and the pages under it are sent first and the lists and counts follow
 ## Position
 
 «Bruk min posisjon» (next to the title) asks the browser for the device's position, on a tap and never on load. The position
-is kept in the cookie `startside-pos` (`lat,lon`, two decimals, about a kilometre, path `/start`, a year) and read by the
-server, which fetches the forecast for it and names the place (OpenStreetMap's Nominatim, through the relay, cached for a
-day). Once the browser has allowed it, the page follows the device and refreshes when it has moved about two kilometres.
-«Bruk standardsted» removes the cookie and goes back to `WEATHER_*`. The position is used for the forecast only; GitHub and
-the rest do not see it. `lib/position.ts` is tested.
+is kept in the cookie `startside-pos` (`lat,lon`, three decimals, about a hundred metres, path `/start`, a year) and read by the
+server, which finds the nearest stations for it (Transport) and fetches the forecast for it to two decimals (about a kilometre, so
+the cache keeps one per square kilometre) and names the place (OpenStreetMap's Nominatim, through the relay, cached for a
+day). Once the browser has allowed it, the page follows the device and refreshes when it has moved about two hundred metres.
+«Bruk standardsted» removes the cookie and goes back to `WEATHER_*` (and Transport has nothing to show). The position is used for
+the stations and the forecast only; GitHub and the rest do not see it. `lib/position.ts` is tested.
 
 ## How it runs
 
@@ -173,7 +174,7 @@ wrangler secret put GITHUB_TOKEN
 `MOCK_DATA=1` makes every upstream (GitHub, Entur, Yr, Nominatim, Spotify) answer from `lib/mock.ts`, at the one seam `fetchSource()` in `lib/upstream.ts`
 (the AI summary is a canned text); the edge cache is skipped, so mock answers never reach a real run. The answers are real, public ones captured by
 `node scripts/fetch-mock-data.mjs` (public data only; `fremtind/jokul` and `navikt/aksel` on GitHub with the timelines of their pull requests and issues, a merged
-pull request, a closed issue and an answered discussion, Yr and Entur for the home spot, Nominatim, and Deezer's records and covers in Spotify's shape) into `lib/mock-data/*.json` and `public/mock/covers/*.jpg`, both committed (small, and needed to run offline). Their timestamps are moved to
+pull request, a closed issue and an answered discussion, Yr for Grünerløkka, Entur's nearest stations for Grünerløkka and the centre (the mock answers any position with the closer of the two, Grünerløkka dressed with a delay, a cancellation and trains), Nominatim, and Deezer's records and covers in Spotify's shape) into `lib/mock-data/*.json` and `public/mock/covers/*.jpg`, both committed (small, and needed to run offline). Their timestamps are moved to
 now when served. Rerun the script to refresh them; `github` needs about 100 requests and the threads of discussions need GraphQL, so give it a token for that run only:
 `GITHUB_TOKEN=$(gh auth token) node scripts/fetch-mock-data.mjs github` (it is sent, never saved). Put it in `.env.local` (read by `next dev`; gitignored)
 and/or `.dev.vars`, with `GITHUB_WATCH_REPOS=fremtind/jokul,navikt/aksel` for the watched-repository parts. Unset, nothing changes. Never set it in production.

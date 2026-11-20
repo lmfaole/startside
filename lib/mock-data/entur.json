@@ -1,17 +1,17 @@
 {
  "capturedAt": "2026-11-20T19:05:37.091Z",
  "spots": {
-  "home": {
+  "grunerlokka": {
    "lat": 59.9226,
    "lon": 10.7586
   },
-  "work": {
+  "sentrum": {
    "lat": 59.915013,
    "lon": 10.751613
   }
  },
  "nearest": {
-  "home": {
+  "grunerlokka": {
    "nearest": {
     "edges": [
      {
@@ -2442,7 +2442,7 @@
     ]
    }
   },
-  "work": {
+  "sentrum": {
    "nearest": {
     "edges": [
      {
@@ -4622,274 +4622,6 @@
         "estimatedCalls": []
        }
       }
-     }
-    ]
-   }
-  }
- },
- "trips": {
-  "homeWork": {
-   "walk": {
-    "tripPatterns": [
-     {
-      "duration": 928
-     }
-    ]
-   },
-   "transit": {
-    "tripPatterns": [
-     {
-      "expectedStartTime": "2026-11-20T20:10:05+01:00",
-      "expectedEndTime": "2026-11-20T20:19:09+01:00",
-      "duration": 544,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 72,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "12"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 172,
-        "line": null
-       }
-      ]
-     },
-     {
-      "expectedStartTime": "2026-11-20T20:11:38+01:00",
-      "expectedEndTime": "2026-11-20T20:20:42+01:00",
-      "duration": 544,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 72,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "18"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 172,
-        "line": null
-       }
-      ]
-     },
-     {
-      "expectedStartTime": "2026-11-20T20:17:04+01:00",
-      "expectedEndTime": "2026-11-20T20:26:08+01:00",
-      "duration": 544,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 72,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "15"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 172,
-        "line": null
-       }
-      ]
-     },
-     {
-      "expectedStartTime": "2026-11-20T20:21:41+01:00",
-      "expectedEndTime": "2026-11-20T20:30:45+01:00",
-      "duration": 544,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 72,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "12"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 172,
-        "line": null
-       }
-      ]
-     },
-     {
-      "expectedStartTime": "2026-11-20T20:25:48+01:00",
-      "expectedEndTime": "2026-11-20T20:34:52+01:00",
-      "duration": 544,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 72,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "18"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 172,
-        "line": null
-       }
-      ]
-     }
-    ]
-   }
-  },
-  "workHome": {
-   "walk": {
-    "tripPatterns": [
-     {
-      "duration": 988
-     }
-    ]
-   },
-   "transit": {
-    "tripPatterns": [
-     {
-      "expectedStartTime": "2026-11-20T20:09:19+01:00",
-      "expectedEndTime": "2026-11-20T20:18:44+01:00",
-      "duration": 565,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 150,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "12"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 115,
-        "line": null
-       }
-      ]
-     },
-     {
-      "expectedStartTime": "2026-11-20T20:11:54+01:00",
-      "expectedEndTime": "2026-11-20T20:21:19+01:00",
-      "duration": 565,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 150,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "15"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 115,
-        "line": null
-       }
-      ]
-     },
-     {
-      "expectedStartTime": "2026-11-20T20:14:30+01:00",
-      "expectedEndTime": "2026-11-20T20:23:55+01:00",
-      "duration": 565,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 150,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "18"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 115,
-        "line": null
-       }
-      ]
-     },
-     {
-      "expectedStartTime": "2026-11-20T20:18:20+01:00",
-      "expectedEndTime": "2026-11-20T20:27:45+01:00",
-      "duration": 565,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 150,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "12"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 115,
-        "line": null
-       }
-      ]
-     },
-     {
-      "expectedStartTime": "2026-11-20T20:22:15+01:00",
-      "expectedEndTime": "2026-11-20T20:31:40+01:00",
-      "duration": 565,
-      "legs": [
-       {
-        "mode": "foot",
-        "duration": 150,
-        "line": null
-       },
-       {
-        "mode": "tram",
-        "duration": 300,
-        "line": {
-         "publicCode": "15"
-        }
-       },
-       {
-        "mode": "foot",
-        "duration": 115,
-        "line": null
-       }
-      ]
      }
     ]
    }

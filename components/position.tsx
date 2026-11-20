@@ -25,7 +25,7 @@ function locate(options: PositionOptions): Promise<Position> {
 
 /**
  * The page's choice of place: the device's position, or the one in the settings. Asking happens on a tap, never on load;
- * once the browser has allowed it, the page follows the device and refreshes the forecast when it has moved a couple of kilometres.
+ * once the browser has allowed it, the page follows the device and refreshes when it has moved a couple of hundred metres (other stations, perhaps another forecast).
  */
 export function PositionControl({ current }: { current: Position | null }) {
   const router = useRouter()

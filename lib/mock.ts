@@ -311,11 +311,11 @@ function call(now: number, minutes: number, line: string, mode: string, destinat
 }
 
 /**
- * What the departure board has to show that a real capture seldom has: the captured answer near home with, at the nearest stop, a departure 4 minutes late, a
+ * What the departure board has to show that a real capture seldom has: the captured answer at Grünerløkka with, at the nearest stop, a departure 4 minutes late, a
  * cancelled one with a notice, one only by the timetable and the platforms; and a made-up stop at the edge of the search with metro and trains, several of each
  * line within the hour, the first ones gone before the reader could walk there.
  */
-export function enturHome(captured: Nearest, now: number): Nearest {
+export function enturDressed(captured: Nearest, now: number): Nearest {
   const edges = captured.nearest.edges.map((edge, index) => {
     const calls = edge.node.place.estimatedCalls
     if (index !== 0 || calls === undefined) return edge
@@ -342,13 +342,11 @@ export function enturHome(captured: Nearest, now: number): Nearest {
 
 function entur(query: string): Response {
   const moved = shift(enturData, Date.now() - Date.parse(enturData.capturedAt))
-  const { home, work } = moved.spots
-  if (query.includes("nearest(")) {
-    const [, lat, lon] = /latitude:([\d.-]+),longitude:([\d.-]+)/.exec(query) ?? []
-    return reply({ data: near(Number(lat), Number(lon), work) < near(Number(lat), Number(lon), home) ? moved.nearest.work : enturHome(moved.nearest.home as Nearest, Date.now()) })
-  }
-  const [, lat, lon] = /from:\{coordinates:\{latitude:([\d.-]+),longitude:([\d.-]+)/.exec(query) ?? []
-  return reply({ data: near(Number(lat), Number(lon), work) < near(Number(lat), Number(lon), home) ? moved.trips.workHome : moved.trips.homeWork })
+  const { grunerlokka, sentrum } = moved.spots
+  if (!query.includes("nearest(")) return notFound(`Entur: ${query.slice(0, 40)}`)
+  // Any position gets the stations of the captured place it is closest to.
+  const [, lat, lon] = /latitude:([\d.-]+),longitude:([\d.-]+)/.exec(query) ?? []
+  return reply({ data: near(Number(lat), Number(lon), sentrum) < near(Number(lat), Number(lon), grunerlokka) ? moved.nearest.sentrum : enturDressed(moved.nearest.grunerlokka as Nearest, Date.now()) })
 }
 
 // Yr and Nominatim -----------------------------------------------------------------------------------------------------------------------------------------

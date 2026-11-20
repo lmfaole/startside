@@ -1,22 +1,20 @@
 import { Freshness } from "@lmfaole/designsystem/components/freshness"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { SummaryBar } from "@lmfaole/designsystem/components/summary-bar"
+import { cookies } from "next/headers"
 
-import { DeparturesSection } from "../components/departures"
 import { NowPlayingSection, ReleasesSection } from "../components/music"
 import { PositionControl } from "../components/position"
 import { AlertsSection, DiscussionsSection, IssuesSection, PullsSection, WeatherDigest } from "../components/sections"
 import { Shell } from "../components/shell"
-import { getContext } from "../lib/context"
 import { dayOf, now } from "../lib/day"
-import { getAround } from "../lib/getaround"
 import { groupDiscussions } from "../lib/discussions"
 import { dateLine } from "../lib/format"
 import { getCiFailures, getDependabot, getDiscussions, getIssues, getPulls, getReplies } from "../lib/github"
 import { groupIssues } from "../lib/issues"
 import { BASE } from "../lib/links"
 import { planFor } from "../lib/plan"
-import { journeyFor } from "../lib/places"
+import { parsePosition, POSITION_COOKIE } from "../lib/position"
 import { groupPulls } from "../lib/pulls"
 import { settle } from "../lib/settle"
 import { summaryItems } from "../lib/summary"
@@ -38,11 +36,10 @@ export default async function Page() {
   const instant = now()
   const day = dayOf(instant)
   const plan = planFor(day)
-  const { position, home, work } = await getContext()
-  const journey = journeyFor({ position, work, home, day })
+  const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
   const wants = (id: (typeof plan.sections)[number]) => plan.sections.includes(id)
 
-  const [pulls, issues, discussions, forecast, ci, replies, dependabot, around, releases, nowPlaying] = await Promise.all([
+  const [pulls, issues, discussions, forecast, ci, replies, dependabot, releases, nowPlaying] = await Promise.all([
     wants("pulls") ? settle(getPulls(plan.pulls)) : null,
     wants("issues") ? settle(getIssues()) : null,
     wants("discussions") ? settle(getDiscussions()) : null,
@@ -50,7 +47,6 @@ export default async function Page() {
     wants("alerts") ? settle(getCiFailures()) : null,
     wants("alerts") ? settle(getReplies(instant)) : null,
     wants("alerts") ? settle(getDependabot()) : null,
-    wants("departures") && journey !== null ? getAround(journey) : null,
     wants("music") ? settle(getReleases(instant)) : null,
     // What plays this second: shown whatever the time of day, and nothing where nothing plays or Spotify is not set up.
     getNowPlaying().catch(() => null),
@@ -73,7 +69,6 @@ export default async function Page() {
           if (id === "pulls" && pulls) return <PullsSection key={id} data={pulls} mode="digest" instant={instant} />
           if (id === "issues" && issues) return <IssuesSection key={id} data={issues} mode="digest" instant={instant} />
           if (id === "discussions" && discussions) return <DiscussionsSection key={id} data={discussions} mode="digest" />
-          if (id === "departures" && around) return <DeparturesSection key={id} data={around} mode="digest" instant={instant} />
           if (id === "music" && releases) return <ReleasesSection key={id} data={releases} mode="digest" />
           if (id === "weather" && forecast) return <WeatherDigest key={id} data={forecast} window={plan.weatherWindow} day={day} instant={instant} />
           return null

@@ -11,7 +11,7 @@ import { Refresh } from "./refresh"
 /** How often the open page asks for itself again (components/refresh.tsx). A source is kept at the edge for as long (lib/upstream.ts) and then shown at once, as it was, while it is asked for anew: a renewal never waits for GitHub. */
 const REFRESH_SECONDS = 60
 
-export type PageId = "front" | "github" | "departures" | "weather"
+export type PageId = "front" | "github" | "transport" | "weather"
 
 /** The pages under GitHub (pull requests, issues, discussions, alerts) have this as their first crumb. */
 export const GITHUB = { path: "/github", label: "GitHub" } as const
@@ -20,7 +20,7 @@ export const GITHUB = { path: "/github", label: "GitHub" } as const
 const PLACES = [
   { key: "front", label: "Forside", path: "", icon: "home" },
   { key: "github", label: "GitHub", path: "/github", icon: "branch" },
-  { key: "departures", label: "Avganger", path: "/avganger", icon: "bus" },
+  { key: "transport", label: "Transport", path: "/transport", icon: "bus" },
   { key: "weather", label: "Vær", path: "/vaer", icon: "weather" },
 ] as const
 

@@ -14,8 +14,9 @@ mkdirSync(dataDir, { recursive: true })
 mkdirSync(coverDir, { recursive: true })
 
 const UA = "startside-mock-capture github.com/lmfaole/startside"
-const HOME = { lat: 59.9226, lon: 10.7586 }
-const WORK = { lat: 59.915013, lon: 10.751613 }
+// Two places in Oslo to capture the stations around: Grünerløkka (also the forecast and the place name) and the centre.
+const GRUNERLOKKA = { lat: 59.9226, lon: 10.7586 }
+const SENTRUM = { lat: 59.915013, lon: 10.751613 }
 const REPOS = ["fremtind/jokul", "navikt/aksel"]
 const ARTISTS = ["Sigrid", "AURORA", "Kygo", "Alan Walker", "girl in red"]
 
@@ -219,23 +220,21 @@ async function captureGithub() {
 }
 
 async function captureYr() {
-  const body = await (await get(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${HOME.lat.toFixed(2)}&lon=${HOME.lon.toFixed(2)}`)).json()
+  const body = await (await get(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${GRUNERLOKKA.lat.toFixed(2)}&lon=${GRUNERLOKKA.lon.toFixed(2)}`)).json()
   save("yr", { capturedAt: body.properties.meta.updated_at, answer: body })
 }
 
-const coordinates = (spot) => `{coordinates:{latitude:${spot.lat},longitude:${spot.lon}}}`
 async function entur(query) {
   const response = await get("https://api.entur.io/journey-planner/v3/graphql", { method: "POST", headers: { "Content-Type": "application/json", "ET-Client-Name": "lmfaole-startside" }, body: JSON.stringify({ query }) })
   return (await response.json()).data
 }
 async function captureEntur() {
-  const nearest = (spot) => entur(`{ nearest(latitude:${spot.lat},longitude:${spot.lon},maximumDistance:600,maximumResults:8,filterByPlaceTypes:[stopPlace]){ edges{ node{ distance place{ ... on StopPlace{ id name estimatedCalls(numberOfDepartures:20,timeRange:3600){ expectedDepartureTime aimedDepartureTime cancellation realtime quay{publicCode} situations{ summary{value language} } destinationDisplay{frontText} serviceJourney{ line{publicCode transportMode} } } } } } } } }`)
-  const trips = (from, to) => entur(`{ walk: trip(from:${coordinates(from)}, to:${coordinates(to)}, modes:{directMode:foot, transportModes:[]}, numTripPatterns:1){ tripPatterns{ duration } } transit: trip(from:${coordinates(from)}, to:${coordinates(to)}, modes:{accessMode:foot, egressMode:foot, transportModes:[{transportMode:bus},{transportMode:tram},{transportMode:metro}]}, numTripPatterns:5){ tripPatterns{ expectedStartTime expectedEndTime duration legs{ mode duration line{publicCode} } } } }`)
-  save("entur", { capturedAt: new Date().toISOString(), spots: { home: HOME, work: WORK }, nearest: { home: await nearest(HOME), work: await nearest(WORK) }, trips: { homeWork: await trips(HOME, WORK), workHome: await trips(WORK, HOME) } })
+  const nearest = (spot) => entur(`{ nearest(latitude:${spot.lat},longitude:${spot.lon},maximumDistance:1000,maximumResults:8,filterByPlaceTypes:[stopPlace]){ edges{ node{ distance place{ ... on StopPlace{ id name estimatedCalls(numberOfDepartures:20,timeRange:3600){ expectedDepartureTime aimedDepartureTime cancellation realtime quay{publicCode} situations{ summary{value language} } destinationDisplay{frontText} serviceJourney{ line{publicCode transportMode} } } } } } } } }`)
+  save("entur", { capturedAt: new Date().toISOString(), spots: { grunerlokka: GRUNERLOKKA, sentrum: SENTRUM }, nearest: { grunerlokka: await nearest(GRUNERLOKKA), sentrum: await nearest(SENTRUM) } })
 }
 
 async function captureNominatim() {
-  save("nominatim", await (await get(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=nb&lat=${HOME.lat}&lon=${HOME.lon}`)).json())
+  save("nominatim", await (await get(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=nb&lat=${GRUNERLOKKA.lat}&lon=${GRUNERLOKKA.lon}`)).json())
 }
 
 // Deezer and Apple have no Spotify, so the artists, their newest records and covers come from Deezer (keyless) and are served in Spotify's shape.
