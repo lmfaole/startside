@@ -1,5 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 
+import { env } from "./env"
+import { mockSummary } from "./mock"
 import { buildMessages, cleanSummary, fingerprint, PROMPT_VERSION, type SummaryInput, type SummaryKind } from "./summarize"
 
 /** Cloudflare Workers AI: a small model, a few hundred tokens a summary, and only when the text is new (see below), so it stays within the free allowance. */
@@ -16,6 +18,7 @@ interface Ai {
  * of the text, so the model is asked once for each version of the text and never again for a page that has not changed.
  */
 export async function summarize(kind: SummaryKind, input: SummaryInput): Promise<string | null> {
+  if (env("MOCK_DATA") === "1") return mockSummary()
   try {
     const ai = (getCloudflareContext().env as unknown as { AI?: Ai }).AI
     if (ai === undefined) return null

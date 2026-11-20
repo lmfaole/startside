@@ -2,7 +2,7 @@ import { ciFailures, fromOthers, type CiFailure, type InvolvedNode, type RepoNod
 import { osloDateDaysAgo } from "./day"
 import { discussionNodes, type DiscussionItem } from "./discussions"
 import { isWatched, parseRepos, scope } from "./github-query"
-import { env } from "./env"
+import { env, mocking } from "./env"
 import { readStatuses, withStatus, type PullStatus, type Statuses } from "./pr-status"
 import { upstream } from "./upstream"
 
@@ -78,7 +78,7 @@ async function graphql(token: string | undefined, query: string): Promise<Status
 function token(): string | undefined {
   const value = env("GITHUB_TOKEN")
   // Through the relay, the relay holds the token.
-  if (!value && !env("UPSTREAM_URL")) throw new Error("GITHUB_TOKEN er ikke satt")
+  if (!value && !env("UPSTREAM_URL") && !mocking()) throw new Error("GITHUB_TOKEN er ikke satt")
   return value
 }
 

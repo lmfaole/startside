@@ -168,6 +168,16 @@ npm run deploy
 wrangler secret put GITHUB_TOKEN
 ```
 
+### Mock data (no keys, no network)
+
+`MOCK_DATA=1` makes every upstream (GitHub, Entur, Yr, Nominatim, Spotify) answer from `lib/mock.ts`, at the one seam `fetchSource()` in `lib/upstream.ts`
+(the AI summary is a canned text); the edge cache is skipped, so mock answers never reach a real run. The answers are real, public ones captured by
+`node scripts/fetch-mock-data.mjs` (no token; `fremtind/jokul` and `navikt/aksel` on GitHub, Yr and Entur for the home spot, Nominatim, and Deezer's records and
+covers in Spotify's shape) into `lib/mock-data/*.json` and `public/mock/covers/*.jpg`, both committed (small, and needed to run offline). Their timestamps are moved to
+now when served. Rerun the script to refresh them (GitHub allows 60 requests an hour without a token). Put it in `.env.local` (read by `next dev`; gitignored)
+and/or `.dev.vars`, with `GITHUB_WATCH_REPOS=fremtind/jokul,navikt/aksel` for the watched-repository parts. Unset, nothing changes. Never set it in production.
+The app is served under the base path, so the start page is <http://localhost:3000/start> (`/` is 404 by design).
+
 The page shows personal data, so `lmfaole.party/start` is behind Cloudflare Access (the application «Startside»): only the owner's address gets in, with a login code by e-mail.
 
 ## Add a source

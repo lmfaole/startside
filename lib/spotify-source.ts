@@ -1,4 +1,4 @@
-import { env } from "./env"
+import { env, mocking } from "./env"
 import { albumsUrl, FOLLOWING_URL, NOW_PLAYING_URL, parseFollowed, parseNowPlaying, parseReleases, parseToken, recentReleases, refreshRequest, type NowPlaying, type Release } from "./spotify"
 import { upstream } from "./upstream"
 
@@ -14,6 +14,7 @@ const AGENT = { "User-Agent": "startside github.com/lmfaole/startside" }
  * makes the page quicker (their terms): a token is no content, the answers below are kept for minutes, and nothing is stored.
  */
 async function accessToken(): Promise<string | null> {
+  if (mocking()) return "mock-access-token"
   const [clientId, secret, refresh] = [env("SPOTIFY_CLIENT_ID"), env("SPOTIFY_CLIENT_SECRET"), env("SPOTIFY_REFRESH_TOKEN")]
   if (clientId === undefined || secret === undefined || refresh === undefined) return null
   const request = refreshRequest(clientId, secret, refresh)

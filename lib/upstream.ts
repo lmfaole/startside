@@ -1,7 +1,8 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 
 import { STALE_SECONDS, verdict } from "./cache-policy"
-import { env } from "./env"
+import { env, mocking } from "./env"
+import { mockFetch } from "./mock"
 import { fingerprint } from "./summarize"
 
 /**
@@ -13,6 +14,7 @@ import { fingerprint } from "./summarize"
 const SPOTIFY_HOSTS = new Set(["api.spotify.com", "accounts.spotify.com"])
 
 async function fetchSource(url: string, init: { headers?: Record<string, string>; revalidate: number; /** How long past `revalidate` a kept answer may still be shown while it is asked for anew (default `STALE_SECONDS`; 0 for what must not be old, like what plays now). */ staleFor?: number; /** A JSON body makes it a POST (GitHub's GraphQL, which the relay allows). */ json?: unknown; /** A text body makes it a POST too (Spotify's token, a form); the caller sets its Content-Type. */ body?: string }): Promise<Response> {
+  if (mocking()) return mockFetch(url, init)
   const relay = env("UPSTREAM_URL")
   const key = env("UPSTREAM_KEY")
   const target = new URL(url)
@@ -39,7 +41,7 @@ const edgeCache = (): Cache | undefined => (typeof caches === "undefined" ? unde
  * An answer that is not ok is never kept. A request for the same address and the same body is the same question, whoever asks.
  */
 export async function upstream(url: string, init: Parameters<typeof fetchSource>[1]): Promise<Response> {
-  const cache = edgeCache()
+  const cache = mocking() ? undefined : edgeCache()
   if (cache === undefined) return fetchSource(url, init)
   const staleFor = init.staleFor ?? STALE_SECONDS
   const key = new Request(`https://startside.invalid/upstream/${await fingerprint([url, JSON.stringify(init.json ?? null), init.body ?? ""])}`)

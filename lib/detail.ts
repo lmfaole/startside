@@ -1,5 +1,5 @@
 import { truncateMarkdown } from "./digest"
-import { env } from "./env"
+import { env, mocking } from "./env"
 import type { Ref } from "./links"
 import { upstream } from "./upstream"
 
@@ -40,7 +40,7 @@ const toComments = (comments: Comments): { total: number; latest: Comment[] } =>
 
 async function ask<T>(query: string, ref: Ref): Promise<T> {
   const token = env("GITHUB_TOKEN")
-  if (!token && !env("UPSTREAM_URL")) throw new Error("GITHUB_TOKEN er ikke satt")
+  if (!token && !env("UPSTREAM_URL") && !mocking()) throw new Error("GITHUB_TOKEN er ikke satt")
   const response = await upstream("https://api.github.com/graphql", {
     headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), "User-Agent": "startside" },
     json: { query, variables: { owner: ref.owner, name: ref.repo, number: ref.number } },

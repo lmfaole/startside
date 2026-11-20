@@ -1,0 +1,161 @@
+// Captures real, public, keyless answers into lib/mock-data/*.json (and album covers into public/mock/covers/), which lib/mock.ts serves when MOCK_DATA=1.
+// Run it by hand now and then: `node scripts/fetch-mock-data.mjs [github] [yr] [entur] [nominatim] [spotify]` (all of them by default).
+// No token is used and nothing private is read: GitHub is asked without authentication (60 requests an hour, about 40 are used by `github`).
+import { mkdirSync, writeFileSync } from "node:fs"
+import { dirname, join } from "node:path"
+import { fileURLToPath } from "node:url"
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "..")
+const dataDir = join(root, "lib", "mock-data")
+const coverDir = join(root, "public", "mock", "covers")
+mkdirSync(dataDir, { recursive: true })
+mkdirSync(coverDir, { recursive: true })
+
+const UA = "startside-mock-capture github.com/lmfaole/startside"
+const HOME = { lat: 59.9226, lon: 10.7586 }
+const WORK = { lat: 59.915013, lon: 10.751613 }
+const REPOS = ["fremtind/jokul", "navikt/aksel"]
+const ARTISTS = ["Sigrid", "AURORA", "Kygo", "Alan Walker", "girl in red"]
+
+const save = (name, value) => writeFileSync(join(dataDir, `${name}.json`), `${JSON.stringify(value, null, 1)}\n`)
+
+async function get(url, init = {}) {
+  const response = await fetch(url, { ...init, headers: { "User-Agent": UA, ...init.headers } })
+  if (!response.ok) throw new Error(`${response.status} ${url}${response.status === 403 ? " (GitHub's limit for requests without a token, wait an hour)" : ""}`)
+  return response
+}
+const github = async (path) => (await get(`https://api.github.com${path}`, { headers: { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" } })).json()
+const clip = (text, length) => (text ?? "").slice(0, length)
+const names = (list) => (list ?? []).map((item) => item.login ?? item.name)
+
+function checksOf(runs) {
+  if (runs.length === 0) return { state: null, runs }
+  const conclusions = runs.map((run) => run.conclusion)
+  const state = conclusions.some((c) => ["failure", "timed_out", "cancelled", "startup_failure", "action_required"].includes(c)) ? "FAILURE" : runs.some((run) => run.status !== "completed") ? "PENDING" : "SUCCESS"
+  return { state, runs }
+}
+const runsOf = async (repo, ref) => {
+  const { check_runs } = await github(`/repos/${repo}/commits/${ref}/check-runs?per_page=30`)
+  return check_runs.map((run) => ({ name: run.name, status: run.status, conclusion: run.conclusion }))
+}
+
+const decode = (html) => html.replace(/<[^>]+>/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim()
+const decodeEntities = (text) => text.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&")
+
+async function discussionsOf(repo) {
+  const atom = await (await get(`https://github.com/${repo}/discussions.atom`)).text()
+  const page = await (await get(`https://github.com/${repo}/discussions`, { headers: { "User-Agent": "Mozilla/5.0" } })).text()
+  const updated = new Map()
+  for (const entry of atom.split("<entry>").slice(1)) {
+    const number = /discussions\/(\d+)"/.exec(entry)?.[1]
+    if (number === undefined) continue
+    updated.set(number, { updated: /<updated>([^<]+)</.exec(entry)?.[1], body: clip(decode(decodeEntities(/<content[^>]*>([\s\S]*?)<\/content>/.exec(entry)?.[1] ?? "")), 1500) })
+  }
+  const rows = page.split('class="markdown-title').slice(1)
+  return rows.flatMap((row) => {
+    const number = /href="\/[^"]+\/discussions\/(\d+)"/.exec(row)?.[1]
+    const title = />([^<]+)<\/a><\/h3>/.exec(row)?.[1]
+    if (number === undefined || title === undefined) return []
+    const next = updated.get(number)
+    const created = /datetime="([^"]+)"/.exec(row)?.[1]
+    const comments = /(\d+) comments?/.exec(row)?.[1]
+    const category = /aria-label="([^"]+) \(category\)"/.exec(row)?.[1] ?? ""
+    return [{ number: Number(number), title: decodeEntities(title), url: `https://github.com/${repo}/discussions/${number}`, author: /aria-label="([^"]+) \(author\)"/.exec(row)?.[1] ?? "ukjent", created, updated: next?.updated ?? created, category: decodeEntities(category), comments: Number(comments ?? 0), answered: /Answered/.test(row) ? true : /Question|Spørsmål|Q&amp;A|Q&A/.test(category) ? false : null, body: next?.body ?? "" }]
+  }).slice(0, 12)
+}
+
+async function captureGithub() {
+  const result = { capturedAt: new Date().toISOString(), me: "", repos: {} }
+  const counts = new Map()
+  const count = (login) => login && !login.includes("[bot]") && counts.set(login, (counts.get(login) ?? 0) + 1)
+  for (const repo of REPOS) {
+    const list = await github(`/repos/${repo}/issues?state=open&sort=updated&direction=desc&per_page=40`)
+    const issues = list.filter((item) => item.pull_request === undefined).slice(0, 20)
+    const pulls = await github(`/repos/${repo}/pulls?state=open&sort=updated&direction=desc&per_page=30`)
+    for (const item of [...issues, ...pulls]) {
+      count(item.user?.login)
+      for (const assignee of item.assignees ?? []) count(assignee.login)
+    }
+    const commit = (await github(`/repos/${repo}/commits?per_page=1`))[0]
+    const info = await github(`/repos/${repo}`)
+    result.repos[repo] = {
+      branch: info.default_branch,
+      commit: { sha: commit.sha, url: commit.html_url, headline: commit.commit.message.split("\n")[0], date: commit.commit.committer.date, checks: checksOf(await runsOf(repo, commit.sha)) },
+      issues: issues.map((issue) => ({ id: issue.id, number: issue.number, url: issue.html_url, title: issue.title, author: issue.user?.login ?? null, created: issue.created_at, updated: issue.updated_at, assignees: names(issue.assignees), labels: names(issue.labels), comments: issue.comments, body: clip(issue.body, 3000) })),
+      pulls: [],
+      issueComments: {},
+      discussions: await discussionsOf(repo),
+      listed: pulls,
+    }
+  }
+  result.me = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? ""
+  for (const repo of REPOS) {
+    const entry = result.repos[repo]
+    const ordered = [...entry.listed.filter((pr) => pr.user?.login === result.me).slice(0, 1), ...entry.listed.filter((pr) => pr.user?.login !== result.me && !pr.user?.login.includes("[bot]")).slice(0, 2), ...entry.listed.filter((pr) => pr.user?.login.includes("[bot]")).slice(0, 1)]
+    for (const item of ordered) {
+      const pr = await github(`/repos/${repo}/pulls/${item.number}`)
+      const reviews = await github(`/repos/${repo}/pulls/${item.number}/reviews?per_page=20`)
+      entry.pulls.push({
+        id: pr.id, number: pr.number, url: pr.html_url, title: pr.title, author: pr.user?.login ?? null, created: pr.created_at, updated: pr.updated_at, draft: pr.draft, mergeableState: pr.mergeable_state,
+        additions: pr.additions, deletions: pr.deletions, files: pr.changed_files, head: pr.head.ref, base: pr.base.ref, labels: names(pr.labels), body: clip(pr.body, 3000), requested: names(pr.requested_reviewers), comments: pr.comments + pr.review_comments,
+        reviews: reviews.filter((review) => review.state !== "PENDING").map((review) => ({ author: review.user?.login ?? "ukjent", state: review.state, submitted: review.submitted_at, body: clip(review.body, 600) })),
+        checks: checksOf(await runsOf(repo, pr.head.sha)),
+      })
+    }
+    delete entry.listed
+    for (const issue of entry.issues.filter((candidate) => candidate.comments > 0).slice(0, 3)) {
+      const last = await github(`/repos/${repo}/issues/${issue.number}/comments?per_page=3&page=${Math.ceil(issue.comments / 3)}`)
+      entry.issueComments[issue.number] = last.map((comment) => ({ author: comment.user?.login ?? "ukjent", created: comment.created_at, body: clip(comment.body, 1200) }))
+    }
+  }
+  save("github", result)
+}
+
+async function captureYr() {
+  const body = await (await get(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${HOME.lat.toFixed(2)}&lon=${HOME.lon.toFixed(2)}`)).json()
+  save("yr", { capturedAt: body.properties.meta.updated_at, answer: body })
+}
+
+const coordinates = (spot) => `{coordinates:{latitude:${spot.lat},longitude:${spot.lon}}}`
+async function entur(query) {
+  const response = await get("https://api.entur.io/journey-planner/v3/graphql", { method: "POST", headers: { "Content-Type": "application/json", "ET-Client-Name": "lmfaole-startside" }, body: JSON.stringify({ query }) })
+  return (await response.json()).data
+}
+async function captureEntur() {
+  const nearest = (spot) => entur(`{ nearest(latitude:${spot.lat},longitude:${spot.lon},maximumDistance:600,maximumResults:8,filterByPlaceTypes:[stopPlace]){ edges{ node{ distance place{ ... on StopPlace{ id name estimatedCalls(numberOfDepartures:12,timeRange:3600){ expectedDepartureTime realtime destinationDisplay{frontText} serviceJourney{ line{publicCode transportMode} } } } } } } } }`)
+  const trips = (from, to) => entur(`{ walk: trip(from:${coordinates(from)}, to:${coordinates(to)}, modes:{directMode:foot, transportModes:[]}, numTripPatterns:1){ tripPatterns{ duration } } transit: trip(from:${coordinates(from)}, to:${coordinates(to)}, modes:{accessMode:foot, egressMode:foot, transportModes:[{transportMode:bus},{transportMode:tram},{transportMode:metro}]}, numTripPatterns:5){ tripPatterns{ expectedStartTime expectedEndTime duration legs{ mode duration line{publicCode} } } } }`)
+  save("entur", { capturedAt: new Date().toISOString(), spots: { home: HOME, work: WORK }, nearest: { home: await nearest(HOME), work: await nearest(WORK) }, trips: { homeWork: await trips(HOME, WORK), workHome: await trips(WORK, HOME) } })
+}
+
+async function captureNominatim() {
+  save("nominatim", await (await get(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=nb&lat=${HOME.lat}&lon=${HOME.lon}`)).json())
+}
+
+// Deezer and Apple have no Spotify, so the artists, their newest records and covers come from Deezer (keyless) and are served in Spotify's shape.
+async function captureSpotify() {
+  const artists = []
+  for (const name of ARTISTS) {
+    const found = (await (await get(`https://api.deezer.com/search/artist?q=${encodeURIComponent(name)}&limit=5`)).json()).data.find((artist) => artist.name.toLowerCase() === name.toLowerCase())
+    if (found === undefined) continue
+    const albums = (await (await get(`https://api.deezer.com/artist/${found.id}/albums?limit=100`)).json()).data
+      .filter((album) => album.record_type === "album" || album.record_type === "single")
+      .sort((a, b) => b.release_date.localeCompare(a.release_date))
+      .slice(0, 3)
+    for (const album of albums) {
+      const image = await get(album.cover_big)
+      writeFileSync(join(coverDir, `${album.id}.jpg`), Buffer.from(await image.arrayBuffer()))
+    }
+    const top = (await (await get(`https://api.deezer.com/artist/${found.id}/top?limit=1`)).json()).data[0]
+    if (top !== undefined) writeFileSync(join(coverDir, `${top.album.id}.jpg`), Buffer.from(await (await get(top.album.cover_big)).arrayBuffer()))
+    artists.push({ id: `dz-${found.id}`, name: found.name, albums: albums.map((album) => ({ id: `dz-${album.id}`, cover: String(album.id), title: album.title, kind: album.record_type, date: album.release_date })), top: top === undefined ? null : { title: top.title, album: top.album.title, cover: String(top.album.id) } })
+  }
+  save("spotify", { capturedAt: new Date().toISOString(), artists })
+}
+
+const steps = { github: captureGithub, yr: captureYr, entur: captureEntur, nominatim: captureNominatim, spotify: captureSpotify }
+const wanted = process.argv.slice(2)
+for (const [name, run] of Object.entries(steps)) {
+  if (wanted.length > 0 && !wanted.includes(name)) continue
+  await run()
+  console.log(`captured ${name}`)
+}

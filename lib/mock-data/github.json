@@ -1,0 +1,1451 @@
+{
+ "capturedAt": "2026-11-20T16:58:44.623Z",
+ "me": "fremtind-bot",
+ "repos": {
+  "fremtind/jokul": {
+   "branch": "main",
+   "commit": {
+    "sha": "f7f3eec6373600119cbef7cc13a7966e8f198052",
+    "url": "https://github.com/fremtind/jokul/commit/f7f3eec6373600119cbef7cc13a7966e8f198052",
+    "headline": "Eksponer schema for Jøkul-tokens fra portalen",
+    "date": "2026-11-20T12:00:04Z",
+    "checks": {
+     "state": "SUCCESS",
+     "runs": [
+      {
+       "name": "Versjoner eller publiser pakker med Changesets",
+       "status": "completed",
+       "conclusion": "success"
+      },
+      {
+       "name": "Analyze (javascript)",
+       "status": "completed",
+       "conclusion": "success"
+      },
+      {
+       "name": "Publiser branch preview",
+       "status": "completed",
+       "conclusion": "success"
+      },
+      {
+       "name": "Deploy Portal",
+       "status": "completed",
+       "conclusion": "success"
+      }
+     ]
+    }
+   },
+   "issues": [
+    {
+     "id": 6464539870,
+     "number": 6849,
+     "url": "https://github.com/fremtind/jokul/issues/6849",
+     "title": "Støtte for span og andre generiske tekstelementer i Title og Text",
+     "author": "lmfaole",
+     "created": "2026-11-18T09:57:19Z",
+     "updated": "2026-11-20T14:22:13Z",
+     "assignees": [],
+     "labels": [],
+     "comments": 1,
+     "body": "### Hva skal gjøres?\n\n`Title` og `Text` bør støtte flere generiske tekstelementer via `as`, slik at man kan bruke to ulike uttrykk i samme tittel, for eksempel en eyebrow-heading over en større heading.\n\nI dag er `as` begrenset til disse listene (`packages/jokul/src/components/typography/types.ts`):\n\n-   `TitleElement`: `h1`–`h6`, `label`, `legend`. Mangler blant annet `span`, `p` og `div`.\n-   `TextElement`: `p`, `span`, `label`, `legend`, `small`, `strong`, `em`, `code`, `kbd`, `samp`, `var`. Mangler blant annet `div`.\n\nDet gjør at man ikke kan rendre en `Title` som `span` for å få heading-uttrykket uten heading-semantikk i DOM-en. En eyebrow over en heading kan derfor ikke lages med Jøkul-komponentene uten å gå utenom dem.\n\nEksempel på hva man ønsker å kunne skrive:\n\n```html\n<hgroup>\n    <Title as=\"span\" size=\"xs\">Forsikring</Title>\n    <Title as=\"h1\" size=\"xl\">Reiseforsikring</Title>\n</hgroup>\n```\n\nForslag:\n\n-   Utvid `TitleElement` med `span` (og vurder `div`).\n-   Vurder om `TextElement` også bør støtte `div`.\n-   Legg til en story og en test for eyebrow-mønsteret.\n\n### Hvorfor skal det gjøres?\n\nTeam som vil kombinere to uttrykk i tittelen sin, for eksempel en liten eyebrow over en stor heading, må i dag bruke egne klasser eller egne elementer. Da mister de designsystemets typografi og tokens, og det blir inkonsistent mellom team."
+    },
+    {
+     "id": 6486864046,
+     "number": 6855,
+     "url": "https://github.com/fremtind/jokul/issues/6855",
+     "title": "Button: Disabled",
+     "author": "jonashior",
+     "created": "2026-11-19T09:50:34Z",
+     "updated": "2026-11-19T10:14:52Z",
+     "assignees": [],
+     "labels": [
+      "🧑‍💻 Utvikling"
+     ],
+     "comments": 0,
+     "body": "Ny state i Button: disabled.\n- Opacity settes til 50%. I Figma brukes variabel jkl/opacity/disabled. \n- Ved hover blir cursor: not-allowed.\n\nLenke til skisse i Figma: https://www.figma.com/design/jnE6mPCHVfbjn7a0AiKGEK/branch/5ixXf6OxQE6VPiaWrF66Th/J%C3%B8kul-v6?m=auto&node-id=15479-1381&t=urQKZfHAKbxnnHnZ-1"
+    },
+    {
+     "id": 6329873850,
+     "number": 6809,
+     "url": "https://github.com/fremtind/jokul/issues/6809",
+     "title": "Eksponer funksjonalitet for å bygge distributørtema",
+     "author": "piofinn",
+     "created": "2026-11-11T13:50:34Z",
+     "updated": "2026-11-17T08:35:22Z",
+     "assignees": [
+      "kristianulv23"
+     ],
+     "labels": [
+      "🧑‍💻 Utvikling",
+      "🧱 Komponentbiblioteket"
+     ],
+     "comments": 0,
+     "body": "### Hva skal gjøres?\n\nFunksjonaliteten for å bygge Jøkul-kompatible tema, inkludert riktige Sass-/CSS-filer og tokens, skal eksponerer fra Jøkul for bruk utenfra. Dette innebærer:\n\n- Konvertering av temafil (fra temabyggeren) til tokens på samme format som vi bruker i Jøkul (se også #6808)\n- Bygging av Sass- og CSS-filer fra tokens (dette vil kreve Style Dictionary, så kan ikke eksponeres til browsere)\n\nBygging av tema kan tilgjengeliggjøres via `jokul` CLI-et med underkommando `build` eller tilsvarende. Ta inn temafil fra temabyggeren og kjør både konvertering og bygging.\n\n### Hvorfor skal det gjøres?\n\nFor å enkelt kunne jobbe med distributørtema utenfor Jøkul-repoet, men på en måte som gjør at designsystemet fortsatt sitter på fasit for format og konvertering."
+    },
+    {
+     "id": 4672575181,
+     "number": 6233,
+     "url": "https://github.com/fremtind/jokul/issues/6233",
+     "title": "Portalen: Skjule publiserte sider fra fundamenter",
+     "author": "Stormoen",
+     "created": "2026-06-16T08:47:09Z",
+     "updated": "2026-11-16T08:38:44Z",
+     "assignees": [],
+     "labels": [
+      "🧑‍💻 Utvikling",
+      "Inaktiv"
+     ],
+     "comments": 2,
+     "body": "### Hva skal gjøres?\n\nLegge til mulighet i i sanity for å skjule publiserte sider fra oversiktien til fundamenter i portalen.\n\n### Hvorfor skal det gjøres?\nFor å ivareta dokumentasjon for eldre versjoner av Jøkul som fortsatt er tilgjengelig. \nEks: \"Farger\" har én inngang på oversiktssiden (nyeste versjon)- og vi kan lenke til eldre dokumentasjon fra denne siden (Jøkul 4). I stedet for slik det blir i dag med to stk innganger til typografi og farger:\n\n<img width=\"1412\" height=\"567\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/0f8dbe59-99a6-407b-87ff-527c32dde4af\" />"
+    },
+    {
+     "id": 6283523611,
+     "number": 6770,
+     "url": "https://github.com/fremtind/jokul/issues/6770",
+     "title": "Temabygger: Mulighet for å angre valg",
+     "author": "jonashior",
+     "created": "2026-11-09T09:33:23Z",
+     "updated": "2026-11-12T08:46:17Z",
+     "assignees": [
+      "kristianulv23"
+     ],
+     "labels": [
+      "🧑‍💻 Utvikling"
+     ],
+     "comments": 0,
+     "body": "Command + z, ctrl + z angre valg bruker har gjort under redigering."
+    },
+    {
+     "id": 6283549842,
+     "number": 6771,
+     "url": "https://github.com/fremtind/jokul/issues/6771",
+     "title": "Temabygger: Flytte navngi tema bort fra \"fontsteg\"",
+     "author": "jonashior",
+     "created": "2026-11-09T09:35:14Z",
+     "updated": "2026-11-12T08:45:59Z",
+     "assignees": [],
+     "labels": [
+      "✏️ Design"
+     ],
+     "comments": 0,
+     "body": "Navngi tema ligger på steg \"Legg til font\". Dette er potensielt forvirrende, kan tolkes som navngiving av fonten. Må løse hvordan navngiving skal gjøres."
+    },
+    {
+     "id": 6346085478,
+     "number": 6814,
+     "url": "https://github.com/fremtind/jokul/issues/6814",
+     "title": "Dokumentasjon om FormErrorMessage",
+     "author": "lmfaole",
+     "created": "2026-11-12T08:39:17Z",
+     "updated": "2026-11-12T08:39:17Z",
+     "assignees": [],
+     "labels": [],
+     "comments": 0,
+     "body": "Inspo:\n\n1. https://aksel.nav.no/komponenter/core/errorsummary\n2. https://aksel.nav.no/god-praksis/artikler/skjemavalidering#2b7f65eb54b8\n3. https://designsystem.nve.no/introduction/forDevelopers/validation\n4. https://design.domstol.no/987b33f71/p/209843-skjemavalidering\n\n"
+    },
+    {
+     "id": 6282968543,
+     "number": 6759,
+     "url": "https://github.com/fremtind/jokul/issues/6759",
+     "title": "Temabygger: Oppdatere visning av font",
+     "author": "jonashior",
+     "created": "2026-11-09T08:54:13Z",
+     "updated": "2026-11-10T11:15:35Z",
+     "assignees": [
+      "zenabii"
+     ],
+     "labels": [
+      "🧑‍💻 Utvikling"
+     ],
+     "comments": 0,
+     "body": "Visning oppdatert til å vise de forskjellige tekststilene våre.\n\nSkisse i Figma: https://www.figma.com/design/dOROd48QQtveivDE60dBv5/branch/EaGQjsq88mR9r14o1N7ZRa/adminverkt%C3%B8y?m=auto&node-id=1132-12208&t=0z05PqEYtqZq3ttu-1"
+    },
+    {
+     "id": 6283408879,
+     "number": 6766,
+     "url": "https://github.com/fremtind/jokul/issues/6766",
+     "title": "Temabygger: Oppdatere delt forhåndsvisning",
+     "author": "jonashior",
+     "created": "2026-11-09T09:25:25Z",
+     "updated": "2026-11-10T11:15:17Z",
+     "assignees": [
+      "fremtindelise"
+     ],
+     "labels": [
+      "🧑‍💻 Utvikling"
+     ],
+     "comments": 0,
+     "body": "Oppdatert til å ta hele bredden. Før var tekst i kort til venstre der skjema er ved redigering, nå er tekst flyttet over visningen.\n\nSkisse i Figma: https://www.figma.com/design/dOROd48QQtveivDE60dBv5/branch/EaGQjsq88mR9r14o1N7ZRa/adminverkt%C3%B8y?m=auto&node-id=3067-19629&t=0z05PqEYtqZq3ttu-1"
+    },
+    {
+     "id": 6303949817,
+     "number": 6782,
+     "url": "https://github.com/fremtind/jokul/issues/6782",
+     "title": "Temabygger: Legge til større eksempler",
+     "author": "jonashior",
+     "created": "2026-11-10T09:21:25Z",
+     "updated": "2026-11-10T09:21:25Z",
+     "assignees": [],
+     "labels": [
+      "✏️ Design"
+     ],
+     "comments": 0,
+     "body": "Vi ser et behov for å vise eksempler på hele grensesnitt, ikke bare utsnitt. Utforsk dette."
+    },
+    {
+     "id": 6283371999,
+     "number": 6765,
+     "url": "https://github.com/fremtind/jokul/issues/6765",
+     "title": "Temabygger: Funksjonalitet utvide visning",
+     "author": "jonashior",
+     "created": "2026-11-09T09:22:49Z",
+     "updated": "2026-11-10T09:20:21Z",
+     "assignees": [],
+     "labels": [
+      "🧑‍💻 Utvikling"
+     ],
+     "comments": 1,
+     "body": "Knapp for å utvide visning. Ved klikk på knapp tas hele bredden av skjermen, kort med skjema skjules.\n\nSkisse i Figma: https://www.figma.com/design/dOROd48QQtveivDE60dBv5/branch/EaGQjsq88mR9r14o1N7ZRa/adminverkt%C3%B8y?m=auto&node-id=262-12775&t=0z05PqEYtqZq3ttu-1"
+    },
+    {
+     "id": 6285525313,
+     "number": 6772,
+     "url": "https://github.com/fremtind/jokul/issues/6772",
+     "title": "Eksponere funksjonalitet for temagenerering fra Jøkul",
+     "author": "piofinn",
+     "created": "2026-11-09T11:52:31Z",
+     "updated": "2026-11-09T11:52:31Z",
+     "assignees": [],
+     "labels": [],
+     "comments": 0,
+     "body": "### Hva skal gjøres?\n\n- Samle all funksjonalitet for generering av tema inn i `@fremtind/jokul`. Dette inkluderer\n  - definisjon av format for tema i Jøkul, inkludert eventuelle typer og JSON schema\n  - funksjonalitet for generering av fargepalett ut fra en kontrastfarge\n  - funksjonalitet for å gjøre om tokens for tema til CSS/Sass og evt. andre formater som brukes i kode\n- Eksponere denne funksjonaliteten gjennom\n  - eksporter som kan brukes f.eks. i temabyggeren i portalen\n  - kommandolinje som kan brukes f.eks. i den nye pakken for distributørtema\n\nArbeidet organiseres som underoppgaver til dette issuet\n\n### Hvorfor skal det gjøres?\n\nFor å kunne legge til rette for en mer konsekvent bruk av tema-funksjonaliteten i Jøkul, og for å kunne flytte tema for distributørenes merkevarer ut av den offentlige kodebasen inn i et eget repo/egen pakke.\n\n### Arkitekturskisse\n\n<img width=\"1604\" height=\"943\" alt=\"Skjermbilde 2026-10-28 kl  14 46 13\" src=\"https://github.com/user-attachments/assets/6640249c-5564-4634-a6f3-af8756df6687\" />"
+    },
+    {
+     "id": 6283017536,
+     "number": 6760,
+     "url": "https://github.com/fremtind/jokul/issues/6760",
+     "title": "Temabygger: Mulighet for å laste opp fontfiler",
+     "author": "jonashior",
+     "created": "2026-11-09T08:57:49Z",
+     "updated": "2026-11-09T08:57:49Z",
+     "assignees": [],
+     "labels": [
+      "🧑‍💻 Utvikling"
+     ],
+     "comments": 0,
+     "body": "Oppdatert til å bruke File Input der bruker kan legge til fonter for vanlig font og display font. Filene skal være med i fil som lastes ned av bruker for å sende til oss i siste steg.\n\nSkisse i Figma: https://www.figma.com/design/dOROd48QQtveivDE60dBv5/branch/EaGQjsq88mR9r14o1N7ZRa/adminverkt%C3%B8y?m=auto&node-id=1132-12208&t=0z05PqEYtqZq3ttu-1\n"
+    },
+    {
+     "id": 6282670276,
+     "number": 6756,
+     "url": "https://github.com/fremtind/jokul/issues/6756",
+     "title": "Dokumentasjon av branding-systemet",
+     "author": "piofinn",
+     "created": "2026-11-09T08:31:51Z",
+     "updated": "2026-11-09T08:31:51Z",
+     "assignees": [],
+     "labels": [
+      "📚 Dokumentasjon"
+     ],
+     "comments": 0,
+     "body": "### Hva skal gjøres?\n\n- Litt om hvordan (og hvorfor) man jobber med branding\n- Litt mer konkret informasjon om hvordan brand-modus fungerer i kode og Figma, og hvordan man tar det i bruk.\n- Konkret info om unntak (som kun light mode for noen tema)\n\n### Hvorfor skal det gjøres?\n\nGi bedre info til utviklere og designere"
+    },
+    {
+     "id": 6202189192,
+     "number": 6724,
+     "url": "https://github.com/fremtind/jokul/issues/6724",
+     "title": "Feil:Fontstørrelse på mobil",
+     "author": "katrinenguyen",
+     "created": "2026-11-04T11:57:28Z",
+     "updated": "2026-11-04T11:57:47Z",
+     "assignees": [],
+     "labels": [],
+     "comments": 0,
+     "body": "### Jøkul-versjon\n\n5.2.2 (?)\n\n### Operativsystem\n\niOS\n\n### Nettleser\n\nMobilappen til SB1\n\n### Hvordan oppstod feilen?\n\nNår man endrer font strl på mobilen så blir ikke fonten større men mellomrommene større og alt ser rart ut. \n\n<img width=\"1206\" height=\"2622\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/ee441bae-1e83-4a39-953d-5224ecce79fd\" />"
+    },
+    {
+     "id": 5484959319,
+     "number": 6549,
+     "url": "https://github.com/fremtind/jokul/issues/6549",
+     "title": "Feat: Link i message forholder seg til sitt eget funksjons-fargespor",
+     "author": "Stormoen",
+     "created": "2026-09-17T08:34:06Z",
+     "updated": "2026-11-04T07:44:04Z",
+     "assignees": [
+      "piofinn",
+      "Stormoen"
+     ],
+     "labels": [
+      "📚 Dokumentasjon",
+      "✨ Forslag",
+      "✏️ Design",
+      "🧑‍💻 Utvikling",
+      "🧱 Komponentbiblioteket",
+      "Inaktiv"
+     ],
+     "comments": 4,
+     "body": "### Innspill fra PM\nEtter at vi la til DNB fargene, har vi fått tilbakemeldinger fra PM om at link i message ikke fungerer så bra. Link bruker text-accent fra profil aksen, som gjør at vi ikke har helt kontroll på hvordan de vil se ut på de globale fargene. \n\nDet er også kommet forslag om å gjøre teksten i message hvit og sort, da det spesielt i dark mode blir litt grums. Slik jeg ser det burde i såfall verdiene til error/text/default endres, men da mister vi funksjonstekst med hint av farge som vi kanskje ønsker å bruke når vi etterhvert lager noen nedtonede meldingsbokser, som ikke bare er midlertidige. Uansett - ikke noe av dette har vi jo i dag - så inntil videre kan vi endre fargen på teksten hvis det er ønskelig.\n\nEksempel brand: DNB\n<img width=\"1336\" height=\"768\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/92382ddc-d61f-4ee7-8a54-89c45b84860c\" />\n\n### Forslag\nLegge til \"modus\" på funksjonsfargene `color:\"error\"`- slik at en link i en message følger samme fargespor som funksjonen sin. @piofinn har utforsket dette.\n\n<img width=\"1612\" height=\"834\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/a53f929a-cbf9-4753-b2c3-e162c9159d7c\" />\n\nI Figma er det også enkelt å legge til dette moduset uten at det blir breaking i variablene - men litt mer logikk må til for å få ikonene til å endre seg i tillegg. Samtidig har vi egentlig besluttet tidligere at dette ikke er optimalt i Figma, og med denne retningen ville det vært bedre om det kun var en variant - slik at man ikke plutselig bruker en error variant og setter modus til warning. \n\nForslag til enkel gjenspeiling i Figma: Vi legger til en link som løpende tekst i komponenten, og setter den til text-accent som hører til fargesporet til varianten.\n\n- [x] #6718\n- [ ] finne en god løsning for figma vs kode, dersom det blir modus i kode\n- [ ] planlegge utvidelse av message - mer nøytral og ikke-midlertidig variant."
+    }
+   ],
+   "pulls": [
+    {
+     "id": 5412971651,
+     "number": 6861,
+     "url": "https://github.com/fremtind/jokul/pull/6861",
+     "title": "backport(jokul-6.x): Spesifikasjon for temafil og -tokens for Jøkul [konflikt]",
+     "author": "fremtind-bot",
+     "created": "2026-11-20T12:01:00Z",
+     "updated": "2026-11-20T12:01:02Z",
+     "draft": false,
+     "mergeableState": "clean",
+     "additions": 0,
+     "deletions": 0,
+     "files": 0,
+     "head": "backport/pr-6847-to-jokul-6.x",
+     "base": "jokul-6.x",
+     "labels": [
+      "🔙 backport"
+     ],
+     "body": "Automatisk backport av [#6847](https://github.com/fremtind/jokul/pull/6847) til `jokul-6.x`.\n\n> [!WARNING]\n\n> Cherry-pick ga konflikt og kunne ikke anvendes automatisk.\n> Sjekk ut branchen og cherry-pick PR-commitene fra GitHub API én etter én før PR-en merges:\n> `git fetch origin refs/pull/6847/head && git checkout backport/pr-6847-to-jokul-6.x && gh api --paginate repos/fremtind/jokul/pulls/6847/commits --jq '.[].sha' | while read -r sha; do git cherry-pick \"$sha\" || break; done`",
+     "requested": [],
+     "comments": 0,
+     "reviews": [],
+     "checks": {
+      "state": "SUCCESS",
+      "runs": [
+       {
+        "name": "Publiser forhåndsvisning",
+        "status": "completed",
+        "conclusion": "skipped"
+       },
+       {
+        "name": "Kjør tester og linting",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Sjekk for endringer",
+        "status": "completed",
+        "conclusion": "success"
+       }
+      ]
+     }
+    },
+    {
+     "id": 5414563701,
+     "number": 6864,
+     "url": "https://github.com/fremtind/jokul/pull/6864",
+     "title": "feat(theme): bygg tokens og Sass fra temafiler",
+     "author": "kristianulv23",
+     "created": "2026-11-20T13:59:25Z",
+     "updated": "2026-11-20T14:13:25Z",
+     "draft": false,
+     "mergeableState": "clean",
+     "additions": 419,
+     "deletions": 143,
+     "files": 14,
+     "head": "6809-bygg-distributortema",
+     "base": "main",
+     "labels": [],
+     "body": "Lagt til `jokul theme build`, slik at vi kan ta en temafil fra temabyggeren og bygge farge- og typografitokens og Sass.\n\nDette er laget for å brukes i vårt repo slik det er nå. Det som trengs for å flytte temaene til et eget repo, tas i såfall senere.",
+     "requested": [
+      "piofinn",
+      "zenabii",
+      "lmfaole",
+      "Stormoen",
+      "fremtindelise",
+      "jonashior"
+     ],
+     "comments": 2,
+     "reviews": [],
+     "checks": {
+      "state": "SUCCESS",
+      "runs": [
+       {
+        "name": "CodeQL",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Publiser forhåndsvisning",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Kjør tester og linting",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Sjekk for endringer",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Analyze (javascript)",
+        "status": "completed",
+        "conclusion": "success"
+       }
+      ]
+     }
+    },
+    {
+     "id": 5414162631,
+     "number": 6863,
+     "url": "https://github.com/fremtind/jokul/pull/6863",
+     "title": "feat(input-card): ny komponent for valg i kortform",
+     "author": "lmfaole",
+     "created": "2026-11-20T13:31:13Z",
+     "updated": "2026-11-20T13:47:37Z",
+     "draft": true,
+     "mergeableState": "clean",
+     "additions": 968,
+     "deletions": 0,
+     "files": 12,
+     "head": "feat/input-card",
+     "base": "main",
+     "labels": [],
+     "body": "> [!IMPORTANT]\n> Ikke ment for å reviewes. Brukes bare for å utforske. \n\n## 💬 Endringer\n\nNy komponent `InputCard` med `InputCardGroup` for enkeltvalg (radio) og flervalg (checkbox) i kortform, med valgfri illustrasjon, tittel og beskrivelse.\n\n-   Bygger på `RadioButton` og `Checkbox`, med valgkontrollen øverst til venstre i kortet\n-   Hele kortet er klikkbart, og gruppen styrer `name`, `value` og feilmelding\n-   Stories med konkrete skadeoppgjør-caser: bilskade, innbrudd, vannskade (tak/vegg/grunn og rom) og mobilskade\n-   Illustrasjonene i storiesene bruker semantiske tokens, så de følger brand og tema\n\n## 🩹 Løser følgende issues\n\n-   Ingen tilknyttet issue\n\n## Eksempler\n\n### Med illustrasjoner\n\n<img width=\"977\" height=\"303\" alt=\"Skjermbilde 2026-11-20 kl  14 40 57\" src=\"https://github.com/user-attachments/assets/b5a8de7f-8eb6-4a45-a8ed-f74db43be0c8\" />\n\n### Med illustrasjoner 2\n\n<img width=\"974\" height=\"294\" alt=\"Skjermbilde 2026-11-20 kl  14 41 04\" src=\"https://github.com/user-attachments/assets/180b3d9f-f219-40c1-b358-66cb5ff43991\" />\n\n### Uten illustrasjoner\n\n<img width=\"352\" height=\"149\" alt=\"Skjermbilde 2026-11-20 kl  14 41 12\" src=\"https://github.com/user-attachments/assets/db7baa28-eccf-4c79-8e34-0df306edbce5\" />",
+     "requested": [],
+     "comments": 2,
+     "reviews": [],
+     "checks": {
+      "state": "SUCCESS",
+      "runs": [
+       {
+        "name": "commit",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "CodeQL",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Publiser forhåndsvisning",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Kjør tester og linting",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "tests (1, 3)",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Analyze (javascript)",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "tests (2, 3)",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "tests (3, 3)",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Sjekk for endringer",
+        "status": "completed",
+        "conclusion": "success"
+       }
+      ]
+     }
+    },
+    {
+     "id": 5273566184,
+     "number": 6813,
+     "url": "https://github.com/fremtind/jokul/pull/6813",
+     "title": "Version Packages - main (next)",
+     "author": "github-actions[bot]",
+     "created": "2026-11-12T07:44:39Z",
+     "updated": "2026-11-20T12:01:48Z",
+     "draft": false,
+     "mergeableState": "unstable",
+     "additions": 71,
+     "deletions": 3,
+     "files": 5,
+     "head": "changeset-release/main",
+     "base": "main",
+     "labels": [
+      "📦 Release"
+     ],
+     "body": "This PR was opened by the [Changesets release](https://github.com/changesets/action) GitHub action. When you're ready to do a release, you can merge this and the packages will be published to npm automatically. If you're not ready to do a release yet, that's fine, whenever you add more changesets to main, this PR will be updated.\n\n⚠️⚠️⚠️⚠️⚠️⚠️\n\n`main` is currently in **pre mode** so this branch has prereleases rather than normal releases. If you want to exit prereleases, run `changeset pre exit` on `main`.\n\n⚠️⚠️⚠️⚠️⚠️⚠️\n\n# Releases\n## @fremtind/jokul@6.1.0-next.8\n\n### Minor Changes\n\n-   7e7752a: Forenkler `TextArea`. Høyden styres nå av CSS-variabelen `--rows`, og fokus-state og JavaScript-måling av høyde er fjernet fra `BaseTextArea`. Klassene `jkl-text-area__text-area--N-rows` er fjernet.\n\n    `autoExpand` bruker nå `field-sizing: content` og er en progressiv forbedring. I nettlesere uten støtte for `field-sizing` utvides ikke feltet automatisk. Det beholder høyden fra `rows`, og lang tekst kan scrolles som i et vanlig tekstfelt.\n\n-   6bb3b59: Legger til CLI-verktøy for generering av fargepalett\n\n-   87d3809: Legger til funksjonalitet for å generere fargepaletter for Jøkul, lik den brukt i temabyggeren i portalen.\n\n### Patch Changes\n\n-   8f8b7e9: (Intern funksjonalitet) Bedre håndtering av fargetokens ved bygg av Jøkul\n\n    Legger til en preprosessor som lar oss referere til andre fargetokens i definisjonsfilene, slik at vi enkelt kan bruke samme verdi flere steder.\n\n-   8371c39: Oppdaterte funksjonsfarger\n\n    Funksjonsfargene (info, error, etc) er oppdatert for å gi bedre kontraster og for å fungere mer som de andre fargerollene i systemet.\n\n-   a65854a: Legger til forhåndsvisning av tema for SpareBank 1 i Storybook\n\n-   3004e73: Legger til definisjon av formatet for overlevering av temainformasjon fra f.eks. temabyggeren.\n\n-   9743f85: Legg til JSON-schema for tokens brukt i Jøkul-tema\n\n-   7531874: Lar Tailwind v4-klassen `font-bold` bruke Jøkuls fontvektvariabel slik at den følger `data-brand`.\n\n-   c1b0764: Fikser at scroll-containeren hoppet når man fokuserte, skrev i eller forlot en `TextArea` med `autoExpand`. Nettlesere som støtter `field-sizing` lar nå feltet vokse uten at høyden måles i JavaScript.\n\n## portal@1.10.0-next.8\n\n### Patch Changes\n\n-   2569d1e: Legger til funksjonalitet for å laste ned tema i temabyggeren.\n\n    Tidligere ble det åpnet en e-post med temaet som innhold, nå blir det lastet ned som en JSON-fil. Deling av forhåndsvisning fungerer som tidligere.\n\n-   f7f3eec: Eksponer schema for Jøkul-tokens fra portalen\n\n-   832012f: Flytt kontroller for forhåndsvisning av tema i Temabyggeren til utenfor forhåndsvisningen.\n\n-   8953bba: Hent funksjonalitet for å generere farger fra Jøkul i stedet for å ha koden i portalen.\n\n-   358f0d9: Vis antall kontrastpar med feil som `NotificationBadge` på fanen for fargekombinasjoner i temabyggeren.\n\n-   3ac8e9f: Oppdater Temabyggeren til å bruke formatet definert i Jøkul\n\n-   Updated de",
+     "requested": [
+      "zenabii",
+      "kristianulv23",
+      "lmfaole",
+      "Stormoen",
+      "fremtindelise",
+      "jonashior"
+     ],
+     "comments": 1,
+     "reviews": [
+      {
+       "author": "piofinn",
+       "state": "APPROVED",
+       "submitted": "2026-11-20T08:20:23Z",
+       "body": ""
+      }
+     ],
+     "checks": {
+      "state": null,
+      "runs": []
+     }
+    }
+   ],
+   "issueComments": {
+    "6233": [
+     {
+      "author": "Stormoen",
+      "created": "2026-09-07T11:41:57Z",
+      "body": "Etter en prat i monday commits ønsker vi å legge til et felt med versjonering i sanity - slik at vi kan filtrere bort tidligere versjoner fra oversiktsiden til fundamenter. Det er lurt å gjøre dette ila denne uka, slik at det ikke blir forvirring når Jøkul v6.0 kommer på fredag."
+     },
+     {
+      "author": "lmfaole",
+      "created": "2026-10-27T08:43:04Z",
+      "body": "Dette bør kanskje ses på på nytt? Det virker fornuftig for meg at hvis de ikke vises på siden skal de heller ikke indexeres heller?"
+     }
+    ],
+    "6765": [
+     {
+      "author": "jonashior",
+      "created": "2026-11-10T09:20:21Z",
+      "body": "Skal ikke gjøres før vi har lagt til større eksempler."
+     }
+    ],
+    "6849": [
+     {
+      "author": "piofinn",
+      "created": "2026-11-20T14:09:50Z",
+      "body": "> Team som vil kombinere to uttrykk i tittelen sin, for eksempel en liten eyebrow over en stor heading, må i dag bruke egne klasser eller egne elementer. Da mister de designsystemets typografi og tokens, og det blir inkonsistent mellom team.\n\nJeg er veldig for å utvide listen over tillatte elementer i disse komponentene for å legge til rette for flere bruksområder! Men jeg stusser litt over eksemplet som er brukt. Man kan få nøyaktig samme uttrykk som i kodeeksemplet her vha. `Text` og `Title`, uten egne stiler eller klasser:\n\n```tsx\n<hgroup>\n    <Text short bold>Forsikring</Text>\n    <Title as=\"h1\" size=\"xl\">Reiseforsikring</Title>\n</hgroup>\n```\n\nSiden det uansett ikke semantisk er en del av selve overskriften synes jeg uansett `Text` er det riktigere valget i akkurat dette eksemplet, og den rendrer allerede riktig element i følge spesifikasjonen til `hgroup`. Tittelen i dette tilfellet er jo \"Reiseforsikring\", ikke \"Forsikring Reiseforsikring\".\n\n**Edit**: Jeg kunne for øvrig godt tenkt meg at vi laget en god definisjon/mønster/komponent for eyebrow-tekst hvis det er noe teamene ønsker å ta i bruk! Her finnes det jo også allerede ganske mange gode konvensjoner å plukke av 😊"
+     }
+    ]
+   },
+   "discussions": [
+    {
+     "number": 6235,
+     "title": "Heading-1 og heading-2 (tekststil + title-komponent) med display font",
+     "url": "https://github.com/fremtind/jokul/discussions/6235",
+     "author": "Stormoen",
+     "created": "2026-06-16T11:42:14Z",
+     "updated": "2026-11-02T12:31:06+00:00",
+     "category": "Endring",
+     "comments": 1,
+     "answered": null,
+     "body": "Hvis vi skal be om display font fra distributørene må vi også legge tilrette for dette i systemet. Usikker på om dette er scope nå eller senere. Samtidig synes jeg det gir mening nå, når distributørene uansett skal gjøre jobben med å oversette sine farger inn i våres system med temavelgeren. Jeg foreslår at vi kobler heading-1 og heading-2 til --jkl-typography-font-family-display​​​​‌ ‍ ​‍​‍‌‍ ‌ ​‍‌‍‍‌‌‍‌ ‌‍‍‌‌‍ ‍​‍​‍​ ‍‍​‍​‍‌ ​ ‌‍​‌‌‍ ‍‌‍‍‌‌ ‌​‌ ‍‌​‍ ‍‌‍‍‌‌‍ ​‍​‍​‍ ​​‍​‍‌‍‍​‌ ​‍‌‍‌‌‌‍‌‍​‍​‍​ ‍‍​‍​‍​‍ ‌ ​ ‌ ‌​‌ ‌‌‌‍‌​‌‍‍‌‌‍ ​‍ ‌‍‍‌‌‍ ‍‌ ‌​‌‍‌‌‌‍ ‍‌ ‌​​‍ ‌‍‌‌‌‍‌​‌‍‍‌‌ ‌​​‍ ‌‍ ‌‌‍ ‌‍‌​‌‍‌‌​ ‌‌ ​​‌ ​‍‌‍‌‌‌ ​ ‌‍‌‌‌‍ ‍‌ ‌​‌‍​‌‌ ‌​‌‍‍‌‌‍ ‌‍ ‍​ ‍ ‌‍‍‌‌‍‌​​ ‌‌‍‌‍​ ‌‌‌‍​‌​ ‍​‌‍​‌‌‍‌‍​ ​ ‌‍​‍​‍ ‌​ ‌‍​ ​ ‌‍​‍​ ‌ ​‍ ‌​ ‌​​ ​ ‌‍​‌‌‍‌‍​‍ ‌​ ‍‌​ ‌‍‌‍‌‌‌‍​‍​‍ ‌​ ‍‌​ ‍​​ ‌ ‌‍‌​‌‍​ ​ ‍‌‌‍​ ‌‍‌‌​ ‌ ​ ​‌‌‍‌‌​ ​​​ ‍ ‌ ‌​‌ ‍‌‌ ​​‌‍‌‌​ ‌‌‍‍‍‌‍ ‌‍‍ ‌ ‌‌‌‍ ​‌‌ ‌‍‌‍‌ ‌‌‌‍ ‍‌‍‌​‌‍​‌‌‍ ‌‌‍‌‌‌‍ ‍‌ ‌​‌‍​‌‌‍ ​‌ ​ ​ ‍ ‌ ​​‌‍​‌‌ ‌​‌‍‍​​ ‌‌‍​‌‌ ​‍‌ ‌​‌‍‍‌‌‍​ ‌‍ ​‌‍‌‌​‍‌‌​ ‌‌‌​​‍‌‌ ‌‍‍ ‌‍‌‌‌ ‍‌​‍‌‌​ ​ ‌​‌​​‍‌‌​ ​ ‌​‌​​‍‌‌​ ​‍​ ​‍‌‍​‍​ ‌‍‌‍‌​​ ​​​ ‌ ‌‍​ ​ ‌ ​ ‌‍​ ​‌​ ‍​​ ​​​ ​‌​‍‌‌​ ​‍​ ​‍​‍‌‌​ ‌‌‌​‌​​‍ ‍‌ ‌​‌‍​‌‌‍​‍‌‍ ​‌‍‌‌​‍ ‍‌ ​‍‌‍ ‌ ‌ ‌ ​ ​‍‌‌​ ‌‌‌​​‍‌‌ ‌‍‍ ‌‍‌‌‌ ‍‌​‍‌‌​ ​ ‌​‌​​‍‌‌​ ​ ‌​‌​​‍‌‌​ ​‍​ ​‍​ ​​​ ‌‌​ ‌‌​ ‌ ​ ‍​​ ​‍‌‍‌‌​ ​‌​‍ ‌‌‍‌​​ ‌‍​ ​ ‌‍‌‌​‍ ‌​ ‌​​ ‌‍​ ‌‍​ ‌ ​‍ ‌​ ‍‌​ ‌‌‌‍‌​‌‍​ ​‍ ‌​ ‌‌‌‍‌​​ ​​‌‍‌‌‌‍​‌​ ‌​‌‍‌‍‌‍‌​‌‍​ ‌‍‌‌​ ‌​​ ‌​​‍‌‌​ ​‍​ ​‍​‍‌‌​ ‌‌‌​‌​​‍ ‍‌‍​ ‌‍‌‌‌‍ ​‌‍ ​‌ ​ ​‍‌‌​ ‌‌‌​​‍​ ​​​‍‌‌​ ‌‌‌​‌​​ ‌‍​‍‌‍​‌‌ ​ ‌‍‌‌‌‌‌‌‌ ​‍‌‍ ​​ ‌​‍‌‌​ ​‍‌​‌‍‌ ​ ‌ ‌​‌ ‌‌‌‍‌​‌‍‍‌‌‍ ​‍‌‍‌‍‍‌‌‍‌​​ ‌‌‍‌‍​ ‌‌‌"
+    },
+    {
+     "number": 6658,
+     "title": "Flytting av distributørtema til egen pakke/eget repo",
+     "url": "https://github.com/fremtind/jokul/discussions/6658",
+     "author": "piofinn",
+     "created": "2026-10-29T08:53:29Z",
+     "updated": "2026-11-02T11:15:20+00:00",
+     "category": "Endring",
+     "comments": 2,
+     "answered": null,
+     "body": "Bakgrunn Nå begynner farger fra distributørene å komme inn, og det fører med seg et par utfordringer: Hvert nye fargespor (og hver endring) blir potensielt en ny release av Jøkul, og må inn i minst to major-versjoner (5 og 6 i skrivende stund). Potensielt sensitiv informasjon om distributørenes visuelle profiler blir offisielt tilgjengelige i repoet vårt. Løsningsforslag For å unngå disse problemene kan vi flytte informasjonen om distributørenes farger ut av @fremtind/jokul -pakken. Ved å gjøre dette kan vi oppdatere farger uavhengig av Jøkul-versjonering, og fargene kan brukes i alle Jøkul-versjoner som støtter brand-theming. Dersom denne pakken også ligger i et eget, privat repo unngår vi også at sensitiv informasjon synes offentlig. Grunnfunksjonalitet i Jøkul Reglene for generering av fargetema bør fortsatt ligge i @fremtind/jokul . Det er designsystemet som bestemmer hvordan themingen skal skje, og hvordan fargene brukes. Derfor bør også funksjonaliteten for dette ligge der. Dette innebærer: Kode for generering av fargetema ut fra en fargekode (flyttes inn fra portalen) Kode for å gjøre om et fargespor til ferdige designsystem-tokens (i dag vha Style Dictionary) Eventuelle verktøy som trengs for å bruke denne funksjonaliteten utenfor Jøkul-pakken på en enkel måte Det meste som trengs her er allerede implementert, men vi bør samlokalisere det og eksponere funksjonaliteten på en enkel måte. Her er det nærliggende å bygge videre på jokul CLI-verktøyet som allerede eksistere"
+    },
+    {
+     "number": 5823,
+     "title": "Interaksjon og formatering i DatePicker",
+     "url": "https://github.com/fremtind/jokul/discussions/5823",
+     "author": "Stormoen",
+     "created": "2026-02-25T08:24:51Z",
+     "updated": "2026-10-07T07:20:26+00:00",
+     "category": "Annet",
+     "comments": 1,
+     "answered": null,
+     "body": "Oppgjør har meldt inn ønske om forbedring av DatePicker . I brukertester er det flertall av de som skriver inn dato manuelt i stedet for å bruke kalenderen, og dermed knoter litt med formateringen siden det funker som et TextInput . Ser flere design systemer har en datokomponent som hjelper brukeren med formatering: dd/mm/åååå markeres hver for seg ved klikk i feltet for tydeligere utfylling / riktig formatering (Eksempel SpareBank 1 , EnTur , Sikt ) vurdere om calendar åpnes ved klikk i feltet også, ikke bare klikk på ikon se Oslo Kommune"
+    },
+    {
+     "number": 6596,
+     "title": "Fra kartlegging til patterns - forslag til veien videre",
+     "url": "https://github.com/fremtind/jokul/discussions/6596",
+     "author": "kristianulv23",
+     "created": "2026-09-30T14:36:00Z",
+     "updated": "2026-09-30T14:53:31+00:00",
+     "category": "Annet",
+     "comments": 3,
+     "answered": null,
+     "body": "I dag har jeg brukt litt tid på å lese meg opp igjen på delene av Design Systems som handler om innsiktsarbeid og patterns, og prøvd å finne litt mer om hvordan vi kan gå fra kartleggingen som er gjort til noe vi faktisk kan bruke i Jøkul. Det fikk meg til å tenke litt på veien videre fra matrisen vår. Er tanken at kortene i matrisen etter hvert skal bli ting vi lager eller dokumenterer i Jøkul? Jeg spør fordi jeg, basert på det jeg prøver å få ut av Design Systems , tror vi kanskje mangler et steg imellom her. Før vi bestemmer hva som skal bli et pattern, tror jeg vi må bruke kartleggingen til å forstå når de ulike løsningene fungerer og hvorfor . Noe av den innsikten finnes sikkert allerede hos teamene, og der den mangler må vi kanskje undersøke mer. Da blir det vi lærer som avgjør hva som faktisk bør bli et pattern i Jøkul – og ikke bare hvilke løsninger vi har funnet i kartleggingen. Forslag til hvordan vi kan jobbe videre Vi kan ta utgangspunkt i ett område fra matrisen om gangen. For eksempel ett eller flere spørsmål per side . 1. Ta utgangspunkt i det vi allerede har Hva har vi sett på tvers av teamene? Hvilke løsninger brukes? I hvilke situasjoner brukes de? Hvorfor har teamene valgt dem? Hvilken innsikt finnes allerede? Poenget er å bruke det som allerede er samlet, ikke starte på nytt. 2. Prøv å forstå når de ulike løsningene fungerer – og hvorfor Se på eksemplene og innsikten på tvers. Når ser én løsning ut til å fungere bedre enn en annen? Hva er det ved situasjon"
+    },
+    {
+     "number": 6389,
+     "title": "Forslag til håndtering av flere Jøkul-versjoner i dokumentasjonen",
+     "url": "https://github.com/fremtind/jokul/discussions/6389",
+     "author": "piofinn",
+     "created": "2026-08-07T13:35:39Z",
+     "updated": "2026-09-30T14:49:44+00:00",
+     "category": "Endring",
+     "comments": 1,
+     "answered": null,
+     "body": "Vi kommer som regel til å støtte flere major-versjoner av Jøkul, samt i flere perioder ha en next branch med kommende endringer. Dette gjør dokumentasjon i portalen og Storybook utfordrende, og allerede i dag finnes det flere versjoner av noen sider i portalen på grunn av dette. For å kunne dokumentere disse versjonene på en bedre og mer konsekvent måte foreslår jeg følgende strategi. Hvert steg burde kunne gjennomføres som en egen oppgave eller sett av oppgaver, men må stort sett skje i rekkefølge. 1. Bygg og publiser versjoner av Storybook for hver major I stedet for å bygge og publisere Storybook sammen med portalen, og kun fra main -branchen, kan vi publisere til GitHub Pages fra hver major-branch, inkludert main og next . Vi har allerede oppsett for dette, ettersom preview genereres akkurat slik. Logikken må bare flyttes/dupliseres inn i en workflow som kjører ved push til branchene vi vil publisere fra. Ved push til main , next eller major-branch, publiser Storybook til https://fremtind.github.io/jokul/<version> På denne måten får vi tilgang til eksempler som stemmer for hver major-versjon av Jøkul, og kan dermed fortsatt dokumentere måter å bruke komponentene og systemet som er endret i nyeste versjon eller kommer til å endre seg i next . 2. Pek eksemplene i portalen mot GitHub Pages Etter å ha endret publiseringen av Storybook må vi peke om eskemplene i portalen. I første omgang kan vi bare endre slik at vi henter eksemplene main -versjonen. Da trenger vi ikke gjøre a"
+    },
+    {
+     "number": 6399,
+     "title": "Erstatning for deprecated feedback",
+     "url": "https://github.com/fremtind/jokul/discussions/6399",
+     "author": "Stormoen",
+     "created": "2026-08-12T08:49:20Z",
+     "updated": "2026-09-30T14:48:55+00:00",
+     "category": "Endring",
+     "comments": 1,
+     "answered": null,
+     "body": "Vi må finne ut av hva vi skal tilby som en erstatning for feedbackmodul, da mange av teamene bruker denne i dag. Alternativer mønstre for hvordan hente tilbakemeldinger enklere variant for feedback, feks som en nps-komponent"
+    },
+    {
+     "number": 6537,
+     "title": "Typografi komponenter vs tekststiler i Figma",
+     "url": "https://github.com/fremtind/jokul/discussions/6537",
+     "author": "Stormoen",
+     "created": "2026-09-15T11:28:39Z",
+     "updated": "2026-09-30T14:46:57+00:00",
+     "category": "Endring",
+     "comments": 1,
+     "answered": null,
+     "body": "Hva skal gjenspeile hva? Hvordan gjør vi oversettelsen fra Figma til kode så enkel som mulig? I overgang til jøkul 5 ble det innført tekst- og tittelkomponenter i kode for enklere migrering. Disse komponentene gir god verdi i kode - men i Figma ødelegger det litt for arbeidsflyten, så hypotesen er at en typografikomponent ikke kommer til å bli brukt. Tekststilene er navngitt likt i figma og kode. Tekst- og tittel komponenten i kode er navngitt med t-skjorte str. Hvis vi skal oppfordre utviklerne til å bruke tekst- og tittelkomponenter, hvordan skal de vite hvilken str tekstilen i figma gjenspeiler? Alternativ 1: mål: tekst- og tittelkomponent er foretrukket i kode Tekststiler i Figma endrer navn til å gjenspeile typografikomponentene i kode Alternativ 2: Kode og Figma tekststiler endrer navn til tskjortestr. Navnendringen vil være breaking i kode. Alternativ 3: Endre navn på size i tekst- og tittelkomponent i kode, tilsvarende tekststilene. (Heading-1, 2, 3...)"
+    },
+    {
+     "number": 6648,
+     "title": "Avklare bruken av Storybook som dokumentasjon",
+     "url": "https://github.com/fremtind/jokul/discussions/6648",
+     "author": "kristianulv23",
+     "created": "2026-09-16T13:41:01Z",
+     "updated": "2026-10-27T08:43:47+00:00",
+     "category": "Avstemming",
+     "comments": 0,
+     "answered": null,
+     "body": "I dag bruker vi enkelte workarounds for å vise komplette kodeeksempler i Storybook. Det gjør eksemplene mer kompliserte å lage og vedlikeholde, og reiser spørsmål om Storybook er riktig sted for dokumentasjon av kode. Vi bør sette av én til to timer til å diskutere hvordan vi ønsker å bruke Storybook fremover, og om vi på sikt bør legge flere og bedre kodeeksempler i portalen der det er behov for det. Temaer å diskutere Hva bør dokumenteres i Storybook, og hva bør ligge i portalen? Hvilken rolle skal Storybook ha i komponentdokumentasjonen? Hvor bør komplette kodeeksempler ligge? Hvordan kan vi redusere behovet for workarounds? Hvordan gjør vi eksemplene enklest mulig å vedlikeholde? Mål Bli enige om en retning for Storybook og kodeeksempler i portalen, og opprette konkrete oppfølgingsoppgaver ved behov."
+    },
+    {
+     "number": 6420,
+     "title": "Knapp som skjemaelement: \"Action Input\"",
+     "url": "https://github.com/fremtind/jokul/discussions/6420",
+     "author": "Stormoen",
+     "created": "2026-08-18T13:27:13Z",
+     "updated": "2026-08-18T13:28:09+00:00",
+     "category": "Noe nytt",
+     "comments": 0,
+     "answered": null,
+     "body": "Flere av skjemaløsningene våre har et spørsmål kombinert med en knapp, som åpner en modal hvor man kan gjøre et valg, som igjen representeres i skjemaet. Fellesnevneren for flere av de er at man åpner et kart for å velge et sted, men mønsteret er også brukt når for å \"legge til <personer/gjenstander>\" o.l. Eks. En quickfix på disse scenarioene kan være å bruke field-group med button. Samtidig har vi ingen etablert måte å vise en errorstate ifm button, men da er hvertfall skjermleser ivaretatt. (obs: fieldgroup eksisterer ikke i figma) På sikt kan vi vurdere å lage en egen kart-inupt da dette er noe som går igjen flere steder. erstatningsberegneren for å velge butikk velge verksted å få gjort reparasjoner velge ulykkessted (ofte ikke tilknyttet en adresse) Alternativt, eller i tillegg til kan vi vurdere å lage en \"action input\" siden dette er et mønster som går igjen på tvers. Den kan bestå av: legend, help og description knapp feilmelding I tillegg til en fleksibel måte å vise valget som er tatt på. valget endre funksjonalitet"
+    },
+    {
+     "number": 6415,
+     "title": "Utfasing av AutoSuggest – brukstilfeller",
+     "url": "https://github.com/fremtind/jokul/discussions/6415",
+     "author": "kristianulv23",
+     "created": "2026-08-17T19:20:45Z",
+     "updated": "2026-08-18T07:33:31+00:00",
+     "category": "Endring",
+     "comments": 1,
+     "answered": null,
+     "body": "Har sett på hvordan ulike prosjekter i monorepoet bruker AutoSuggest , og pratet med Simen for å få litt mer innsikt i hvordan de bruker komponenten i løsningene sine. I den korte praten vi hadde fant vi tre brukstilfeller. Det kan være flere, så legg gjerne til hvis dere kjenner til andre måter AutoSuggest brukes på. 1. Søk og velg en gyldig verdi De henter alternativer fra et API og sender dem inn i AutoSuggest . Brukeren søker og velger et av alternativene. Det er viktig at brukeren ikke kan sende inn noe de har skrevet selv, siden verdien må være et gyldig alternativ. Hvis ikke feiler API-et som mottar verdien. Hvis søket ikke gir treff, viser de tre andre forslag som brukeren kan velge mellom. Behov: Søke blant alternativer Kun kunne velge en gyldig verdi Vise forslag/fallback når søket ikke gir treff 2. Adressesøk med mange treff De bruker også AutoSuggest til adressesøk. API-et kan returnere flere hundre treff. Hvis alle vises samtidig, blir løsningen treg og det tar tid før alternativene dukker opp. De bruker derfor AutoSuggest til å begrense hvor mange resultater som vises om gangen. Her må brukeren også velge en adresse fra resultatene, og kan ikke sende inn en egen verdi. Behov: Søke i et stort datasett Ikke vise alle resultater samtidig Kun kunne velge en gyldig verdi 3. Alternativ når det ikke finnes treff Brukeren søker etter noe i AutoSuggest . Hvis det ikke finnes treff, vises en lenke. Trykker brukeren på lenken, vises to radioknapper hvor de kan velge et alt"
+    },
+    {
+     "number": 6295,
+     "title": "Multiple select",
+     "url": "https://github.com/fremtind/jokul/discussions/6295",
+     "author": "piofinn",
+     "created": "2026-07-02T07:58:23Z",
+     "updated": "2026-09-30T14:50:05+00:00",
+     "category": "Noe nytt",
+     "comments": 3,
+     "answered": null,
+     "body": "Vi har funnet ut av at vi ønsker å forenkle mønstrene Combobox , Select (med NativeSelect ) og Autosuggest . Løsningen vi ser for oss er å flytte noe av funksjonaliteten i Autosuggest over til TextInput brukt med datalist , og legge til funksjonalitet i Select for å velge flere alternativer. Combobox og Autosuggest deprecates og slettes etter hvert. Beslutninger planleggingsmøte 30.juni Disse deprecates i v5 eller forsvinner i v6, avhengig av hvilken releasestrategi vi går for: Combobox Autosuggest Select Native Select Funksjonaliteten som blir borte finnes eller legges til i: Beta Select Alternativer Typeahead Native (også i Figma) Single- og multiselect Size 1 (viser en linje) TextInput datalist fjerne action og action button I tillegg må vi dokumentere og lage mønstre for: Når ingen alternativer passer og man vil legge inn eget alternativ Søk og hvordan man kan velge i resultatene"
+    },
+    {
+     "number": 6175,
+     "title": "Simplify release flow",
+     "url": "https://github.com/fremtind/jokul/discussions/6175",
+     "author": "zenabii",
+     "created": "2026-05-26T10:50:23Z",
+     "updated": "2026-06-05T08:52:34+00:00",
+     "category": "Endring",
+     "comments": 1,
+     "answered": null,
+     "body": "Problem Dagens release-oppsett bruker to langlivede branches: main (stabil) og release/next (pre-release). I teorien er main kilden til sannhet og release/next holdes synkronisert via en automatisert GitHub Actions-workflow. I praksis skaper dette gjentakende problemer: Strukturelle merge-konflikter ved hver release-syklus Hver Version Packages-commit på main konflikter med versjonsbumpene som release/next allerede har akkumulert. Sync-workflowen håndterer dette ved å åpne en manuell PR (sync-main-to-release-next), som blokkerer neste sync til den er løst. Dette er ikke et sporadisk kanttilfelle — det skjer ved hver eneste release. Eksempel: Merge conflicts under release av Jøkul 5.0 Kognitiv overhead for bidragsytere Hvilken branch skal en PR rettes mot? Ligger changesets på riktig sted? Er pre.json til stede eller ikke, og har det noe å si for denne PRen? Er det en åpen sync-PR som må løses først? Vi kjemper mot verktøyet Changesets er designet rundt én enkelt arbeids-branch. Å splitte release-livssyklusen på tvers av to langlivede, divergerende branches går mot verktøyets modell — og er årsaken til at vi stadig treffer på kanttilfeller. CI-kompleksitet Vi vedlikeholder to nesten identiske release-workflows, én sync-workflow og én sync-cleanup-workflow — alt for å lappe over to-branch-modellen. Foreslått løsning Snu modellen: gjør next til den eneste utviklings-branchen, og behandle main som et skrivebeskyttet stabilt speil som kun oppdateres ved release. Hva endres: Alle P"
+    }
+   ]
+  },
+  "navikt/aksel": {
+   "branch": "main",
+   "commit": {
+    "sha": "a37da7bd3e6c8657e40f4dd888216dba5d945e7e",
+    "url": "https://github.com/navikt/aksel/commit/a37da7bd3e6c8657e40f4dd888216dba5d945e7e",
+    "headline": "ci(Chromatic): fix issue with dead links in PR comment (#5565)",
+    "date": "2026-11-20T13:37:25Z",
+    "checks": {
+     "state": "SUCCESS",
+     "runs": [
+      {
+       "name": "Analyze (javascript-typescript)",
+       "status": "completed",
+       "conclusion": "success"
+      },
+      {
+       "name": "Analyze (actions)",
+       "status": "completed",
+       "conclusion": "success"
+      },
+      {
+       "name": "UI tests (Storybook)",
+       "status": "completed",
+       "conclusion": "success"
+      },
+      {
+       "name": "Lint (Oxlint, Stylelint etc.)",
+       "status": "completed",
+       "conclusion": "success"
+      },
+      {
+       "name": "Validate component examples",
+       "status": "completed",
+       "conclusion": "success"
+      },
+      {
+       "name": "Unit and integration tests",
+       "status": "completed",
+       "conclusion": "success"
+      }
+     ]
+    }
+   },
+   "issues": [
+    {
+     "id": 6510210935,
+     "number": 5563,
+     "url": "https://github.com/navikt/aksel/issues/5563",
+     "title": "[Rapporter en bug] Aksel-artikkel: Table",
+     "author": "MBegnum",
+     "created": "2026-11-20T11:08:15Z",
+     "updated": "2026-11-20T11:11:10Z",
+     "assignees": [],
+     "labels": [
+      "forespørsel 🥰",
+      "komponenter 🧩",
+      "mønster"
+     ],
+     "comments": 1,
+     "body": "Hei,\n\nVi bruker denne komponenten til Sakshistorikk, i komplekse saker med mye historikk og mange vedlegg. Saksbehandlerne våre gir tilbakemelding på at lesbarheten blir dårlig når vi har lenker til dokumenter i tabell - på zebra striper: \"Det er leseligheten som er største grunn ja. Flere har gitt tilbakemelding på at det blir mange linjer nedover, og at teksten derfor er vanskelig å lese lett og raskt. \"\n\n<img width=\"576\" height=\"526\" alt=\"bilde\" src=\"https://github.com/user-attachments/assets/22e95137-1150-4256-8298-e1c1f50cfc4f\" />\n\nEr det mulig å se på mulighet for litt mer whitespace mellom tekst og linje i Link når lenker brukes i Tabell, eller har dere andre forslag her?"
+    },
+    {
+     "id": 6469665498,
+     "number": 5558,
+     "url": "https://github.com/navikt/aksel/issues/5558",
+     "title": "[Innspill] Aksel-artikkel: Process",
+     "author": "fredrikmork",
+     "created": "2026-11-18T14:42:31Z",
+     "updated": "2026-11-18T14:42:31Z",
+     "assignees": [],
+     "labels": [],
+     "comments": 0,
+     "body": "Vi ønsker å kunne endre størrelsen til tittel i komponenten `Process.Event`, i vårt tilfelle `xsmall (18px)` for å spare plass. \nAkkurat nå overrider vi css-en på Process-nivå og setter stylingen på title, som ikke ser så bra ut:\n\n`       \n<Process aria-label=\"Historikk\" className=\"[&_.aksel-process\\_\\_title]:text-ax-large\">\n`"
+    },
+    {
+     "id": 6419893638,
+     "number": 5555,
+     "url": "https://github.com/navikt/aksel/issues/5555",
+     "title": "[Innspill] Aksel-artikkel: Switch",
+     "author": "Karroholm",
+     "created": "2026-11-16T11:09:23Z",
+     "updated": "2026-11-16T11:09:23Z",
+     "assignees": [],
+     "labels": [],
+     "comments": 0,
+     "body": "Vet ikke hvordan fieldset-komponenten fungerer, men ønsker hvertfall at når man grupperer switches, får label hengelås dersom alle switchene er read-only, på samme måte som radio. Hengelås pr switch ser ikke så nice ut. \n\nhttps://www.figma.com/design/bud9ANZRLwrD8Cw9yk5kiJ/%F0%9F%AA%A2-Skribenten-komponent--og-m%C3%B8nsterbibliotek?node-id=2822-34663&m=draw&t=TAXIriXMhfD9vxAj-11 \n\n<img width=\"1073\" height=\"360\" alt=\"image\" src=\"https://github.com/user-attachments/assets/45b72f75-e717-46a2-856f-d0008e0dc5a3\" />"
+    },
+    {
+     "id": 6419774199,
+     "number": 5554,
+     "url": "https://github.com/navikt/aksel/issues/5554",
+     "title": "[Innspill] Aksel-artikkel: LocalAlert",
+     "author": "Karroholm",
+     "created": "2026-11-16T11:02:09Z",
+     "updated": "2026-11-16T11:02:09Z",
+     "assignees": [],
+     "labels": [],
+     "comments": 0,
+     "body": "Ønsker å kunne kollapse local alert. Se beskrivelse i figma: \nhttps://www.figma.com/design/bud9ANZRLwrD8Cw9yk5kiJ/%F0%9F%AA%A2-Skribenten-komponent--og-m%C3%B8nsterbibliotek?node-id=2822-33702&m=draw&t=TAXIriXMhfD9vxAj-11\n\n<img width=\"794\" height=\"464\" alt=\"image\" src=\"https://github.com/user-attachments/assets/cebd16b6-249a-42b3-a4a7-0500835cda23\" />"
+    },
+    {
+     "id": 6305526961,
+     "number": 5538,
+     "url": "https://github.com/navikt/aksel/issues/5538",
+     "title": "[BUG] Blinking i ToggleGroup i Firefox",
+     "author": "ivoiv",
+     "created": "2026-11-10T11:04:06Z",
+     "updated": "2026-11-16T08:34:25Z",
+     "assignees": [],
+     "labels": [
+      "bug 🐛",
+      "Besvart"
+     ],
+     "comments": 1,
+     "body": "## Hva er feilen/problemet?\n\nValgene i ToggleGroup får ikke on-hover farge eller cursor helt riktig i Firefox ser det ut som.\nEr ett problem jeg har fått av en bruker, har ikke Firefox selv.\n\nInnmelder sier at det ordner seg etter et en refresh så mulig det var #justFirefoxThings\n\nds-react og ds-css 8.20.0 \n\n## Steg for å reprodusere problemet (valgfri)\n\nHovre over valg i ToggleGroup.\nKan oppleves f.eks. her https://www.nav.no/aa-registeret/innsyn\n\n## Eksempel/Tilleggsinformasjon (valgfri)\n\n<!--\nScreenshots, kodesnippets eller sandbox-lenke.\nLegg gjerne ved info som nettleser eller desktop/mobil hvis det er relevant.\n-->\nhttps://github.com/user-attachments/assets/308ca45e-f04f-44c8-a060-664989eb38cf\n"
+    },
+    {
+     "id": 2364064995,
+     "number": 3018,
+     "url": "https://github.com/navikt/aksel/issues/3018",
+     "title": "[Innspill til komponent]: Combobox med ikoner (landvelger/valutavelger)",
+     "author": "idaame",
+     "created": "2024-06-20T10:12:48Z",
+     "updated": "2026-11-11T11:38:43Z",
+     "assignees": [
+      "HalvorHaugan"
+     ],
+     "labels": [
+      "nytt ✨",
+      "forespørsel 🥰",
+      "komponenter 🧩",
+      "beta 🧪"
+     ],
+     "comments": 1,
+     "body": "### Tilbakemelding\n\nHei,\r\n\r\nVi i Team BAKS har en drøm om å bruke Combobox i stedet for `@navikt/landvelger` for landvelger og valutavelger. Det vi i hovedsak trenger for å få til det er at Combobox utvides med ikoner for hvert menyvalg. Aller best hadde det vært om det kunne lages egne komponenter for landvelger og valutavelger, så man slipper å manuelt sende inn mange land+ikoner, men detter er noe vi også _kan_ håndtere selv så lenge Combobox får på plass støtte for ikoner 😊\r\n\r\nSe denne tråden på slack for mer detaljer: https://nav-it.slack.com/archives/C7NE7A8UF/p1701422299515639"
+    },
+    {
+     "id": 6326087194,
+     "number": 5540,
+     "url": "https://github.com/navikt/aksel/issues/5540",
+     "title": "CheckboxCard: Error-varianten og skjermleser",
+     "author": "mortentollefsen",
+     "created": "2026-11-11T10:02:53Z",
+     "updated": "2026-11-11T10:02:53Z",
+     "assignees": [],
+     "labels": [
+      "forespørsel 🥰",
+      "komponenter 🧩"
+     ],
+     "comments": 0,
+     "body": "### Tilbakemelding\n\nRekkefølgen på id'ene (aria-describedby) i error-varianten bør byttes, eller kanskje bedre feilmeldingen settes på fieldset.\nEksempel på det som leses nå:\nHvilke inntekter har du fra fisket?\nVelg alle som gjelder deg. gruppe\nugyldig valg\nLott - andel av fangsten avkryssingsboks ikke avkrysset\nDu må velge minst én inntekt før du kan gå videre.\nDu får betalt ut fra hva fartøyet fanger - ikke fast lønn\n\nHvis ID'ene byttes aria-describedby=\"_r_5_ fieldset-error-_r_3_\":\nHvilke inntekter har du fra fisket?\nVelg alle som gjelder deg. gruppe\nugyldig valg\nLott - andel av fangsten avkryssingsboks ikke avkrysset\nDu får betalt ut fra hva fartøyet fanger - ikke fast lønn\nDu må velge minst én inntekt før du kan gå videre.\n\naria-invalid=\"true\" er selvsagt ikke feil på noen som helst måte, men det er fristende å fjerne attributtet fordi det gjør at meldingen på avkryssingsfeltet blir lang og kanskje mer vanskelig å høre (med den error-greia midt i taleflommen). Fjernes aria-invalid får vi:\nHvilke inntekter har du fra fisket?\nVelg alle som gjelder deg. gruppe\nLott - andel av fangsten avkryssingsboks ikke avkrysset\nDu får betalt ut fra hva fartøyet fanger - ikke fast lønn\nDu må velge minst én inntekt før du kan gå videre.\n\nHvis vi beholder aria-invalid (og det kan hende vi bør det for eksempel. fordi skjermlesere i alle fall teoretisk da kan hoppe til felt med feil) foreslår jeg at feilmeldingen legges på fieldset så du slipper den hver gang (for hvert eneste avkryssingsfelt).\naria-label på fieldset blir da:\naria-labelledby=\"_r_2_ fieldset-description-_r_3_ fieldset-error-_r_3_\"\n\nPå det første avkryssingsfeltet vil da Jaws lese:\nHvilke inntekter har du fra fisket?\nVelg alle som gjelder deg.\nDu må velge minst én inntekt før du kan gå videre. gruppe\nugyldig valg\nLott - andel av fangsten avkryssingsboks ikke avkrysset\nDu får betalt ut fra hva fartøyet fanger - ikke fast lønn\nPå neste felt vil Jaws lese:\nHyre - fast lønn avkryssingsboks ikke avkrysset\nDu får fast lønn fra arbeidsgiveren din, som en vanlig ansatt\n(det blir litt mindre masete synes jeg, og når vi har en gruppe/fieldset er det jo vanlig at legend og evt. description bare leses når du tabber inn i gruppa)"
+    },
+    {
+     "id": 6222009739,
+     "number": 5510,
+     "url": "https://github.com/navikt/aksel/issues/5510",
+     "title": "[Rapporter en bug] Aksel-artikkel: 404-side",
+     "author": "tatjanaand",
+     "created": "2026-11-05T11:10:58Z",
+     "updated": "2026-11-05T11:10:58Z",
+     "assignees": [],
+     "labels": [],
+     "comments": 0,
+     "body": "Kan Aksel også lenke til https://www.nav.no/person/kontakt-oss/en/tilbakemeldinger/feil-og-mangler nederst der teksten er på engelsk, siden det også lenkes til den siden på norsk?"
+    },
+    {
+     "id": 3813059967,
+     "number": 4490,
+     "url": "https://github.com/navikt/aksel/issues/4490",
+     "title": "[Innspill til komponent]: Button - vise tekst med Loading",
+     "author": "ivoiv",
+     "created": "2026-01-14T12:43:05Z",
+     "updated": "2026-10-30T10:43:20Z",
+     "assignees": [],
+     "labels": [
+      "nytt ✨",
+      "forespørsel 🥰",
+      "komponenter 🧩",
+      "beta 🧪"
+     ],
+     "comments": 3,
+     "body": "### Tilbakemelding\n\nNår man setter loading={true} på en Button så blir innholdet i knappen erstattet av en spinner.\nHadde vært nyttig å kunne skrive inn en tekst i tillegg, liksom \"Genererer PDF... |spinner_her|\" eller noe sånt."
+    },
+    {
+     "id": 6056283543,
+     "number": 5464,
+     "url": "https://github.com/navikt/aksel/issues/5464",
+     "title": "[Rapporter en bug] Aksel-artikkel: ExpansionCard",
+     "author": "sjur-gr",
+     "created": "2026-10-27T09:15:50Z",
+     "updated": "2026-10-28T13:02:14Z",
+     "assignees": [],
+     "labels": [],
+     "comments": 2,
+     "body": "Tror margin over overskriften i eksemplet \"icon\" er en bug.\n\n<img width=\"2093\" height=\"958\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/a4b105d2-f768-4510-9ddc-ded1d7c03078\" />"
+    },
+    {
+     "id": 5459147003,
+     "number": 5268,
+     "url": "https://github.com/navikt/aksel/issues/5268",
+     "title": "[Nytt ikon]: AIModified",
+     "author": "JanniRK",
+     "created": "2026-09-15T07:49:55Z",
+     "updated": "2026-09-15T11:22:16Z",
+     "assignees": [],
+     "labels": [],
+     "comments": 1,
+     "body": "### Navnet på ikonet\nAIModified\nAIGenerated\n\n### Eksempel på ikonet\nI forbindelse med ny Code of Practice om merking av KI-generert innhold etter KI-forordningen ønsker vi oss et ikon for å markere slikt innhold (vi bruker designsystemet og Aksels ikonbibliotek), er dette relevant for dere?\n\nUlike eksempler:\n\n[VG](https://www.vg.no/rampelys/i/K842E5/prins-harry-og-hertuginne-meghan-har-byttet-skole-for-barna)\n<img width=\"356\" height=\"42\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/dda472fd-08b7-47a3-94c9-90e839adbd6a\" />\n\n\n[KI-merket\n](https://kimerket.no/)\n<img width=\"97\" height=\"102\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/4a7cbea9-cb82-49cf-9f90-b43a118e61e0\" />\n\n[EU-komisjonen\n](https://digital-strategy.ec.europa.eu/en/policies/eu-icons-labelling-ai-generated-content)\n\n<img width=\"138\" height=\"120\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/f62c2402-70b6-4472-b4cf-0140fb65b4aa\" />\n\n<img width=\"207\" height=\"57\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/50b4b657-cc0c-4037-9642-7e91fb487d40\" />\n\n<img width=\"182\" height=\"48\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/87a9371c-5401-4822-9b5e-2ce376f9c965\" />"
+    },
+    {
+     "id": 2121176568,
+     "number": 2706,
+     "url": "https://github.com/navikt/aksel/issues/2706",
+     "title": "[Innspill til komponent]: Combobox - gruppering av options",
+     "author": "idaame",
+     "created": "2024-02-06T16:13:16Z",
+     "updated": "2026-03-27T09:01:15Z",
+     "assignees": [
+      "HalvorHaugan"
+     ],
+     "labels": [
+      "nytt ✨",
+      "forespørsel 🥰",
+      "komponenter 🧩",
+      "beta 🧪"
+     ],
+     "comments": 9,
+     "body": "### Tilbakemelding\n\nHei,\r\n\r\nJeg ønsker meg at combobox kan få mulighet for gruppering av options. Dette er funksjonalitet vi trenger, i tillegg til typing av options (https://github.com/navikt/aksel/issues/2553), for å kunne bytte over til Combobox alle steder vi bruker multiselect i dag. Hadde vært fint å få på plass, så lesevisning/readonly på denne komponenten kan bli lik de andre komponentene i løsningen 🙏 \r\n\r\nSe bilde for eksempel på hvordan vi bruker dette i dag:\r\n![image](https://github.com/navikt/aksel/assets/25459913/f05d3f69-e770-42f3-9bc7-d6742284c542)\r\n\r\nI dag bruker vi React select, hvor man har mulighet til å jobbe med grupper. Se eksempelkode fra appen vår her: https://github.com/navikt/familie-ks-sak-frontend/blob/main/src/frontend/komponenter/Fagsak/Vedtak/VedtakBegrunnelserTabell/VedtaksperioderMedBegrunnelser/BegrunnelserMultiselect.tsx\r\n\r\nRop ut om det er spørsmål 😊 \r\n\r\n"
+    },
+    {
+     "id": 3860474671,
+     "number": 4562,
+     "url": "https://github.com/navikt/aksel/issues/4562",
+     "title": "[Innspill] InlineMessage",
+     "author": "TRG200",
+     "created": "2026-01-27T12:56:16Z",
+     "updated": "2026-01-27T13:23:35Z",
+     "assignees": [],
+     "labels": [
+      "forespørsel 🥰",
+      "komponenter 🧩"
+     ],
+     "comments": 0,
+     "body": "### Tilbakemelding\n\nJeg syns teksten i disse Inline variantene burde være Neutral Default og at de ikke trenger semantiske tekstfarger som det er lagt opp til nå. Ikon som hovedmarkør for meldingstypen burde fortsatt rekke, slik det var på forrige versjon (Inline).\n\nHvis man ser på Info varianten med Text/Info så er den såpass dyp blå at den ligger tett opptil det man ser som default body, siden nyansen er så liten fordi blåtonen er så mørk (grunnet kontrakstkrav) så blir ulikhetene mer som en raritet og kan ende opp med å testklikkes fordi tekst+blåtone er såpass innarbeidet som link. Text/Warning lider litt av samme dilemma, den er veldig mørk så hvis formålet er at den i seg selv skal markere warning blir det litt \"half baked\". \n\nHvis teksten hadde vært Neutral Default ville det også vært enklere når man setter link på enkeltord i teksten, da kan man i tillegg til å bruke Link fra Body også bruke Text/Accent uten at det blir forstyrret av at resten av teksten også har farge. Link prop'en på dette komponentet nå tar **hele** teksten (Figma) det er sjeldent et sannsynlig scenario. \n\n<img width=\"585\" height=\"291\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/60923602-4709-4ea2-bdb8-e94a04673d52\" />"
+    },
+    {
+     "id": 3582935859,
+     "number": 4257,
+     "url": "https://github.com/navikt/aksel/issues/4257",
+     "title": "[Ny komponent]: DateInput",
+     "author": "OdaSortland",
+     "created": "2025-11-03T16:58:56Z",
+     "updated": "2026-01-12T15:06:10Z",
+     "assignees": [],
+     "labels": [
+      "nytt ✨",
+      "forespørsel 🥰",
+      "komponenter 🧩"
+     ],
+     "comments": 1,
+     "body": "### Navn på komponent\n\nDateInput\n\n### Eksempel på komponenten\n\nHva \n- Inputfelt for dato \n- Uten \"klikk for å velge dag, måned år\" fordi det ikke er bra for datoer langt tilbake i tid \n- Standardisert fra Aksel \n- Godta flere inputmåter som saksbehandlere bruker, feks 230520 og 23052020, og transformere det til 23.05.2020\n- Til fagsystemer, kanskje og åpne sider ved datoer langt tilbake i tid \n- Fungere bra i kompakt design \n\nBehov\nVi har dette behovet på Seksjon pensjon og uføre, og jeg vet feks fagsystem Kelvin også har det. (De løste det med å kode noe eget.) Antar mange flere fagsystemer også har behovet. Utfordringen når alle koder sine egne datofelt på tvers av fagsystemer er at da vil de godta ulik input. Og i verste fall transformerer de input til dato på ulikt vis, som kan resultere i feil i saksbehandlingen. Vi skal straks i gang med modernisering av Pesys (\"P5\"), det ser ut til å bli høyt tempo, veldig mange involverte, og designressurser vil være svært begrenset. Et godt standard datofelt for fagsystem ville vært veldig bra å ha.\n\nFor en stund tilbake spurte frontender på teamet mitt om det kunne gått an å få datepicker uten muligheten til å velge dag/år. Ken sa til utvikleren at det kunne få uønskede sideeffekter å fjerne velge-dato-funksjonalitet på dagens datepicker. Men jeg tenker at dere sikkert ville klare å lage et rent DatoInput felt som funker fett, om dere har anledning."
+    },
+    {
+     "id": 3746663948,
+     "number": 4424,
+     "url": "https://github.com/navikt/aksel/issues/4424",
+     "title": "[Innspill til komponent]: <LocalAlert />",
+     "author": "Bendixx",
+     "created": "2025-12-19T08:52:16Z",
+     "updated": "2025-12-23T12:32:00Z",
+     "assignees": [],
+     "labels": [
+      "forespørsel 🥰",
+      "komponenter 🧩",
+      "beta 🧪"
+     ],
+     "comments": 1,
+     "body": "### Tilbakemelding\n\nSynes den nye LocalAlerten ser veldig mye bedre ut enn tidligere. Så kudos for det. \n\nMen (alltid et men): størrelsene er litt snodige - om det er riktig å si. Personlig synes jeg `medium`-størrelse burde erstattes av 'small'-størrelse, og heller lage en enda mindre `small`-størrelse. Fordi `small`-størrelsen kjennes visuelt ut som den \"største\" størrelsen man kan bruke. \n\nBare en tanke 💭 😄 "
+    },
+    {
+     "id": 3670770385,
+     "number": 4339,
+     "url": "https://github.com/navikt/aksel/issues/4339",
+     "title": "[Innspill til komponent]: <InfoCard />",
+     "author": "Karroholm",
+     "created": "2025-11-27T10:23:49Z",
+     "updated": "2025-12-19T13:22:11Z",
+     "assignees": [
+      "JorgenMaristuen"
+     ],
+     "labels": [
+      "nytt ✨",
+      "forespørsel 🥰",
+      "komponenter 🧩",
+      "beta 🧪"
+     ],
+     "comments": 6,
+     "body": "### Tilbakemelding\n\nInfo card er nesten 40% større enn den originale alert med bare 1 linje informasjon. \nEr det mulig å få en mindre variant for interne flater? \n\n<img width=\"1108\" height=\"737\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/3024c6f7-6ff4-41d8-af57-4414f0608b6c\" />\n\nhttps://www.figma.com/design/bud9ANZRLwrD8Cw9yk5kiJ/Skribenten-komponent--og-m%C3%B8nsterbibliotek?node-id=581-13778&t=v7KWwSg7gHYD9Lmj-11"
+    },
+    {
+     "id": 3651267969,
+     "number": 4306,
+     "url": "https://github.com/navikt/aksel/issues/4306",
+     "title": "[Innspill] Oppsummeringsside for søknadsdialoger",
+     "author": "annesjuel",
+     "created": "2025-11-21T11:19:23Z",
+     "updated": "2025-11-27T06:39:41Z",
+     "assignees": [],
+     "labels": [
+      "nytt ✨",
+      "forespørsel 🥰",
+      "komponenter 🧩",
+      "beta 🧪"
+     ],
+     "comments": 1,
+     "body": "### Tilbakemelding\n\nSer i brukertest at noen misforstår overskriften \"Oppsummering\" som at søknaden er sendt. Folk hopper over den generelle introen og går rett på å sjekke at opplysningene stemmer. Det kan ligge mye info på siden som gjør at Send-knappen kommer langt ned og ikke er synlig. \n\nAnbefaler heller en overskrift som signaliserer handling, f.eks. \"Bekreft informasjonen og send søknaden\" eller \"Sjekk informasjonen og send søknaden\".\n"
+    },
+    {
+     "id": 3573913281,
+     "number": 4241,
+     "url": "https://github.com/navikt/aksel/issues/4241",
+     "title": "[Innspill] Process",
+     "author": "christinaroise",
+     "created": "2025-10-31T08:40:55Z",
+     "updated": "2025-10-31T10:41:56Z",
+     "assignees": [],
+     "labels": [
+      "forespørsel 🥰",
+      "komponenter 🧩"
+     ],
+     "comments": 1,
+     "body": "### Tilbakemelding\n\nFor interne flater savner jeg en size prop ettersom denne blir litt for stor ☺️"
+    },
+    {
+     "id": 3182088322,
+     "number": 3917,
+     "url": "https://github.com/navikt/aksel/issues/3917",
+     "title": "[Innspill til komponent]: <LinkCard />",
+     "author": "macbruker",
+     "created": "2025-06-27T09:24:55Z",
+     "updated": "2025-08-25T12:27:17Z",
+     "assignees": [],
+     "labels": [
+      "nytt ✨",
+      "forespørsel 🥰",
+      "komponenter 🧩"
+     ],
+     "comments": 2,
+     "body": "### Tilbakemelding\n\nForslag om å tilby en variant der ikon ligger over tittel, slik som Image/Picture.\n\n<img width=\"357\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/c04f3b11-ed7f-41ff-afa4-0c5c784ef734\" />"
+    },
+    {
+     "id": 2900001432,
+     "number": 3632,
+     "url": "https://github.com/navikt/aksel/issues/3632",
+     "title": "[Innspill til komponent]: <Alert />",
+     "author": "solumstrand",
+     "created": "2025-03-06T10:28:21Z",
+     "updated": "2025-04-27T17:43:08Z",
+     "assignees": [
+      "sjur-gr"
+     ],
+     "labels": [
+      "forespørsel 🥰",
+      "komponenter 🧩"
+     ],
+     "comments": 10,
+     "body": "### Tilbakemelding\n\nØnske om x-small.\n\nVi bruker designsystemet i saksbehandlingsløsningen vi jobber med. Per nå blir alert for svær i noen steder, og vi har endt med å bruke tag-komponent i x-small fordi den er halvparten av høyden. Ikke ideelt"
+    }
+   ],
+   "pulls": [
+    {
+     "id": 5414687754,
+     "number": 5567,
+     "url": "https://github.com/navikt/aksel/pull/5567",
+     "title": "feat(ComboboxSingle): release to preview",
+     "author": "HalvorHaugan",
+     "created": "2026-11-20T14:07:48Z",
+     "updated": "2026-11-20T14:12:47Z",
+     "draft": true,
+     "mergeableState": "clean",
+     "additions": 59,
+     "deletions": 39,
+     "files": 15,
+     "head": "comboboxsingle",
+     "base": "main",
+     "labels": [],
+     "body": "TODO: Chromatic, examples, go through checklist bellow\n\n### Component Checklist 📝\n\n- [ ] JSDoc\n- [ ] Examples\n- [ ] Documentation / Decision Records\n- [ ] Storybook\n- [ ] CSS class deprecations (`@navikt/aksel-stylelint/src/deprecations.ts`)\n- [ ] Exports (`@navikt/core/react/src/index.ts` and `@navikt/core/react/package.json`)\n- [ ] New component? CSS import (`@navikt/core/css/index.css`)\n- [ ] Breaking change? Update migration guide. Consider codemod.\n- [ ] Changeset (Format: `<Component>: <gitmoji?> <Text>` E.g. \"Button: :sparkles: Add feature xyz\")\n",
+     "requested": [],
+     "comments": 3,
+     "reviews": [],
+     "checks": {
+      "state": "SUCCESS",
+      "runs": [
+       {
+        "name": "Post PR comment with results",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Compare bundles (PR vs main)",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "CodeQL",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Post PR comment with results",
+        "status": "completed",
+        "conclusion": "skipped"
+       },
+       {
+        "name": "Analyze npm packages",
+        "status": "completed",
+        "conclusion": "skipped"
+       },
+       {
+        "name": "Analyze main branch",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Analyze PR branch",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Run Chromatic",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Check PR title",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Check PR title",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Lint (Oxlint, Stylelint etc.)",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Validate component examples",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "UI tests (Storybook)",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Unit and integration tests",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Analyze (javascript-typescript)",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Analyze (actions)",
+        "status": "completed",
+        "conclusion": "success"
+       }
+      ]
+     }
+    },
+    {
+     "id": 5052461703,
+     "number": 5465,
+     "url": "https://github.com/navikt/aksel/pull/5465",
+     "title": "feat(DataGrid): Pagination components and built-in client and server pagination",
+     "author": "KenAJoh",
+     "created": "2026-10-28T14:45:22Z",
+     "updated": "2026-11-20T12:13:39Z",
+     "draft": true,
+     "mergeableState": "unknown",
+     "additions": 2786,
+     "deletions": 161,
+     "files": 33,
+     "head": "datagrid-pagination",
+     "base": "main",
+     "labels": [],
+     "body": "### Description\n\nhttps://github.com/navikt/team-aksel/issues/1004\n\n\n\n#### Bugfixes\n- Ensures keyboard navigation position is restored after loading in the data grid table.\n\n### Component Checklist 📝\n\n- [ ] JSDoc\n- [ ] Examples\n- [ ] Documentation / Decision Records\n- [ ] Storybook\n- [ ] CSS class deprecations (`@navikt/aksel-stylelint/src/deprecations.ts`)\n- [ ] Exports (`@navikt/core/react/src/index.ts` and `@navikt/core/react/package.json`)\n- [ ] New component? CSS import (`@navikt/core/css/index.css`)\n- [ ] Breaking change? Update migration guide. Consider codemod.\n- [ ] Changeset (Format: `<Component>: <gitmoji?> <Text>` E.g. \"Button: :sparkles: Add feature xyz\")\n",
+     "requested": [],
+     "comments": 16,
+     "reviews": [
+      {
+       "author": "copilot-pull-request-reviewer[bot]",
+       "state": "COMMENTED",
+       "submitted": "2026-10-28T14:52:11Z",
+       "body": "<!-- ccr-overview-v2 -->\n\n### 🟡 Changes recommended\n\nPagination CSS hides the page-size control in custom layouts and leaves unavailable Previous, Next, and Last buttons looking enabled.\n\n<details open>\n<summary><strong>2 open issues</strong></summary>\n\n- <picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://github.githubassets.com/static/images/icons/copilot-code-review/medium-v2-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://github.githubassets.com/static/images/icons/copilot-code-review/medium-v2-light.svg\"><img src=\"https://github.githubassets.com/"
+      },
+      {
+       "author": "copilot-pull-request-reviewer[bot]",
+       "state": "COMMENTED",
+       "submitted": "2026-11-19T11:23:20Z",
+       "body": "<!-- ccr-overview-v2 -->\n\n### 🟡 Changes recommended\n\nIncorrect pagination assertions fail or time out, while grid focus restoration and repeated live-region announcements retain accessibility defects.\n\n<details open>\n<summary><strong>6 open issues</strong></summary>\n\n- <picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://github.githubassets.com/static/images/icons/copilot-code-review/high-v2-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://github.githubassets.com/static/images/icons/copilot-code-review/high-v2-light.svg\"><img src=\"https://github.githuba"
+      },
+      {
+       "author": "copilot-pull-request-reviewer[bot]",
+       "state": "COMMENTED",
+       "submitted": "2026-11-20T09:00:16Z",
+       "body": "<!-- ccr-overview-v2 -->\n\n### 🟡 Changes recommended\n\nStale pagination assertions block navigation and sort-reset checks, while unresolved focus and live-region defects can direct focus into hidden placeholders and suppress screen-reader announcements.\n\n<details open>\n<summary><strong>11 open issues</strong></summary>\n\n- <picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://github.githubassets.com/static/images/icons/copilot-code-review/high-v2-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://github.githubassets.com/static/images/icons/copilot-code-review"
+      }
+     ],
+     "checks": {
+      "state": "SUCCESS",
+      "runs": [
+       {
+        "name": "copilot-pull-request-reviewer",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "CodeQL",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "copilot-pull-request-reviewer",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Analyze (actions)",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Analyze (javascript-typescript)",
+        "status": "completed",
+        "conclusion": "success"
+       }
+      ]
+     }
+    },
+    {
+     "id": 5414039607,
+     "number": 5566,
+     "url": "https://github.com/navikt/aksel/pull/5566",
+     "title": "Version Packages",
+     "author": "github-actions[bot]",
+     "created": "2026-11-20T13:22:00Z",
+     "updated": "2026-11-20T13:24:05Z",
+     "draft": false,
+     "mergeableState": "unstable",
+     "additions": 83,
+     "deletions": 60,
+     "files": 21,
+     "head": "changeset-release/main",
+     "base": "main",
+     "labels": [],
+     "body": "This PR was opened by the [Changesets release](https://github.com/changesets/action) GitHub action. When you're ready to do a release, you can merge this and the packages will be published to npm automatically. If you're not ready to do a release yet, that's fine, whenever you add more changesets to main, this PR will be updated.\n\n\n# Releases\n## @navikt/ds-react@8.23.1\n\n### Patch Changes\n\n- Button: Preserve keyboard modifiers during native Space activation. ([#5564](https://github.com/navikt/aksel/pull/5564))\n\n- Updated dependencies []:\n  - @navikt/ds-tokens@8.23.1\n  - @navikt/aksel-icons@8.23.1\n## @navikt/aksel@8.23.1\n\n\n## @navikt/aksel-icons@8.23.1\n\n\n## @navikt/aksel-stylelint@8.23.1\n\n\n## @navikt/ds-css@8.23.1\n\n\n## @navikt/ds-tailwind@8.23.1\n\n\n## @navikt/ds-tokens@8.23.1\n\n",
+     "requested": [],
+     "comments": 0,
+     "reviews": [
+      {
+       "author": "copilot-pull-request-reviewer[bot]",
+       "state": "COMMENTED",
+       "submitted": "2026-11-20T13:24:05Z",
+       "body": "<!-- ccr-overview-v2 -->\n\n### 🟢 Approval recommended\n\nNo active review issues are reported for the 8.23.1 release metadata update.\n\n**No open issues** 🎉\n\n<details>\n<summary><strong>What changed in this PR</strong></summary>\n\nPrepares Aksel’s seven published packages for release **8.23.1**, including the Button keyboard-modifier fix from #5564. This PR updates release metadata, not component implementation.\n\n**Changes:**\n- Bumps package versions and internal dependency ranges to 8.23.1.\n- Updates application dependencies and the Yarn lockfile.\n- Adds release changelog entries and removes the "
+      }
+     ],
+     "checks": {
+      "state": "SUCCESS",
+      "runs": [
+       {
+        "name": "CodeQL",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "copilot-pull-request-reviewer",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Analyze (actions)",
+        "status": "completed",
+        "conclusion": "success"
+       },
+       {
+        "name": "Analyze (javascript-typescript)",
+        "status": "completed",
+        "conclusion": "success"
+       }
+      ]
+     }
+    }
+   ],
+   "issueComments": {
+    "3018": [
+     {
+      "author": "thoalm",
+      "created": "2026-03-11T15:07:21Z",
+      "body": "Dette er noe vi fortsatt ønsker oss. 😊 "
+     }
+    ],
+    "5538": [
+     {
+      "author": "KenAJoh",
+      "created": "2026-11-10T15:05:50Z",
+      "body": "Mistenker #justFirefoxThings her, vi har testet på både mac og linux, begge uten å replikere det 🤔 "
+     }
+    ],
+    "5563": [
+     {
+      "author": "MBegnum",
+      "created": "2026-11-20T11:11:10Z",
+      "body": "Aner ikke om jeg har meldt inn forespørselen riktig, prøver meg bare! Gi beskjed - og gratulerer med pris!!! 🩷"
+     }
+    ]
+   },
+   "discussions": [
+    {
+     "number": 4584,
+     "title": "Notification",
+     "url": "https://github.com/navikt/aksel/discussions/4584",
+     "author": "BeoPeter",
+     "created": "2026-01-30T08:00:56Z",
+     "updated": "2026-01-30T08:00:56+00:00",
+     "category": "Komponenter",
+     "comments": 0,
+     "answered": null,
+     "body": "Ser Sjur har lekt seg litt i eksperimenter med notifikasjon, og savner noe jeg kan bruke i grensesnittet til saksbehandlere. Intern kommunikasjon er noe som vi kommer til å måtte legge opp til før eller senere. Det er en forventning av brukere å kunne oppfatte, raskt, om det har kommet inn en beskjed eller kommentar fra en annen kollega. Jeg liker den litt lysere bakgrunnen for rød (strong), og ønsker meg en komponent som justerer seg automatisk, og samtidig justerer seg automatisk ettersom man endrer tallet."
+    },
+    {
+     "number": 4563,
+     "title": "Forslag til kategori av ikoner for kommunal sektor",
+     "url": "https://github.com/navikt/aksel/discussions/4563",
+     "author": "HansOB",
+     "created": "2026-01-27T13:02:04Z",
+     "updated": "2026-01-27T13:02:04+00:00",
+     "category": "Ikoner",
+     "comments": 0,
+     "answered": null,
+     "body": "Takk for det gode arbeidet med ikonsettet og designsystemet – det er en solid base for offentlig sektor! Jeg arbeider med webutvikling i Askøy kommune og er i gang med å utvikle en ny webportal. Vi ønsker å implementere Designsystemet og et felles ikonsett for å ivareta ideen om konsistent og gjenkjennbart design for våre innbyggere. I dette arbeidet har jeg identifisert et behov for ikoner som representerer typiske kommunale tjenester. Kommunene leverer mange tjenester som skiller seg fra det statlige tjenestetilbudet, og jeg savner ikoner som kan visualisere disse. Jeg har derfor utarbeidet noen konkrete forslag som kan komplettere det eksisterende arbeidet. Dette er ikke ment som en uttømmende liste – det er sikkert flere kommunale tjenester som vil ha nytte av dedikerte ikoner. Andre kommuner har helt sikkert gode argumenter for ytterligere tillegg, men dette er en start. Forslag_nye_ikoner_kommunesektoren.docx"
+    },
+    {
+     "number": 4559,
+     "title": "Gosys-ikon",
+     "url": "https://github.com/navikt/aksel/discussions/4559",
+     "author": "BeoPeter",
+     "created": "2026-01-27T09:14:55Z",
+     "updated": "2026-01-27T09:14:55+00:00",
+     "category": "Ikoner",
+     "comments": 0,
+     "answered": null,
+     "body": "Vi trenger ikoner som lar oss sy sammen tjenestene for saksbehandlere og veiledere som jobber i flere systemer. Ser vi ikke har et Gosys-ikon vi kan bruke. Kunne vi fått laget dette?"
+    },
+    {
+     "number": 4368,
+     "title": "Forskjellig styling basert på theme og macOS-utseendet",
+     "url": "https://github.com/navikt/aksel/discussions/4368",
+     "author": "rojahno",
+     "created": "2025-12-03T07:26:23Z",
+     "updated": "2025-12-03T07:26:24+00:00",
+     "category": "Darkside",
+     "comments": 0,
+     "answered": null,
+     "body": "Hei! Jeg har satt theme til \"light\" i react appen min. import '@navikt/ds-css/darkside' ; import { Theme } from '@navikt/ds-react/Theme' ; import { AuthProvider } from './context/AuthContext' ; import type { FC } from 'react' ; export const App : FC = ( ) => { return ( < Theme theme = 'light' > < AuthProvider > < Outlet /> </ AuthProvider > </ Theme > ) ; } ; Når macOS er satt til dark mode, vises komponentene slik: Men når jeg endrer macOS-utseendet til light mode, endrer alle «clickables» seg til dette: Med: @media ( prefers-color-scheme : light ) { button { background-color : # f9f9f9 ; } Jeg tenker at fargene til komponentene bør styres av theme=\"light\" i Theme-provideren, og ikke av macOS sitt systemutseende. Slik det fungerer nå, blir knappene fortsatt påvirket av prefers-color-scheme i operativsystemet, selv om jeg eksplisitt setter temaet. Er det en måte å sikre at komponentene alltid bruker temaet angitt i Theme-provideren — uavhengig av hvilket utseende som er valgt i macOS?"
+    },
+    {
+     "number": 2583,
+     "title": "[Alpha] Process",
+     "url": "https://github.com/navikt/aksel/discussions/2583",
+     "author": "sjur-gr",
+     "created": "2023-12-22T09:57:14Z",
+     "updated": "2025-08-29T09:58:52+00:00",
+     "category": "Komponenter",
+     "comments": 4,
+     "answered": null,
+     "body": "Velkommen til vurdering av Process 🙌 Process brukes til å vise og forklare en serie med hendelser/opplysninger. Hvert steg kan være til informasjon, ha handlinger, lenke til andre sider eller fortelle status med Tags . Forslaget her er å kommunisere hendelser som skjer etter hverandre på en fleksibel måte. Det skal støtte flere tidsperspektiver (fortid, nåtid og fremtid). Process kan erstatte komponenten Stepper . Vi har lagt et eksempel på komponenten Process i Alpha UI kit som dere kan teste ut. For å finne ut om vi skal inkludere Process som en komponent i Aksel trenger vi deres hjelp. Vi er på jakt etter bevis på behov i løsninger som er i prod/demo. Vi ønsker skjermbilder (uten sensitive opplysninger) og en forklaring av konteksten. Vi holder ikke aktivt øye med denne diskusjonen, så gi oss et hint om du legger til noe her. Når vi har fått bevis på minst 3 tilfeller av bruk vil vi gå videre med komponenten. Del dette gjerne med team du tror Process vil passe for."
+    },
+    {
+     "number": 2580,
+     "title": "[Alpha] Lookup",
+     "url": "https://github.com/navikt/aksel/discussions/2580",
+     "author": "sjur-gr",
+     "created": "2023-12-21T14:58:15Z",
+     "updated": "2025-07-02T16:59:03+00:00",
+     "category": "Komponenter",
+     "comments": 1,
+     "answered": null,
+     "body": "Velkommen til vurdering av Lookup 🙌 Lookup brukes til å vise en kort forklaring av et ord. Forklaringen dukker opp i en Popover . Forslaget her er å tilby en måte å gi en kort forklaring av ord i løpende tekst når du trenger det. Vi må stresse begrensningen \"kort forklaring\" 😆 Vi har lagt et eksempel på komponenten ComboButton i Alpha UI kit som dere kan teste ut. For å finne ut om vi skal inkludere Lookup som en komponent i Aksel trenger vi deres hjelp. Vi er på jakt etter bevis på behov i løsninger som er i prod/demo . Vi ønsker skjermbilder (uten sensitive opplysninger) og en forklaring av konteksten. Vi holder ikke aktivt øye med denne diskusjonen, så gi oss et hint om du legger til noe her. Når vi har fått bevis på minst 3 tilfeller av bruk vil vi gå videre med komponenten. Del dette gjerne med team du tror Lookup vil passe for."
+    },
+    {
+     "number": 2405,
+     "title": "[Alpha] Fact",
+     "url": "https://github.com/navikt/aksel/discussions/2405",
+     "author": "sjur-gr",
+     "created": "2023-10-20T10:15:58Z",
+     "updated": "2025-05-14T12:42:38+00:00",
+     "category": "Komponenter",
+     "comments": 5,
+     "answered": null,
+     "body": "Velkommen til vurderingen av komponenten Fact 🙌 Fact er en komponent som viser faktainformasjon eller ekstra informasjon for brukerne. Det er et panel som viser litt av innholdet til å starte med. Bruker kan klikke på en knapp for å se alt innholdet. Samme knapp brukes for å krympe panelet igjen. Vi har sett et eksempel hvor komponenten er brukt, men er usikre på om det er flere som har behov for den. Eksemplet vi har sett er en situasjon hvor Fact blir brukt er under en graf for å vise dataene fra grafen i et annet format. Fra interwebsen vet vi at Fact ofte blir brukt for vise kortversjon/oppsummering av en artikkel eller faktaopplysninger om ting som beskrives i artikkelen. Vi har lagt et eksempel på komponenten Fact i Alpha UI kit som dere kan teste ut. For å finne ut om vi skal inkludere Fact som en komponent i Aksel trenger vi deres hjelp. Vi er på jakt etter bevis på behov i løsninger som er i prod/demo. Vi ønsker skjermbilder (uten sensitive opplysninger) og en forklaring av konteksten. Når vi har fått bevis på minst 3 tilfeller av bruk vil vi gå videre med komponenten. Del dette gjerne med team du tror Fact vil passe for."
+    },
+    {
+     "number": 2581,
+     "title": "[Alpha] NotificationBadge",
+     "url": "https://github.com/navikt/aksel/discussions/2581",
+     "author": "sjur-gr",
+     "created": "2023-12-22T07:22:01Z",
+     "updated": "2025-04-01T11:40:00+00:00",
+     "category": "Komponenter",
+     "comments": 1,
+     "answered": null,
+     "body": "Velkommen til vurdering av NotificationBadge 🙌 NotificationBadge brukes til å markere at det har kommet ny informasjon. For eksempel nye meldinger eller en oppdatert sak. Forslaget her er å tilby en måte å markere at det har kommet ny informasjon. Markeringen skal være tydelig for brukerne. Samt ha støtte for å vise antall. Vi har lagt et eksempel på komponenten NotificationBadge i Alpha UI kit som dere kan teste ut. For å finne ut om vi skal inkludere NotificationBadge som en komponent i Aksel trenger vi deres hjelp. Vi er på jakt etter bevis på behov i løsninger som er i prod/demo . Vi ønsker skjermbilder (uten sensitive opplysninger) og en forklaring av konteksten. Vi holder ikke aktivt øye med denne diskusjonen, så gi oss et hint om du legger til noe her. Når vi har fått bevis på minst 3 tilfeller av bruk vil vi gå videre med komponenten. Del dette gjerne med team du tror NotificationBadge vil passe for."
+    },
+    {
+     "number": 3621,
+     "title": "Chat < Brev til lege/behandler",
+     "url": "https://github.com/navikt/aksel/discussions/3621",
+     "author": "BeoPeter",
+     "created": "2025-03-04T10:22:54Z",
+     "updated": "2025-03-27T19:34:26+00:00",
+     "category": "Mønster og maler",
+     "comments": 1,
+     "answered": null,
+     "body": "På interne flater bruker vi meldinger flittig på ulike deler av modia. Noen meldinger har uttrykk som chatter, mens andre har særegne behov som gir de litt andre uttrykk. Ovenfor behandlere, særlig på modia syfo, så er det nødvendig å gi meldingene et preg av at det er et brev, og ikke en chat. Det har litt med systemet bak å gjøre, men også på grunn av lovmessigheter og takstkoder, siden lege kan ta seg betalt for å svare på en melding fra nav i noen sammenhenger. Caset viser bare at vi kunne ha trengt en mal eller et mønster, eller komponentsupport for hvordan å gi meldingstjenester som går mer i form av brev, et utrykk som gjør at brukeren tenker seg om to ganger før de sender av gårde en melding. Det kan være at dette inntreffer flere steder enn syfo-eksemplet over, så derfor jeg åpnet en ny diskusjon her. Akkurat nå bruker jeg ulike elementer, som ikoner, farger, label for å øke bevisstheten til brukeren om HVA de skal sende, og på den måten håper jeg at de ikke sender 3 ord, som vi kan bli trukket for i form av L40 eller lignende. Andre som har lignende caser?"
+    },
+    {
+     "number": 3649,
+     "title": "Combo-drop-",
+     "url": "https://github.com/navikt/aksel/discussions/3649",
+     "author": "BeoPeter",
+     "created": "2025-03-11T13:42:24Z",
+     "updated": "2025-03-27T19:19:22+00:00",
+     "category": "Komponenter",
+     "comments": 1,
+     "answered": null,
+     "body": "Jeg har et problem jeg lurer på om dere også har sett på, men kommet frem til at ikke går an å fikse. I komponenten jeg har lagt inn skjermbilde av, så gir den uttrykk av at er skrollbar, men dette er et statisk element som ligger som en \"thumb\" i komponentbeskrivelsen. Så vidt jeg ser er det ikke noen måte for meg å gjøre denne interaktiv eller at den følger etter når man skroller i listen. I fagsystemene tyr brukere ofte til å klikke og dra på elementer for å skrolle, og det bryter da flyten veldig i tester jeg setter opp når de ikke får lov til å gjøre dette. Er det noen måte å gjøre dette elementet til en faktisk skroll-interaksjon, eller er det i det minste mulig å gjøre at den følger posisjonen relativ til listen man skroller i? Endringsønske fra meg i så fall."
+    },
+    {
+     "number": 3517,
+     "title": "[Alpha] Drawer",
+     "url": "https://github.com/navikt/aksel/discussions/3517",
+     "author": "KenAJoh",
+     "created": "2025-01-22T11:19:34Z",
+     "updated": "2025-01-22T13:49:40+00:00",
+     "category": "Komponenter",
+     "comments": 1,
+     "answered": null,
+     "body": "Velkommen til vurdering av Drawer 🙌 Drawer , også kalt Tray eller Sheets av noen er en kontainer som kommer ut fra en side på skjermen og er koblet til den siden (oftest høyre eller bunnen av skjermen). Drawer vil også være en effektiv metode for å vise typiske \"Popover\"-elementer på mobil, da typisk ActionMenu, Datepicker eller Combobox. Komponenten kan både oppleves som en Modal, eller sekundært innhold på skjermen basert på nødvendig kontekst. For å finne ut om vi skal inkludere Drawer som en komponent i Aksel trenger vi deres hjelp. Vi er på jakt etter bevis på behov i løsninger som er i prod/demo. Vi ønsker skjermbilder (uten sensitive opplysninger) og en forklaring av konteksten. Når vi har fått bevis på minst 3 tilfeller av bruk vil vi gå videre med komponenten. Del dette gjerne med team du tror Drawer vil passe for."
+    },
+    {
+     "number": 2573,
+     "title": "[Alpha] Alert med knapper",
+     "url": "https://github.com/navikt/aksel/discussions/2573",
+     "author": "sjur-gr",
+     "created": "2023-12-20T14:00:51Z",
+     "updated": "2024-12-17T09:09:24+00:00",
+     "category": "Komponenter",
+     "comments": 1,
+     "answered": null,
+     "body": "Velkommen til vurdering av Alert med knapper 🙌 Alert brukes til å varsle brukere i en kontekst. Forslaget her er å tilby handlinger rett i Alert ’en. Vi har ikke fått noen konkrete eksempler på at noen gjør dette i dag. Vi har lagt et eksempel på komponenten Alert i Alpha UI kit som dere kan teste ut. For å finne ut om vi skal inkludere Alert med knapper som en komponent i Aksel trenger vi deres hjelp. Vi er på jakt etter bevis på behov i løsninger som er i prod/demo . Vi ønsker skjermbilder (uten sensitive opplysninger) og en forklaring av konteksten. Vi holder ikke aktivt øye med denne diskusjonen, så gi oss et hint om du legger til noe her. Når vi har fått bevis på minst 3 tilfeller av bruk vil vi gå videre med komponenten. Del dette gjerne med team du tror Alert med knapper vil passe for."
+    }
+   ]
+  }
+ }
+}
