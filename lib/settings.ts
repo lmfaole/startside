@@ -131,8 +131,9 @@ export function reposCookie(repos: readonly string[] | null): string {
 export type Checks = { user: (login: string) => Promise<string | null>; publicRepo: (repo: string) => Promise<string | null> }
 
 /** The fields that are checked, each on its own step of the wizard. */
-export type Field = "github" | "repos"
-export const STEP_OF: Record<Field, string> = { github: "github", repos: "repos" }
+export type Field = "github" | "repos" | "starts"
+/** The wizard's step of each field, or the settings page's anchor (`starts`: the time-of-day settings, not in the wizard). */
+export const STEP_OF: Record<Field, string> = { github: "github", repos: "repos", starts: "tider" }
 
 export type Checked = { errors: Partial<Record<Field, string>>; github?: string | null; repos?: string[] }
 
@@ -168,7 +169,7 @@ export async function checkSettings(form: SettingsForm, checks: Checks): Promise
 /** What a failed submission brings back to the form: where (the wizard's step), why, and what was written. */
 export type Problems = { step?: string; errors: Partial<Record<Field, string>>; values: Partial<Record<Field, string>> }
 
-const FIELDS: readonly Field[] = ["github", "repos"]
+const FIELDS: readonly Field[] = ["github", "repos", "starts"]
 
 export function encodeProblems(problems: Problems): string {
   const params = new URLSearchParams()

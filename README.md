@@ -82,17 +82,25 @@ A source that fails shows its own error and does not take the page down.
 
 ## Time of day
 
-The page follows the time of day in Oslo (`lib/day.ts`, the plan in `lib/plan.ts`):
+The page follows the time of day in Oslo (`lib/day.ts`, the plan in `lib/plan.ts`). By default (the visitor can change all of it, below):
 
-| | Greeting | Shown, in order | Forecast |
+| | Greeting | Shown | Forecast |
 | --- | --- | --- | --- |
 | Morning 05–09 | God morgen | weather, pull requests (reviews and own), assigned issues | rest of today |
 | Workday 09–16 | God dag | pull requests (reviews and own), assigned issues, weather | rest of today |
 | Evening 16–22 | God kveld | own pull requests, weather | tomorrow |
 | Night 22–05 | God natt | weather | tomorrow |
-| Weekend | as above | weather, own pull requests (night: weather) | today by day, tomorrow in the evening |
+| Weekend | as above | as above without issues and discussions, own pull requests only | today by day, tomorrow in the evening |
 
-Before 05:00 it is still the day before, so the night after Friday is a weekday and the night after Sunday a weekend.
+Before the morning starts (05:00) it is still the day before, so the night after Friday is a weekday and the night after Sunday a weekend.
+The time of day only decides which sections show; their order is one order, the visitor's (`order` in `prefs`, `lib/section-order.ts`;
+by default alerts, pull requests, issues, discussions, weather).
+
+The visitor's settings are the cookie `startside_day` (`lib/day-settings.ts`, path `/start`, a year, `SameSite=Lax`, `Secure`; a query
+string, only what differs from the default, removed when all is default): `mode=auto|off` (off: the same page all day, every chosen
+section, today's weather, all pull requests), `greeting=on|off` (off: the title is «Startside»), `starts=HH:MM,HH:MM,HH:MM,HH:MM` (morgen,
+arbeidsdag, kveld, natt; quarter hours, in order around the clock), `weekend=on|off` (the weekend rule above), `weekenddays=6,0` (0 is
+Sunday), `show.<part>=ids`, `weather.<part>=today|tomorrow` and `pulls.<part>=all|mine`. Anything not understood is that field's default.
 What is not shown is not fetched. In `next dev`, `NOW=2026-11-18T07:00:00+01:00 npm run dev` stands in for the clock;
 it is never read in production. `npm test` covers the parts of the day, their edges, the clocks changing and the forecast windows.
 
@@ -179,6 +187,12 @@ JavaScript:
   settings page, with the errors and what was written in the short-lived cookie `innstillinger-feil` (two minutes, `HttpOnly`). The wizard is not
   marked seen then.
 - `skip=1` («Hopp over») only marks it seen; `rerun=1` («Vis introen igjen») removes it from `seen` and goes back.
+- `order=<id>,<id>` keeps the front page's order in `prefs` (`order=`). `move=<id>:up|down` (the reorder buttons without JavaScript) moves
+  one section in the submitted `order` (or the saved one), keeps only that, and goes back to `/start/innstillinger#rekkefolge`.
+- With `day=1` (the settings page's time-of-day fields; the wizard never sends it) it keeps `startside_day` (`readDayForm`): `mode`,
+  `greeting`, `weekend`, `weather.<part>`, `pulls.<part>` (absent: unchanged), `weekenddays` and `show.<part>` (checkboxes, several values;
+  absent: none, so never disable them), and `starts.morgen`, `starts.arbeidsdag`, `starts.kveld`, `starts.natt` (`HH:MM`). Starts that are
+  not quarter hours or not in order are not kept: the error goes back as `starts` in `innstillinger-feil`, to `#tider`.
 
 `<html>` gets `htmlAttributes(prefs)` in `app/layout.tsx` (`data-theme`, `data-effects`, `data-tilt`), and the front page shows only the chosen
 sections (`chosenSections` in `lib/plan.ts`; all ticked is stored as none chosen, so new sections show up). With `MOCK_DATA=1` any username and

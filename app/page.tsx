@@ -17,13 +17,14 @@ import { getCiFailures, getDependabot, getDiscussions, getIssues, getPulls, getR
 import { groupIssues } from "../lib/issues"
 import { BASE } from "../lib/links"
 import { chosenSections, planFor } from "../lib/plan"
+import { sectionOrder } from "../lib/section-order"
 import { parsePosition, POSITION_COOKIE } from "../lib/position"
 import { groupPulls } from "../lib/pulls"
 import { settle } from "../lib/settle"
 import { SETTINGS_PAGE } from "../lib/settings"
 import { summaryItems } from "../lib/summary"
 import { formState, type SearchParams } from "../lib/username"
-import { githubPage, introSeen, SEEN_PATH, visitorPrefs } from "../lib/visitor"
+import { githubPage, introSeen, SEEN_PATH, visitorDaySettings, visitorOrder, visitorPrefs } from "../lib/visitor"
 import { getForecast } from "../lib/yr"
 
 /** The page renews itself every minute (components/shell.tsx); after three missed renewals it says its data may be old. */
@@ -34,18 +35,19 @@ export const dynamic = "force-dynamic"
 
 /**
  * The front page is a digest: first the state in counts (each a link to what it counts), then the few things that need you
- * most from each source, each with a way to all of it. What is shown follows the time of day (lib/plan.ts); what is left out
+ * most from each source, each with a way to all of it. Which sections are shown follows the time of day as the visitor set it
+ * (lib/plan.ts, lib/day-settings.ts), in the one order the visitor chose (lib/section-order.ts); what is left out
  * is not fetched either. The lists, and a page for each thing, are one level down. GitHub is fetched for the visitor's username
  * (lib/visitor.ts); before there is one, the form asking for it stands where the first GitHub section would be. The alerts are the
  * token owner's only.
  */
 export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const instant = now()
-  const day = dayOf(instant)
   const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
-  const [{ user, known, params }, prefs] = await Promise.all([githubPage(searchParams), visitorPrefs()])
-  const planned = planFor(day)
-  const plan = { ...planned, sections: chosenSections(planned.sections, prefs.sections) }
+  const [{ user, known, params }, prefs, order, daySettings] = await Promise.all([githubPage(searchParams), visitorPrefs(), visitorOrder(), visitorDaySettings()])
+  const day = dayOf(instant, daySettings)
+  const planned = planFor(day, daySettings)
+  const plan = { ...planned, sections: sectionOrder(chosenSections(planned.sections, prefs.sections), order) }
   const asking = user === null
   const owner = user === null ? false : await isTokenOwner(user).catch(() => false)
   const wants = (id: (typeof plan.sections)[number]) => plan.sections.includes(id)
@@ -72,7 +74,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
   })
 
   return (
-    <Shell current="front" title={plan.greeting} lead={<>{dateLine.format(instant)} · <Freshness at={instant.toISOString()} now={instant.toISOString()} staleAfterSeconds={STALE_AFTER} /></>} actions={<PositionControl current={position} />}>
+    <Shell current="front" title={plan.greeting ?? "Startside"} lead={<>{dateLine.format(instant)} · <Freshness at={instant.toISOString()} now={instant.toISOString()} staleAfterSeconds={STALE_AFTER} /></>} actions={<PositionControl current={position} />}>
       <Stack gap="xl">
         {formAt === null ? (
           <IntroCallout

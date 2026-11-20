@@ -16,7 +16,7 @@ import { dailyOutlook, nextHours } from "../../lib/forecast"
 import { dateLine, degrees, number } from "../../lib/format"
 import { parsePosition, POSITION_COOKIE } from "../../lib/position"
 import { settle } from "../../lib/settle"
-import { introSeen, SEEN_PATH } from "../../lib/visitor"
+import { introSeen, SEEN_PATH, visitorDaySettings } from "../../lib/visitor"
 import { describeSymbol, getForecast } from "../../lib/yr"
 
 export const dynamic = "force-dynamic"
@@ -25,7 +25,7 @@ export const metadata = { title: "Vær · Startside" }
 /** The whole forecast: now and the day ahead in the card, the next 24 hours as a meteogram, and the coming week as lowest to highest. */
 export default async function Page() {
   const instant = now()
-  const day = dayOf(instant)
+  const day = dayOf(instant, await visitorDaySettings())
   const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
   const forecast = await settle(getForecast(position))
 
