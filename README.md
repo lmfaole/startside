@@ -107,7 +107,12 @@ An open page keeps itself fresh (`components/refresh.tsx`): every 60 seconds, an
 after more than half that, it asks the server for the page again (`router.refresh()`), so the lists, the weather and the
 time of day change without a reload and without losing the page's state. Nothing runs while the window is hidden or the
 device is offline. «oppdatert 19:27» under the title is when the server last built the page. If the Access session has
-run out, the refresh ends at the login, as a reload would. The pull requests are one `SectionGroup` of the design system
+run out, the refresh ends at the login, as a reload would.
+
+**Why a page does not wait for GitHub.** Next's own `revalidate` keeps nothing on Workers without an incremental cache, so every source (`lib/upstream.ts`) is kept in the edge cache
+instead: good for its `revalidate` (60 s for GitHub), then shown at once for ten minutes more, as it was, while it is asked for anew in the background (`lib/cache-policy.ts`).
+A renewal or a click on GitHub therefore never waits for GitHub unless the answer is older than that; what is shown can be up to a renewal behind. On the GitHub pages the frame, the
+navigation and the pages under it are sent first and the lists and counts follow (`StreamedSection`), so the click answers at once. The pull requests are one `SectionGroup` of the design system
 (5.1), so the grid places them as one part.
 
 ## Position

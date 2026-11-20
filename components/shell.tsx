@@ -8,7 +8,7 @@ import type { ReactNode } from "react"
 import { withBase } from "../lib/links"
 import { Refresh } from "./refresh"
 
-/** How often the open page asks for itself again (components/refresh.tsx); GitHub is cached for as long, so each ask sees fresh lists. */
+/** How often the open page asks for itself again (components/refresh.tsx). A source is kept at the edge for as long (lib/upstream.ts) and then shown at once, as it was, while it is asked for anew: a renewal never waits for GitHub. */
 const REFRESH_SECONDS = 60
 
 export type PageId = "front" | "github" | "departures" | "weather"

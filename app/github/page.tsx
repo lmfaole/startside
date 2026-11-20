@@ -1,4 +1,5 @@
 import { Stack } from "@lmfaole/designsystem/components/layout"
+import { StreamedSection } from "@lmfaole/designsystem/components/streamed-section"
 import { SubPages } from "@lmfaole/designsystem/components/sub-pages"
 import { SummaryBar } from "@lmfaole/designsystem/components/summary-bar"
 
@@ -15,8 +16,8 @@ import { summaryItems } from "../../lib/summary"
 export const dynamic = "force-dynamic"
 export const metadata = { title: "GitHub · Startside" }
 
-/** GitHub in one place: the counts of what wants you, and the pages under it. */
-export default async function Page() {
+/** The counts of what wants you: asked for while the rest of the page is sent, so the pages under GitHub are there at once and the slowest source holds nothing back. */
+async function Counts() {
   const instant = now()
   const [pulls, issues, discussions, ci, replies, dependabot] = await Promise.all([settle(getPulls("all")), settle(getIssues()), settle(getDiscussions()), settle(getCiFailures()), settle(getReplies(instant)), settle(getDependabot())])
   const summary = summaryItems(BASE, {
@@ -25,10 +26,17 @@ export default async function Page() {
     discussions: discussions.ok ? groupDiscussions(discussions.value) : [],
     alerts: { ci: ci.ok ? ci.value.length : 0, replies: replies.ok ? replies.value.length : 0, dependabot: dependabot.ok ? dependabot.value.length : 0 },
   })
+  return <SummaryBar label="Oversikt" items={summary} />
+}
+
+/** GitHub in one place: the counts of what wants you, and the pages under it. */
+export default function Page() {
   return (
     <Shell current="github" title={GITHUB.label} lead="Det som venter på deg i repoene dine.">
       <Stack gap="xl">
-        <SummaryBar label="Oversikt" items={summary} />
+        <StreamedSection title="oversikten" lines={1}>
+          <Counts />
+        </StreamedSection>
         <SubPages
           label="Under GitHub"
           pages={[
