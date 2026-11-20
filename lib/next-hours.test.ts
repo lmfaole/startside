@@ -1,7 +1,7 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
 
-import { nextHours, type Timeseries } from "./forecast.ts"
+import { nextHours, summariseHours, type Timeseries } from "./forecast.ts"
 
 const entry = (hour: number, hourly = true): Timeseries => ({
   time: `2026-11-20T${String(hour).padStart(2, "0")}:00:00Z`,
@@ -22,4 +22,10 @@ test("the chart starts at the hour it is now and stops at the count", () => {
 test("the chart ends where the forecast has no more hourly entries", () => {
   const series = [entry(10), entry(11), entry(12, false), entry(18, false)]
   assert.equal(nextHours(series, new Date("2026-11-20T10:00:00Z"), 24).length, 2)
+})
+
+test("the hours come to a lowest and highest temperature, all the rain and the strongest wind", () => {
+  const points = nextHours([entry(10), entry(11), entry(12)], new Date("2026-11-20T10:00:00Z"), 24)
+  assert.deepEqual(summariseHours(points), { min: 10, max: 12, rain: 1.5, wind: 1 })
+  assert.equal(summariseHours([]), null)
 })

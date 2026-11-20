@@ -29,6 +29,7 @@ export interface HourPoint {
   time: string
   temperature: number
   precipitation: number
+  wind: number
 }
 
 /** The next `count` hourly entries from the hour `instant` is in, for the chart; a forecast that has gone over to six-hourly entries ends it there. */
@@ -38,9 +39,21 @@ export function nextHours(timeseries: readonly Timeseries[], instant: Date, coun
     if (points.length === count) break
     if (new Date(entry.time).getTime() < instant.getTime() - 3_600_000 + 1) continue
     if (entry.data.next_1_hours === undefined) break
-    points.push({ time: entry.time, temperature: entry.data.instant.details.air_temperature, precipitation: entry.data.next_1_hours.details.precipitation_amount })
+    points.push({ time: entry.time, temperature: entry.data.instant.details.air_temperature, precipitation: entry.data.next_1_hours.details.precipitation_amount, wind: entry.data.instant.details.wind_speed })
   }
   return points
+}
+
+/** What the hours of the chart come to: the lowest and highest temperature, the rain that falls in all, and the strongest wind. */
+export function summariseHours(points: readonly HourPoint[]): { min: number; max: number; rain: number; wind: number } | null {
+  if (points.length === 0) return null
+  const temperatures = points.map((point) => point.temperature)
+  return {
+    min: Math.min(...temperatures),
+    max: Math.max(...temperatures),
+    rain: points.reduce((sum, point) => sum + point.precipitation, 0),
+    wind: Math.max(...points.map((point) => point.wind)),
+  }
 }
 
 /** The icon for one of Yr's symbol codes (`lightrainshowersandthunder_day`): thunder before rain before snow before fog before cloud before clear. */

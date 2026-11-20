@@ -4,6 +4,9 @@ import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Rows } from "@lmfaole/designsystem/components/rows"
 import { Heading, Text } from "@lmfaole/designsystem/components/text"
 import { WeatherStage } from "@lmfaole/designsystem/components/weather-stage"
+import { DumbbellChart } from "@lmfaole/designsystem/components/dumbbell-chart"
+import { Sparkline } from "@lmfaole/designsystem/components/sparkline"
+import { StatusLine } from "@lmfaole/designsystem/components/status-line"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { cookies } from "next/headers"
 
@@ -11,7 +14,7 @@ import { ForecastCharts } from "../../components/forecast-charts"
 import { PositionControl } from "../../components/position"
 import { Shell } from "../../components/shell"
 import { dayOf, now } from "../../lib/day"
-import { dailyOutlook, nextHours, weatherIcon } from "../../lib/forecast"
+import { dailyOutlook, nextHours, summariseHours, weatherIcon } from "../../lib/forecast"
 import { dateLine, degrees, number } from "../../lib/format"
 import { parsePosition, POSITION_COOKIE } from "../../lib/position"
 import { settle } from "../../lib/settle"
@@ -30,6 +33,8 @@ export default async function Page() {
   const current = forecast.ok ? forecast.value.timeseries[0] : undefined
   const symbol = current?.data.next_1_hours?.summary.symbol_code ?? current?.data.next_6_hours?.summary.symbol_code
   const chartHours = forecast.ok ? nextHours(forecast.value.timeseries, instant, 24) : []
+  const summary = summariseHours(chartHours)
+  const outlook = forecast.ok ? dailyOutlook(forecast.value.timeseries, day.date, 5) : []
 
   return (
     <WeatherStage symbol={symbol ?? "cloudy"} page>
@@ -54,13 +59,35 @@ export default async function Page() {
           ) : null}
           {chartHours.length > 1 ? (
             <PageSection id="next-hours" title="Neste døgn" icon="time">
-              <ForecastCharts hours={chartHours} />
+              <Stack gap="md">
+                {summary === null ? null : (
+                  <StatusLine
+                    items={[
+                      { text: `Laveste ${degrees(summary.min)}, høyeste ${degrees(summary.max)}` },
+                      { text: summary.rain > 0 ? `${number.format(Math.round(summary.rain * 10) / 10)} mm nedbør` : "Ingen nedbør", icon: "rain" },
+                      { text: `Vind opptil ${number.format(summary.wind)} m/s` },
+                    ]}
+                  />
+                )}
+                <ForecastCharts hours={chartHours} />
+                <Text as="span" size="xs" tone="muted">
+                  Vind <Sparkline values={chartHours.map((hour) => hour.wind)} label="Vind de neste timene" />
+                </Text>
+              </Stack>
             </PageSection>
           ) : null}
           <PageSection id="outlook" title="Kommende dager" icon="calendar">
+            <DumbbellChart
+              rows={outlook.map((one) => ({ label: dateLine.format(new Date(`${one.date}T12:00:00Z`)), from: Math.round(one.min), to: Math.round(one.max) }))}
+              fromLabel="Laveste"
+              toLabel="Høyeste"
+              ariaLabel="Laveste og høyeste temperatur de neste dagene"
+              formatValue={degrees}
+              keepOrder
+            />
             <Rows
               lead="icon"
-              rows={dailyOutlook(forecast.value.timeseries, day.date, 5).map((outlook) => ({
+              rows={outlook.map((outlook) => ({
                 key: outlook.date,
                 icon: weatherIcon(outlook.symbol),
                 body: (
