@@ -11,6 +11,18 @@ import type { SectionId } from "./plan.ts"
 export const DAY_COOKIE = "startside_day"
 
 export const PARTS: readonly DayPart[] = ["morgen", "arbeidsdag", "kveld", "natt"]
+export const PART_LABEL: Record<DayPart, string> = { morgen: "Morgen", arbeidsdag: "Arbeidsdag", kveld: "Kveld", natt: "Natt" }
+
+/** Monday first, as a Norwegian week; the values are `Date.getDay()`'s. */
+export const WEEKDAYS: readonly { value: string; label: string }[] = [
+  { value: "1", label: "Mandag" },
+  { value: "2", label: "Tirsdag" },
+  { value: "3", label: "Onsdag" },
+  { value: "4", label: "Torsdag" },
+  { value: "5", label: "Fredag" },
+  { value: "6", label: "Lørdag" },
+  { value: "0", label: "Søndag" },
+]
 const SECTION_IDS: readonly SectionId[] = ["alerts", "pulls", "issues", "discussions", "weather"]
 
 export type OnOff = "on" | "off"
@@ -160,8 +172,9 @@ export function dayCookieString(value: string, path: string): string {
 export type DayForm = { settings: DaySettings; errors: { starts?: string }; written: { starts?: string } }
 
 /**
- * The settings with what the form changed. A radio or time field that is absent is left as it is; the checkbox groups (`weekenddays`,
- * `show.<part>`) are read as they are, so none ticked is none (the form has them all: do not disable them). The starts are
+ * The settings with what the form changed. A radio or time field that is absent is left as it is. A checkbox group sends nothing when none
+ * is ticked, so the form says which groups it has (`has=weekenddays`, `has=show`, hidden): those are read as they are (none ticked is none;
+ * do not disable them), the others are left as they are. Each settings subpage has only its own fields. The starts are
  * `starts.morgen`, `starts.arbeidsdag`, `starts.kveld` and `starts.natt` (`HH:MM`); written wrong or out of order they are left as they
  * were, and the error says why.
  */
@@ -170,6 +183,7 @@ export function readDayForm(form: FormData, current: DaySettings): DayForm {
     const value = form.get(name)
     return typeof value === "string" ? value : null
   }
+  const has = form.getAll("has").map(String)
   const mode = get("mode")
   const greeting = get("greeting")
   const weekend = get("weekend")
@@ -179,8 +193,8 @@ export function readDayForm(form: FormData, current: DaySettings): DayForm {
       greeting: isOnOff(greeting) ? greeting : current.greeting,
       starts: { ...current.starts },
       weekend: isOnOff(weekend) ? weekend : current.weekend,
-      weekendDays: weekdayList(form.getAll("weekenddays").map(String)) ?? [...current.weekendDays],
-      show: perPart((part) => sectionList(form.getAll(`show.${part}`).map(String))),
+      weekendDays: has.includes("weekenddays") ? (weekdayList(form.getAll("weekenddays").map(String)) ?? [...current.weekendDays]) : [...current.weekendDays],
+      show: perPart((part) => (has.includes("show") ? sectionList(form.getAll(`show.${part}`).map(String)) : [...current.show[part]])),
       weather: perPart((part) => {
         const written = get(`weather.${part}`)
         return isWeather(written) ? written : current.weather[part]
@@ -218,4 +232,34 @@ export function daySummary(settings: DaySettings): string {
   if (settings.weekend === "off") parts.push("ingen egen helg")
   if (settings.greeting === "off") parts.push("uten hilsen")
   return parts.join(" · ")
+}
+
+/** A part of the day from its start to the next part's: «05:00–09:00». */
+export function partSpan(starts: Record<DayPart, number>, part: DayPart): string {
+  return `${formatTime(starts[part])}–${formatTime(starts[PARTS[(PARTS.indexOf(part) + 1) % PARTS.length]])}`
+}
+
+/** The overview's line for the starts: «Morgen 05:00 · arbeidsdag 09:00 · kveld 16:00 · natt 22:00». */
+export function startsSummary(starts: Record<DayPart, number>): string {
+  return PARTS.map((part, index) => `${index === 0 ? PART_LABEL[part] : PART_LABEL[part].toLowerCase()} ${formatTime(starts[part])}`).join(" · ")
+}
+
+const listed = (names: readonly string[]): string => (names.length <= 1 ? (names[0] ?? "") : `${names.slice(0, -1).join(", ")} og ${names.at(-1)}`)
+
+/** The overview's line for the weekend: «Av», or the days, Monday first («Lørdag og søndag»), or that there are none. */
+export function weekendSummary(settings: Pick<DaySettings, "weekend" | "weekendDays">): string {
+  if (settings.weekend === "off") return "Av · alle dager er like"
+  const days = WEEKDAYS.filter((day) => settings.weekendDays.includes(Number(day.value))).map((day, index) => (index === 0 ? day.label : day.label.toLowerCase()))
+  return days.length === 0 ? "Ingen helgedager valgt" : listed(days)
+}
+
+/** The overview's line for what each part shows: «Alt hele døgnet», or how many sections each part has. */
+export function showSummary(show: Record<DayPart, readonly string[]>, all: number): string {
+  if (PARTS.every((part) => show[part].length === all)) return "Alt hele døgnet"
+  return PARTS.map((part, index) => `${index === 0 ? PART_LABEL[part] : PART_LABEL[part].toLowerCase()} ${show[part].length}`).join(" · ") + ` av ${all}`
+}
+
+/** A part's line: its span, the weather and the pull requests («05:00–09:00 · været i dag · alle pull requests»). */
+export function partSummary(settings: DaySettings, part: DayPart): string {
+  return [partSpan(settings.starts, part), settings.weather[part] === "today" ? "været i dag" : "været i morgen", settings.pulls[part] === "all" ? "alle pull requests" : "bare dine pull requests"].join(" · ")
 }

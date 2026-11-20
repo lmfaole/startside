@@ -27,7 +27,7 @@ export const viewport: Viewport = {
 // The visitor's theme and effects (the `prefs` cookie, chosen in the wizard or under Innstillinger) are on <html> from the first frame.
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="nb" {...htmlAttributes(await visitorPrefs())}>
+    <html lang="nb-NO" {...htmlAttributes(await visitorPrefs())}>
       <body>
         {children}
         <ServiceWorker />

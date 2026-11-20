@@ -2,7 +2,7 @@ import { strict as assert } from "node:assert"
 import { test } from "node:test"
 
 import { dayOf, partOfMinute } from "./day.ts"
-import { DAY_COOKIE, dayCookieString, daySummary, DEFAULT_DAY_SETTINGS, parseDaySettings, parseTime, readDayForm, serializeDaySettings, startsInOrder, type DaySettings } from "./day-settings.ts"
+import { DAY_COOKIE, dayCookieString, daySummary, partSpan, partSummary, showSummary, startsSummary, weekendSummary, DEFAULT_DAY_SETTINGS, parseDaySettings, parseTime, readDayForm, serializeDaySettings, startsInOrder, type DaySettings } from "./day-settings.ts"
 import { planFor } from "./plan.ts"
 
 const PARTS = ["morgen", "arbeidsdag", "kveld", "natt"] as const
@@ -91,9 +91,9 @@ test("the plan: sections, weather and pulls per part; weekends only when on; off
   }
 })
 
-test("the form: absent radios are kept, checkbox groups are what is ticked, starts are checked", () => {
+test("the form: absent radios are kept, checkbox groups it has are what is ticked, starts are checked", () => {
   const current = settings("weather.natt=today")
-  const read = readDayForm(form([["day", "1"], ["mode", "off"], ["weekenddays", "0"], ["show.morgen", "weather"], ["show.morgen", "pulls"], ["pulls.kveld", "all"], ["starts.morgen", "06:00"], ["starts.arbeidsdag", "08:00"], ["starts.kveld", "17:00"], ["starts.natt", "23:00"]]), current)
+  const read = readDayForm(form([["day", "1"], ["has", "weekenddays"], ["has", "show"], ["mode", "off"], ["weekenddays", "0"], ["show.morgen", "weather"], ["show.morgen", "pulls"], ["pulls.kveld", "all"], ["starts.morgen", "06:00"], ["starts.arbeidsdag", "08:00"], ["starts.kveld", "17:00"], ["starts.natt", "23:00"]]), current)
   assert.deepEqual(read.errors, {})
   assert.equal(read.settings.mode, "off")
   assert.equal(read.settings.greeting, "on")
@@ -111,8 +111,33 @@ test("the form: absent radios are kept, checkbox groups are what is ticked, star
   assert.match(readDayForm(form([["starts.morgen", "kl 7"]]), current).errors.starts ?? "", /«kl 7» er ikke et klokkeslett/)
 })
 
+test("a subpage's form leaves the checkbox groups it does not have as they are", () => {
+  const current = settings("weekenddays=5,6&show.natt=weather")
+  const read = readDayForm(form([["day", "1"], ["weather.kveld", "today"]]), current)
+  assert.deepEqual(read.settings.weekendDays, [5, 6])
+  assert.deepEqual(read.settings.show, current.show)
+  assert.equal(read.settings.weather.kveld, "today")
+  const onlyDays = readDayForm(form([["day", "1"], ["has", "weekenddays"]]), current)
+  assert.deepEqual(onlyDays.settings.weekendDays, [])
+  assert.deepEqual(onlyDays.settings.show, current.show)
+})
+
 test("the overview's summary: off, or when the morning starts and what is turned off", () => {
   assert.equal(daySummary(DEFAULT_DAY_SETTINGS), "Automatisk · morgen fra 05:00")
   assert.equal(daySummary({ ...DEFAULT_DAY_SETTINGS, starts: { ...DEFAULT_DAY_SETTINGS.starts, morgen: 6 * 60 + 30 }, weekend: "off", greeting: "off" }), "Automatisk · morgen fra 06:30 · ingen egen helg · uten hilsen")
   assert.equal(daySummary({ ...DEFAULT_DAY_SETTINGS, mode: "off" }), "Av · samme forside hele dagen")
+})
+
+test("the time-of-day overview's lines: spans over midnight, weekend days Monday first, sections per part", () => {
+  const day = DEFAULT_DAY_SETTINGS
+  assert.equal(partSpan(day.starts, "morgen"), "05:00–09:00")
+  assert.equal(partSpan(day.starts, "natt"), "22:00–05:00")
+  assert.equal(startsSummary(day.starts), "Morgen 05:00 · arbeidsdag 09:00 · kveld 16:00 · natt 22:00")
+  assert.equal(weekendSummary({ weekend: "on", weekendDays: [0, 5, 6] }), "Fredag, lørdag og søndag")
+  assert.equal(weekendSummary({ weekend: "on", weekendDays: [] }), "Ingen helgedager valgt")
+  assert.equal(weekendSummary({ weekend: "off", weekendDays: [6, 0] }), "Av · alle dager er like")
+  const all = ["alerts", "pulls", "issues", "discussions", "weather"] as const
+  assert.equal(showSummary({ morgen: [...all], arbeidsdag: [...all], kveld: [...all], natt: [...all] }, 5), "Alt hele døgnet")
+  assert.equal(showSummary({ morgen: [...all], arbeidsdag: [...all], kveld: ["weather"], natt: [] }, 5), "Morgen 5 · arbeidsdag 5 · kveld 1 · natt 0 av 5")
+  assert.equal(partSummary({ ...day, weather: { ...day.weather, kveld: "tomorrow" }, pulls: { ...day.pulls, kveld: "mine" } }, "kveld"), "16:00–22:00 · været i morgen · bare dine pull requests")
 })

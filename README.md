@@ -15,7 +15,7 @@ Built after the design system's «Pages and navigation» rules (5.3): three leve
 | `/start/github` | GitHub in one place: the counts of what wants you and the pages under it (varsler, pull requests, issues, discussions), which have GitHub as their first breadcrumb |
 | `/start/transport` | The stations nearest to the device (Entur, within a kilometre, nearest first), each with a departure board (`DepartureBoard`): line, destination, platform, delays and cancellations. Only from the device's position («Bruk min posisjon»); without it the page says so. `/start/avganger` redirects here (`next.config.ts`) |
 | `/start/varsler` | What wants a look: **feilende CI** (a default branch whose last commit is red, in the user's public repositories and the watched ones), **nytt fra andre** (replies and reviews on what the user is in, last three days, where somebody else wrote last) and **Dependabot** (its open pull requests in the user's public repositories, with their checks). Only when the username is the token's owner (see below) |
-| `/start/innstillinger` | **Innstillinger** (last in the menu): an overview (`SubPages` with what is chosen now) of the subpages `konto` (GitHub username; where «Bytt» leads, and where `/start/brukernavn` redirects), `repoer`, `forside` (sections and their order), `tid` (time of day), `posisjon`, `utseende` (theme, effects, tilt) and `app` (install, «Vis introen igjen»), each with its own small form; «Vis introen igjen» also at the bottom of the overview |
+| `/start/innstillinger` | **Innstillinger** (last in the menu): an overview (`SubPages` with what is chosen now) of the subpages `konto` (GitHub username; where «Bytt» leads, and where `/start/brukernavn` redirects), `repoer`, `forside` (sections and their order), `tid` (time of day: the switch and greeting, with its own subpages `tid/deler`, `tid/helg`, `tid/innhold` and one per part, `tid/morgen` … `tid/natt`), `posisjon`, `utseende` (theme, effects, tilt) and `app` (install, «Vis introen igjen»), each with its own small form; «Vis introen igjen» also at the bottom of the overview |
 | `/start/vaer` | The whole forecast: the rest of today, tomorrow, the coming days |
 | `/start/pull-requests/{owner}/{repo}/{n}`, `/issues/…`, `/discussions/…` | The **detail** of one thing: status, description, facts, checks, last comments, and **«Åpne på GitHub» last** |
 
@@ -190,10 +190,10 @@ JavaScript:
 - `skip=1` («Hopp over») only marks it seen; `rerun=1` («Vis introen igjen») removes it from `seen` and goes back.
 - `order=<id>,<id>` keeps the front page's order in `prefs` (`order=`). `move=<id>:up|down` (the reorder buttons without JavaScript) moves
   one section in the submitted `order` (or the saved one), keeps only that, and goes back to `back` (`/start/innstillinger/forside`) at `#rekkefolge`.
-- With `day=1` (`/start/innstillinger/tid`; the wizard never sends it) it keeps `startside_day` (`readDayForm`): `mode`,
-  `greeting`, `weekend`, `weather.<part>`, `pulls.<part>` (absent: unchanged), `weekenddays` and `show.<part>` (checkboxes, several values;
-  absent: none, so never disable them), and `starts.morgen`, `starts.arbeidsdag`, `starts.kveld`, `starts.natt` (`HH:MM`). Starts that are
-  not quarter hours or not in order are not kept: the error goes back as `starts` in `innstillinger-feil`, to `#tider`.
+- With `day=1` (`/start/innstillinger/tid` and its subpages, each sending only its own fields; the wizard never sends it) it keeps `startside_day` (`readDayForm`): `mode`,
+  `greeting`, `weekend`, `weather.<part>`, `pulls.<part>` (absent: unchanged), `weekenddays` and `show.<part>` (checkboxes, several values; read only when
+  the form says it has them, `has=weekenddays` / `has=show`, and then none ticked is none, so never disable them), and `starts.morgen`, `starts.arbeidsdag`, `starts.kveld`, `starts.natt` (`HH:MM`). Starts that are
+  not quarter hours or not in order are not kept: the error goes back as `starts` in `innstillinger-feil`, to `tid/deler#tider`.
 
 `<html>` gets `htmlAttributes(prefs)` in `app/layout.tsx` (`data-theme`, `data-effects`, `data-tilt`), and the front page shows only the chosen
 sections (`chosenSections` in `lib/plan.ts`; all ticked is stored as none chosen, so new sections show up). With `MOCK_DATA=1` any username and

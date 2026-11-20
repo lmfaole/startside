@@ -11,7 +11,7 @@ const MOVED: Record<string, string> = {
   posisjon: "posisjon",
   forside: "forside",
   rekkefolge: "forside#rekkefolge",
-  tider: "tid#tider",
+  tider: "tid/deler#tider",
   tema: "utseende#tema",
   effekter: "utseende#effekter",
   lys: "utseende#lys",

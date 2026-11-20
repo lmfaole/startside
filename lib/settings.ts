@@ -13,7 +13,7 @@ export const SETTINGS_PAGE = `${BASE}/innstillinger`
 /** The settings' subpages (`app/innstillinger/<slug>`), each with its own small form; the overview links to them. */
 export const SETTINGS_SUBPAGES = ["konto", "repoer", "forside", "tid", "posisjon", "utseende", "app"] as const
 export type SettingsSubpage = (typeof SETTINGS_SUBPAGES)[number]
-export const settingsPage = (slug: SettingsSubpage): string => `${SETTINGS_PAGE}/${slug}`
+export const settingsPage = (slug: SettingsSubpage, sub?: string): string => `${SETTINGS_PAGE}/${slug}${sub === undefined ? "" : `/${sub}`}`
 
 /** The repositories to follow, `owner/name` separated by commas (URL-encoded in the cookie). */
 export const REPOS_COOKIE = "github_repos"
