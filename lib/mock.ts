@@ -48,15 +48,35 @@ interface Pull {
   additions: number; deletions: number; files: number; head: string; base: string; labels: string[]; body: string; requested: string[]; comments: number
   reviews: { author: string; state: string; submitted: string; body: string }[]
   checks: { state: Checks; runs: Run[] }
+  timeline?: Item[]
+  /** Only on the closed ones: `MERGED` or `CLOSED`, and when. */
+  state?: string; merged?: string | null; closed?: string | null
 }
-interface Issue { id: number; number: number; url: string; title: string; author: string | null; created: string; updated: string; assignees: string[]; labels: string[]; comments: number; body: string }
+interface Issue {
+  id: number; number: number; url: string; title: string; author: string | null; created: string; updated: string; assignees: string[]; labels: string[]; comments: number; body: string
+  timeline?: Item[]
+  state?: string; stateReason?: string | null; closed?: string | null
+}
 interface Comment { author: string; created: string; body: string }
-interface Discussion { number: number; title: string; url: string; author: string; created: string; updated: string; category: string; comments: number; answered: boolean | null; body: string }
+interface ThreadComment { id: string; url: string; created: string; author: string | null; body: string; isAnswer: boolean; replies: number; upvotes: number; replyTo?: string }
+interface Discussion {
+  number: number; title: string; url: string; author: string; created: string; updated: string; category: string; comments: number; answered: boolean | null; body: string
+  thread?: ThreadComment[]; answerChosen?: string | null; answerChosenBy?: string | null; closed?: string | null
+}
+/** A timeline item as scripts/fetch-mock-data.mjs keeps it: GraphQL's name for it, and the few fields there are of it. */
+interface Item {
+  type: string; id: string; at: string; actor: string | null; url?: string; body?: string; state?: string; name?: string | null; sha?: string; headline?: string
+  label?: string; color?: string; subject?: string | null; reason?: string | null; merge?: string | null
+  source?: { kind: string; number: number; title: string; url: string; state: string }
+}
 interface Repo {
   branch: string
   commit: { sha: string; url: string; headline: string; date: string; checks: { state: Checks } }
   issues: Issue[]
   pulls: Pull[]
+  /** A merged pull request and a closed issue, found only by their detail pages. */
+  closedPulls?: Pull[]
+  closedIssues?: Issue[]
   issueComments: Record<string, Comment[]>
   discussions: Discussion[]
 }
@@ -158,9 +178,40 @@ function replies(): unknown {
 }
 
 const toComment = (comment: Comment) => ({ author: { login: comment.author }, createdAt: comment.created, body: comment.body })
+const login = (name: string | null | undefined) => (name === null || name === undefined ? null : { login: name })
+
+/** A captured timeline item in the shape of GraphQL's `timelineItems` node. */
+function timelineNode(item: Item): unknown {
+  const actor = login(item.actor)
+  const event = { __typename: item.type, id: item.id, createdAt: item.at, actor }
+  switch (item.type) {
+    case "IssueComment": return { __typename: item.type, id: item.id, url: item.url, createdAt: item.at, body: item.body ?? "", author: actor }
+    case "PullRequestReview": return { __typename: item.type, id: item.id, url: item.url, createdAt: item.at, submittedAt: item.at, state: item.state, body: item.body ?? "", author: actor }
+    case "PullRequestCommit": {
+      const sha = item.sha ?? ""
+      return { __typename: item.type, id: item.id, url: item.url, commit: { oid: sha, abbreviatedOid: sha.slice(0, 7), messageHeadline: item.headline ?? "", committedDate: item.at, url: item.url, author: { name: item.name ?? null, user: actor }, statusCheckRollup: null } }
+    }
+    case "ReviewRequestedEvent": return { ...event, requestedReviewer: item.subject ? { login: item.subject } : null }
+    case "AssignedEvent": return { ...event, assignee: login(item.subject) }
+    case "MergedEvent": return { ...event, url: item.url, mergeRefName: item.merge ?? null }
+    case "ClosedEvent": return { ...event, url: item.url, stateReason: item.reason ?? null, closer: null }
+    case "LabeledEvent":
+    case "UnlabeledEvent": return { ...event, label: { name: item.label, color: item.color } }
+    case "HeadRefForcePushedEvent": return { ...event, beforeCommit: null, afterCommit: null }
+    case "ReviewDismissedEvent": return { ...event, url: item.url, review: null }
+    case "CrossReferencedEvent": return { ...event, url: item.url, willCloseTarget: false, source: item.source === undefined ? null : { __typename: item.source.kind, number: item.source.number, title: item.source.title, url: item.source.url, state: item.source.state } }
+    default: return { ...event, url: item.url }
+  }
+}
+
+/** The newest 100 items, as `timelineItems(last: 100)` has them. */
+function timelineItems(items: Item[] = []): unknown {
+  return { totalCount: items.length, pageInfo: { hasPreviousPage: items.length > 100 }, nodes: items.slice(-100).map(timelineNode) }
+}
 
 function pullDetail(repo: string, number: number): unknown {
-  const pull = nameOf(repo, github().repos)?.pulls.find((candidate) => candidate.number === number)
+  const entry = nameOf(repo, github().repos)
+  const pull = [...(entry?.pulls ?? []), ...(entry?.closedPulls ?? [])].find((candidate) => candidate.number === number)
   if (pull === undefined) return { data: { repository: { pullRequest: null } } }
   const state = pull.checks.state
   const reviews = pull.reviews
@@ -168,13 +219,14 @@ function pullDetail(repo: string, number: number): unknown {
     data: {
       repository: {
         pullRequest: {
-          title: pull.title, url: pull.url, state: "OPEN", isDraft: pull.draft, body: pull.body, createdAt: pull.created, updatedAt: pull.updated, author: pull.author === null ? null : { login: pull.author },
+          title: pull.title, url: pull.url, state: pull.state ?? "OPEN", isDraft: pull.draft, body: pull.body, createdAt: pull.created, updatedAt: pull.updated, mergedAt: pull.merged ?? null, closedAt: pull.closed ?? null, author: pull.author === null ? null : { login: pull.author },
           headRefName: pull.head, baseRefName: pull.base, additions: pull.additions, deletions: pull.deletions, changedFiles: pull.files, reviewDecision: decisionOf(pull), mergeable: mergeableOf(pull),
           labels: { nodes: pull.labels.map((name) => ({ name })) }, reviewRequests: { nodes: pull.requested.map((login) => ({ requestedReviewer: { login } })) },
           latestReviews: { nodes: [...new Map(reviews.map((review) => [review.author, review])).values()].map((review) => ({ state: review.state, author: { login: review.author } })) },
           reviewThreads: { nodes: [] },
           commits: { nodes: [{ commit: { statusCheckRollup: state === null ? null : { state, contexts: { nodes: pull.checks.runs.map((run) => ({ __typename: "CheckRun", name: run.name, conclusion: run.conclusion?.toUpperCase() ?? null, status: run.status.toUpperCase() })) } } } }] },
           comments: { totalCount: pull.comments, nodes: reviews.filter((review) => review.body !== "").map((review) => toComment({ author: review.author, created: review.submitted, body: review.body })) },
+          timelineItems: timelineItems(pull.timeline),
         },
       },
     },
@@ -183,15 +235,34 @@ function pullDetail(repo: string, number: number): unknown {
 
 function issueDetail(repo: string, number: number): unknown {
   const entry = nameOf(repo, github().repos)
-  const issue = entry?.issues.find((candidate) => candidate.number === number)
+  const issue = [...(entry?.issues ?? []), ...(entry?.closedIssues ?? [])].find((candidate) => candidate.number === number)
   if (entry === undefined || issue === undefined) return { data: { repository: { issue: null } } }
-  return { data: { repository: { issue: { title: issue.title, url: issue.url, state: "OPEN", body: issue.body, createdAt: issue.created, updatedAt: issue.updated, author: issue.author === null ? null : { login: issue.author }, labels: { nodes: issue.labels.map((name) => ({ name })) }, assignees: { nodes: issue.assignees.map((login) => ({ login })) }, comments: { totalCount: issue.comments, nodes: (entry.issueComments[String(number)] ?? []).map(toComment) } } } } }
+  const closing = { stateReason: issue.stateReason ?? null, closedAt: issue.closed ?? null, timelineItems: timelineItems(issue.timeline) }
+  return { data: { repository: { issue: { ...closing, title: issue.title, url: issue.url, state: issue.state ?? "OPEN", body: issue.body, createdAt: issue.created, updatedAt: issue.updated, author: issue.author === null ? null : { login: issue.author }, labels: { nodes: issue.labels.map((name) => ({ name })) }, assignees: { nodes: issue.assignees.map((login) => ({ login })) }, comments: { totalCount: issue.comments, nodes: (entry.issueComments[String(number)] ?? []).map(toComment) } } } } }
 }
 
 function discussionDetail(repo: string, number: number): unknown {
   const d = nameOf(repo, github().repos)?.discussions.find((candidate) => candidate.number === number)
   if (d === undefined) return { data: { repository: { discussion: null } } }
-  return { data: { repository: { discussion: { title: d.title, url: d.url, body: d.body, createdAt: d.created, updatedAt: d.updated, isAnswered: d.answered, author: { login: d.author }, category: { name: d.category }, answer: null, comments: { totalCount: d.comments, nodes: [] } } } } }
+  const all = d.thread ?? []
+  const thread = all.filter((comment) => comment.replyTo === undefined)
+  const answer = all.find((comment) => comment.isAnswer)
+  const node = (comment: ThreadComment) => ({ id: comment.id, url: comment.url, createdAt: comment.created, body: comment.body, isAnswer: comment.isAnswer, upvoteCount: comment.upvotes, replies: { totalCount: comment.replies }, author: login(comment.author) })
+  return {
+    data: {
+      repository: {
+        discussion: {
+          title: d.title, url: d.url, body: d.body, createdAt: d.created, updatedAt: d.updated, isAnswered: d.answered, author: { login: d.author }, category: { name: d.category },
+          answer: answer === undefined ? null : { ...node(answer), replyTo: answer.replyTo === undefined ? null : { id: answer.replyTo } },
+          answerChosenAt: d.answerChosen ?? null, answerChosenBy: login(d.answerChosenBy), closedAt: d.closed ?? null,
+          comments: {
+            totalCount: Math.max(d.comments, thread.length), pageInfo: { hasPreviousPage: d.comments > thread.length },
+            nodes: thread.map(node),
+          },
+        },
+      },
+    },
+  }
 }
 
 function graphql(init: MockInit): Response {

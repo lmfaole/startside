@@ -5,6 +5,8 @@ import { discussionNodes } from "./discussions.ts"
 import { mockFetch } from "./mock.ts"
 import { readStatuses } from "./pr-status.ts"
 import { parseFollowed, parseNowPlaying, parseReleases, parseToken, recentReleases } from "./spotify.ts"
+import { discussionSteps, discussionTimeline, issueSteps, issueTimeline, prSpans, prSteps, prTimeline } from "./timeline.ts"
+import githubData from "./mock-data/github.json" with { type: "json" }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const graphql = async (query: string, variables?: unknown): Promise<any> => await mockFetch("https://api.github.com/graphql", { json: { query, variables } }).json()
@@ -40,6 +42,47 @@ test("a detail is there for a captured pull request and null for one that is not
   assert.equal(found.data.repository.pullRequest.url, href)
   const missing = await graphql("pullRequest(number: $number)", { owner: "x", name: "y", number: 1 })
   assert.equal(missing.data.repository.pullRequest, null)
+})
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const timelineOf = (node: any) => ({ items: node.timelineItems.nodes, total: node.timelineItems.totalCount, truncated: node.timelineItems.pageInfo.hasPreviousPage })
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const repos = githubData.repos as Record<string, any>
+const at = (url: string) => { const [owner, name, , number] = url.split("/").slice(3); return { owner, name, number: Number(number) } }
+
+test("detail pages have timelines: a merged pull request with changes asked for and approved, one waiting for review, a closed issue, an answered discussion", async () => {
+  const now = new Date().toISOString()
+  const merged = (await graphql("pullRequest(number: $number)", at(repos["fremtind/jokul"].closedPulls[0].url))).data.repository.pullRequest
+  const pull = { url: merged.url, author: merged.author?.login ?? null, created: merged.createdAt, state: merged.state, draft: merged.isDraft, merged: merged.mergedAt, closed: merged.closedAt, timeline: timelineOf(merged) }
+  assert.equal(pull.state, "MERGED")
+  assert.ok(pull.timeline.truncated, "more than 100 items: the oldest are left out, as GitHub does")
+  const summaries = prTimeline(pull).map((event) => event.summary)
+  for (const said of ["ba om endringer", "godkjente", "force-pushet"]) assert.ok(summaries.includes(said), said)
+  assert.ok(summaries.some((summary) => summary.startsWith("merget")))
+  assert.deepEqual(prSteps(pull, now).map((step) => step.state), ["done", "done", "done", "done", "done"])
+  assert.ok(prSpans(pull, now).some((span) => span.label === "Endringer etterspurt"))
+
+  const commits = (await graphql("pullRequest(number: $number)", at(repos["navikt/aksel"].closedPulls[0].url))).data.repository.pullRequest
+  assert.ok(commits.timelineItems.nodes.filter((node: { __typename: string }) => node.__typename === "PullRequestCommit").length > 3)
+
+  const waiting = (await graphql("pullRequest(number: $number)", at(repos["fremtind/jokul"].pulls.find((p: { requested: string[] }) => p.requested.length > 0).url))).data.repository.pullRequest
+  const open = { url: waiting.url, author: waiting.author?.login ?? null, created: waiting.createdAt, state: waiting.state, draft: waiting.isDraft, merged: null, closed: null, timeline: timelineOf(waiting) }
+  assert.ok(prTimeline(open).some((event) => event.summary.endsWith("om review")))
+  assert.ok(prSteps(open, now).some((step) => step.state === "current"))
+
+  const closed = (await graphql("issue(number: $number)", at(repos["navikt/aksel"].closedIssues[0].url))).data.repository.issue
+  const issue = { url: closed.url, author: closed.author?.login ?? null, created: closed.createdAt, state: closed.state, stateReason: closed.stateReason, closed: closed.closedAt, assignees: [], timeline: timelineOf(closed) }
+  assert.ok(issueTimeline(issue).some((event) => event.summary === "lukket som fullført"))
+  assert.equal(issueSteps(issue, now).at(-1)?.label, "Lukket som fullført")
+
+  const answered = repos["fremtind/jokul"].discussions.find((d: { answered: boolean | null }) => d.answered === true)
+  const found = (await graphql("discussion(number: $number)", at(answered.url))).data.repository.discussion
+  type Node = { id: string; url: string; createdAt: string; body: string; author: { login: string } | null; isAnswer: boolean; replies: { totalCount: number }; upvoteCount: number }
+  const comment = (c: Node) => ({ id: c.id, url: c.url, createdAt: c.createdAt, body: c.body, author: c.author, isAnswer: c.isAnswer, replies: c.replies.totalCount, upvotes: c.upvoteCount })
+  const thread = [...found.comments.nodes.map(comment), ...(found.answer === null || found.comments.nodes.some((c: Node) => c.id === found.answer.id) ? [] : [{ ...comment(found.answer), replyTo: found.answer.replyTo?.id }])]
+  const discussion = { url: found.url, author: found.author.login, created: found.createdAt, answered: found.isAnswered, closed: found.closedAt, answerChosen: found.answerChosenAt, answerChosenBy: found.answerChosenBy?.login ?? null, thread: { items: thread, total: thread.length, truncated: false } }
+  assert.ok(discussionTimeline(discussion).some((event) => event.badge === "Svar"))
+  assert.equal(discussionSteps(discussion, now).at(-1)?.state, "done")
 })
 
 test("Spotify has a token, a song playing and recent releases, with covers that are files in public/", async () => {
