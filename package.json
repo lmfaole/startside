@@ -13,11 +13,10 @@
     "build:worker": "opennextjs-cloudflare build && node scripts/embed-assets.mjs",
     "skills": "designsystem-skills",
     "skills:check": "designsystem-skills --check",
-    "ds:bump": "designsystem-bump",
-    "spotify:auth": "node scripts/spotify-auth.ts"
+    "ds:bump": "designsystem-bump"
   },
   "dependencies": {
-    "@lmfaole/designsystem": "github:lmfaole/designsystem#bb09eff2731ea92d303dfe8ff88bbdbc27d1104d",
+    "@lmfaole/designsystem": "github:lmfaole/designsystem#0cdf1b833c4d567b6c437b8be957633d2ae87ed4",
     "@opennextjs/cloudflare": "^1.20.17",
     "next": "^16.4.6",
     "react": "^19.2.8",

@@ -1,15 +1,13 @@
 /**
- * What every upstream the page asks (GitHub, Entur, Yr, Nominatim, Spotify) answers with `MOCK_DATA=1` (see lib/upstream.ts), so the whole site runs in `next dev`
- * with no keys and no network. The answers are real ones, captured once from public, keyless endpoints by `scripts/fetch-mock-data.mjs` into `lib/mock-data/*.json`
- * (and the covers into `public/mock/covers/`), put in the shape of each source's own answer here, and moved in time to now, so they never look stale.
+ * What every upstream the page asks (GitHub, Entur, Yr, Nominatim) answers with `MOCK_DATA=1` (see lib/upstream.ts), so the whole site runs in `next dev`
+ * with no keys and no network. The answers are real ones, captured once from public, keyless endpoints by `scripts/fetch-mock-data.mjs` into `lib/mock-data/*.json`,
+ * put in the shape of each source's own answer here, and moved in time to now, so they never look stale.
  * Pure: no environment, no network.
  */
 import enturData from "./mock-data/entur.json" with { type: "json" }
 import githubData from "./mock-data/github.json" with { type: "json" }
 import nominatimData from "./mock-data/nominatim.json" with { type: "json" }
-import spotifyData from "./mock-data/spotify.json" with { type: "json" }
 import yrData from "./mock-data/yr.json" with { type: "json" }
-import { BASE } from "./links.ts"
 
 export interface MockInit {
   json?: unknown
@@ -362,34 +360,6 @@ function yr(): Response {
   return reply(shift(yrData.answer, days * DAY))
 }
 
-// Spotify (from Deezer's real records and covers, in Spotify's shape) ---------------------------------------------------------------------------------------
-
-interface Artist { id: string; name: string; albums: { id: string; cover: string; title: string; kind: string; date: string }[]; top: { title: string; album: string; cover: string } | null }
-
-const cover = (id: string) => ({ url: `${BASE}/mock/covers/${id}.jpg`, width: 500 })
-const searchUrl = (...words: string[]): string => `https://open.spotify.com/search/${encodeURIComponent(words.join(" "))}`
-
-/** The release dates moved so that the newest of all is three days old: «new music» is then what the real spacing between releases says. */
-function artists(): Artist[] {
-  const all = (spotifyData as unknown as { artists: Artist[] }).artists
-  const latest = Math.max(...all.flatMap((artist) => artist.albums.map((album) => Date.parse(album.date))))
-  const days = Math.round((Date.now() - 3 * DAY - latest) / DAY)
-  return all.map((artist) => ({ ...artist, albums: artist.albums.map((album) => ({ ...album, date: new Date(Date.parse(album.date) + days * DAY).toISOString().slice(0, 10) })) }))
-}
-
-function spotify(target: URL): Response {
-  if (target.pathname === "/v1/me/player/currently-playing") {
-    const playing = artists().find((artist) => artist.top !== null)
-    if (playing?.top == null) return new Response(null, { status: 204 })
-    return reply({ is_playing: true, currently_playing_type: "track", item: { name: playing.top.title, external_urls: { spotify: searchUrl(playing.top.title, playing.name) }, artists: [{ name: playing.name }], album: { name: playing.top.album, images: [cover(playing.top.cover)] } } })
-  }
-  if (target.pathname === "/v1/me/following") return reply({ artists: { items: artists().map(({ id, name }) => ({ id, name })) } })
-  const albums = /^\/v1\/artists\/([^/]+)\/albums$/.exec(target.pathname)
-  if (albums === null) return notFound(target.href)
-  const artist = artists().find((candidate) => candidate.id === decodeURIComponent(albums[1] as string))
-  return reply({ items: (artist?.albums ?? []).map((album) => ({ id: album.id, name: album.title, album_group: album.kind, release_date: album.date, external_urls: { spotify: searchUrl(album.title, artist?.name ?? "") }, images: [cover(album.cover)] })) })
-}
-
 /** A short summary in Norwegian for a page, in place of the model that only runs on Cloudflare. */
 export function mockSummary(): string {
   return "Dette er en lokal eksempeltekst: endringen er liten, testene går gjennom, og det eneste som gjenstår er en gjennomgang. Ingenting er hentet fra en KI-modell."
@@ -407,10 +377,6 @@ export function mockFetch(address: string, init: MockInit = {}): Response {
       return yr()
     case "nominatim.openstreetmap.org":
       return reply(nominatimData)
-    case "accounts.spotify.com":
-      return reply({ access_token: "mock-access-token", token_type: "Bearer", expires_in: 3600 })
-    case "api.spotify.com":
-      return spotify(target)
     default:
       return notFound(address)
   }

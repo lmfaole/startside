@@ -10,10 +10,7 @@ import { fingerprint } from "./summarize"
  * reach origins outside Cloudflare; straight to the source otherwise, as in `next dev`. Through the relay, the relay
  * adds the GitHub token.
  */
-/** The hosts whose `Authorization` goes through the relay with the ask: Spotify's, because the relay has no key of its own for them. */
-const SPOTIFY_HOSTS = new Set(["api.spotify.com", "accounts.spotify.com"])
-
-async function fetchSource(url: string, init: { headers?: Record<string, string>; revalidate: number; /** How long past `revalidate` a kept answer may still be shown while it is asked for anew (default `STALE_SECONDS`; 0 for what must not be old, like what plays now). */ staleFor?: number; /** A JSON body makes it a POST (GitHub's GraphQL, which the relay allows). */ json?: unknown; /** A text body makes it a POST too (Spotify's token, a form); the caller sets its Content-Type. */ body?: string }): Promise<Response> {
+async function fetchSource(url: string, init: { headers?: Record<string, string>; revalidate: number; /** How long past `revalidate` a kept answer may still be shown while it is asked for anew (default `STALE_SECONDS`; 0 for what must not be old, like what plays now). */ staleFor?: number; /** A JSON body makes it a POST (GitHub's GraphQL, which the relay allows). */ json?: unknown; /** A text body makes it a POST too (a form); the caller sets its Content-Type. */ body?: string }): Promise<Response> {
   if (mocking()) return mockFetch(url, init)
   const relay = env("UPSTREAM_URL")
   const key = env("UPSTREAM_KEY")
@@ -21,8 +18,8 @@ async function fetchSource(url: string, init: { headers?: Record<string, string>
   const headers: Record<string, string> = { ...init.headers, ...(init.json === undefined ? {} : { "Content-Type": "application/json" }) }
   const post = init.json !== undefined ? { method: "POST", body: JSON.stringify(init.json) } : init.body !== undefined ? { method: "POST", body: init.body } : {}
   if (relay && key) {
-    // The relay holds GitHub's token; what is asked of Spotify comes with its own (an hour's access token, or the client's sign-in for the token).
-    if (!SPOTIFY_HOSTS.has(target.host)) delete headers.Authorization
+    // The relay holds GitHub's token.
+    delete headers.Authorization
     return fetch(`${relay.replace(/\/$/, "")}/${target.host}${target.pathname}${target.search}`, {
       ...post,
       headers: { ...headers, "X-Upstream-Key": key },

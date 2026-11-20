@@ -1,12 +1,14 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 
 import { Button } from "@lmfaole/designsystem/components/button"
 import { Icon } from "@lmfaole/designsystem/components/icon"
 import { Inline } from "@lmfaole/designsystem/components/layout"
+import { PermissionCard, type PermissionCardState } from "@lmfaole/designsystem/components/permission-card"
 import { Text } from "@lmfaole/designsystem/components/text"
+import { usePermissionState } from "@lmfaole/designsystem/lib/use-permission-state"
 
 import { formatPosition, movedFar, POSITION_COOKIE, roundPosition, type Position } from "../lib/position"
 
@@ -23,15 +25,14 @@ function locate(options: PositionOptions): Promise<Position> {
   )
 }
 
-/**
- * The page's choice of place: the device's position, or the one in the settings. Asking happens on a tap, never on load;
- * once the browser has allowed it, the page follows the device and refreshes when it has moved a couple of hundred metres (other stations, perhaps another forecast).
- */
-export function PositionControl({ current }: { current: Position | null }) {
+type Failure = "denied" | "failed"
+
+/** Asking the device for its position on a tap and keeping it in the cookie; once the browser has allowed it, following the device when it has moved a couple of hundred metres. */
+function useLocate(current: Position | null) {
   const router = useRouter()
-  const [message, setMessage] = useState<string | null>(null)
+  const [failure, setFailure] = useState<Failure | null>(null)
   const [busy, setBusy] = useState(false)
-  // Known only in the browser (Node has a `navigator` too, without `geolocation`), so the control appears once the page is hydrated.
+  // Known only in the browser (Node has a `navigator` too, without `geolocation`), so a control appears once the page is hydrated.
   const [supported, setSupported] = useState(false)
   useEffect(() => setSupported("geolocation" in navigator), [])
 
@@ -55,13 +56,12 @@ export function PositionControl({ current }: { current: Position | null }) {
 
   async function use() {
     setBusy(true)
-    setMessage(null)
+    setFailure(null)
     try {
       write(await locate({ enableHighAccuracy: false, maximumAge: 10 * 60_000, timeout: 15_000 }))
       router.refresh()
     } catch (error) {
-      const denied = (error as GeolocationPositionError).code === 1
-      setMessage(denied ? "Posisjon er ikke tillatt i nettleseren." : "Fant ikke posisjonen.")
+      setFailure((error as GeolocationPositionError).code === 1 ? "denied" : "failed")
     } finally {
       setBusy(false)
     }
@@ -69,23 +69,38 @@ export function PositionControl({ current }: { current: Position | null }) {
 
   function reset() {
     write(null)
-    setMessage(null)
+    setFailure(null)
     router.refresh()
   }
 
+  return { supported, busy, failure, use, reset }
+}
+
+function UseButton({ busy, onClick }: { busy: boolean; onClick: () => void }) {
+  return (
+    <Button variant="outline" size="sm" disabled={busy} onClick={onClick}>
+      <Icon name="place" slot="start" />
+      Bruk min posisjon
+    </Button>
+  )
+}
+
+/**
+ * The page's choice of place, compact for the page's header: the device's position, or the one in the settings. Asking happens on a tap, never on load;
+ * once the browser has allowed it, the page follows the device and refreshes when it has moved a couple of hundred metres (other stations, perhaps another forecast).
+ */
+export function PositionControl({ current }: { current: Position | null }) {
+  const { supported, busy, failure, use, reset } = useLocate(current)
   if (!supported) return null
   return (
     <Inline gap="sm">
-      {message === null ? null : (
+      {failure === null ? null : (
         <Text size="xs" tone="muted">
-          {message}
+          {failure === "denied" ? "Posisjon er ikke tillatt i nettleseren." : "Fant ikke posisjonen."}
         </Text>
       )}
       {current === null ? (
-        <Button variant="outline" size="sm" disabled={busy} onClick={use}>
-          <Icon name="place" slot="start" />
-          Bruk min posisjon
-        </Button>
+        <UseButton busy={busy} onClick={use} />
       ) : (
         <Button variant="outline" size="sm" disabled={busy} onClick={reset}>
           <Icon name="home" slot="start" />
@@ -94,4 +109,18 @@ export function PositionControl({ current }: { current: Position | null }) {
       )}
     </Inline>
   )
+}
+
+/**
+ * Asks for the device's position where the page needs it and says how it went: what it is for (`body`), whether the browser
+ * has been asked, is asking, said no (with the way back in the browser's settings) or cannot. With a position in the cookie and the
+ * browser still allowing it, there is nothing to ask: the card is gone and the compact `PositionControl` in the header is enough.
+ * When the browser has said no, a position kept from before still counts: the card says so, and `fallback` says what is shown without one.
+ */
+export function PositionPermission({ current, title, body, fallback }: { current: Position | null; title: string; body: string; fallback?: ReactNode }) {
+  const permission = usePermissionState("geolocation")
+  const { busy, failure, use } = useLocate(current)
+  const state: PermissionCardState = busy ? "pending" : failure === "denied" ? "denied" : failure === "failed" ? "error" : permission === "granted" && current === null ? "prompt" : permission
+  if (current !== null && state !== "denied" && state !== "error") return null
+  return <PermissionCard title={title} body={body} state={state} action={<UseButton busy={busy} onClick={use} />} deniedHelp="Posisjon er avslått for dette nettstedet. Tillat posisjon i nettleserens innstillinger for nettstedet, og last siden på nytt." fallback={current === null ? fallback : undefined} />
 }

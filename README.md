@@ -45,7 +45,7 @@ alerts (`/varsler` and «Følg opp») are shown only when the name is the token'
 
 No answer is shared between names: the edge cache in `lib/upstream.ts` is keyed by the address and the body, which hold the name; the pages are
 rendered per request (`force-dynamic`, `Cache-Control: private, no-store`); and the service worker empties the pages it keeps when the username form
-is sent. The page shows no Spotify data (Spilles nå and Ny musikk are gone; `/musikk` goes to the front page), so the Spotify secrets are not needed.
+is sent. The page shows no Spotify data (Spilles nå and Ny musikk are gone; `/musikk` goes to the front page), so the Spotify secrets and the code that read them are gone.
 
 ## Alerts
 
@@ -139,13 +139,24 @@ navigation and the pages under it are sent first and the lists and counts follow
 
 ## Position
 
-«Bruk min posisjon» (next to the title) asks the browser for the device's position, on a tap and never on load. The position
+Without a position, Transport and Vær show a card (`PositionPermission` in `components/position.tsx`, the design system's `PermissionCard`)
+that says what the position is for and how the browser stands: «Bruk min posisjon» while it can be asked, waiting while it asks, the way to
+allow it in the browser's settings when it said no, and what the page shows without it (Vær: the place in the settings; Transport: nothing).
+With a position and the browser still allowing it, the card is gone and the compact control next to the title is left. «Bruk min posisjon» asks the browser for the device's position, on a tap and never on load. The position
 is kept in the cookie `startside-pos` (`lat,lon`, three decimals, about a hundred metres, path `/start`, a year) and read by the
 server, which finds the nearest stations for it (Transport) and fetches the forecast for it to two decimals (about a kilometre, so
 the cache keeps one per square kilometre) and names the place (OpenStreetMap's Nominatim, through the relay, cached for a
 day). Once the browser has allowed it, the page follows the device and refreshes when it has moved about two hundred metres.
 «Bruk standardsted» removes the cookie and goes back to `WEATHER_*` (and Transport has nothing to show). The position is used for
 the stations and the forecast only; GitHub and the rest do not see it. `lib/position.ts` is tested.
+
+## First visits
+
+What a reader has seen is kept in the cookie `seen` (the design system's `lib/onboarding`, path `/start`), read on the server so nothing flashes:
+a short intro on the front page (left out while the username form is shown: the form is the introduction then), Transport, Vær and the pages of a
+pull request, an issue or a discussion (`intro-front`, `intro-transport`, `intro-weather`, `intro-detail`), each gone for good once dismissed; «Nytt»
+on Transport in the navigation until `TRANSPORT_NEW_UNTIL` (`lib/visitor.ts`) or until Transport has been opened (`new-transport`; the time is the
+server's); and the offer to install the app on the front page (`install`). An empty list says what would be in it and offers one way on.
 
 ## How it runs
 
@@ -192,10 +203,10 @@ wrangler secret put GITHUB_TOKEN
 
 ### Mock data (no keys, no network)
 
-`MOCK_DATA=1` makes every upstream (GitHub, Entur, Yr, Nominatim, Spotify) answer from `lib/mock.ts`, at the one seam `fetchSource()` in `lib/upstream.ts`
+`MOCK_DATA=1` makes every upstream (GitHub, Entur, Yr, Nominatim) answer from `lib/mock.ts`, at the one seam `fetchSource()` in `lib/upstream.ts`
 (the AI summary is a canned text); the edge cache is skipped, so mock answers never reach a real run. The answers are real, public ones captured by
 `node scripts/fetch-mock-data.mjs` (public data only; `fremtind/jokul` and `navikt/aksel` on GitHub with the timelines of their pull requests and issues, a merged
-pull request, a closed issue and an answered discussion, Yr for Grünerløkka, Entur's nearest stations for Grünerløkka and the centre (the mock answers any position with the closer of the two, Grünerløkka dressed with a delay, a cancellation and trains), Nominatim, and Deezer's records and covers in Spotify's shape) into `lib/mock-data/*.json` and `public/mock/covers/*.jpg`, both committed (small, and needed to run offline). Their timestamps are moved to
+pull request, a closed issue and an answered discussion, Yr for Grünerløkka, Entur's nearest stations for Grünerløkka and the centre (the mock answers any position with the closer of the two, Grünerløkka dressed with a delay, a cancellation and trains), and Nominatim) into `lib/mock-data/*.json`, committed (small, and needed to run offline). Their timestamps are moved to
 now when served. Rerun the script to refresh them; `github` needs about 100 requests and the threads of discussions need GraphQL, so give it a token for that run only:
 `GITHUB_TOKEN=$(gh auth token) node scripts/fetch-mock-data.mjs github` (it is sent, never saved). Put it in `.env.local` (read by `next dev`; gitignored)
 and/or `.dev.vars`, with `GITHUB_WATCH_REPOS=fremtind/jokul,navikt/aksel` for the watched-repository parts. Unset, nothing changes. Never set it in production.

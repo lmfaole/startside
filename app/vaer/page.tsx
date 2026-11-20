@@ -1,4 +1,5 @@
 import { ErrorMessage } from "@lmfaole/designsystem/components/error-message"
+import { IntroCallout } from "@lmfaole/designsystem/components/intro-callout"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Text } from "@lmfaole/designsystem/components/text"
@@ -6,15 +7,17 @@ import { WeatherStage } from "@lmfaole/designsystem/components/weather-stage"
 import { DumbbellChart } from "@lmfaole/designsystem/components/dumbbell-chart"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Meteogram } from "@lmfaole/designsystem/components/meteogram"
+import { isSeen } from "@lmfaole/designsystem/lib/onboarding"
 import { cookies } from "next/headers"
 
-import { PositionControl } from "../../components/position"
+import { PositionControl, PositionPermission } from "../../components/position"
 import { Shell } from "../../components/shell"
 import { dayOf, now } from "../../lib/day"
 import { dailyOutlook, nextHours } from "../../lib/forecast"
 import { dateLine, degrees, number } from "../../lib/format"
 import { parsePosition, POSITION_COOKIE } from "../../lib/position"
 import { settle } from "../../lib/settle"
+import { SEEN_PATH, seenNotes } from "../../lib/visitor"
 import { describeSymbol, getForecast } from "../../lib/yr"
 
 export const dynamic = "force-dynamic"
@@ -24,7 +27,7 @@ export const metadata = { title: "Vær · Startside" }
 export default async function Page() {
   const instant = now()
   const day = dayOf(instant)
-  const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
+  const [position, seen] = await Promise.all([cookies().then((jar) => parsePosition(jar.get(POSITION_COOKIE)?.value)), seenNotes()])
   const forecast = await settle(getForecast(position))
 
   const current = forecast.ok ? forecast.value.timeseries[0] : undefined
@@ -38,8 +41,22 @@ export default async function Page() {
         current && symbol
           ? `Nå ${degrees(current.data.instant.details.air_temperature)} og ${describeSymbol(symbol).toLowerCase()}, vind ${number.format(current.data.instant.details.wind_speed)} m/s.`
           : "Meldingen fra Yr: det neste døgnet og de neste dagene."
-      } actions={<PositionControl current={position} />}>
+      } actions={position === null ? undefined : <PositionControl current={position} />}>
       <Stack gap="xl">
+        <IntroCallout
+          id="intro-weather"
+          seen={isSeen(seen, "intro-weather")}
+          title="Slik leser du været"
+          body="Linjen er temperaturen time for time: varm farge over null, kald under, og nullstreken er tegnet inn. Søylene nederst er nedbøren hver time. «Vis tallene» gir alt som tabell."
+          icon="weather"
+          cookiePath={SEEN_PATH}
+        />
+        <PositionPermission
+          current={position}
+          title="Været der du er"
+          body="Del posisjonen for å få været akkurat der du er. Den rundes av og lagres bare i en informasjonskapsel i denne nettleseren."
+          fallback={<Text size="sm">{forecast.ok ? `Du ser været for ${forecast.value.place}, stedet i innstillingene.` : "Du ser været for stedet i innstillingene."}</Text>}
+        />
         {!forecast.ok ? (
           <ErrorMessage error={forecast.error}>Kunne ikke hente været</ErrorMessage>
         ) : (

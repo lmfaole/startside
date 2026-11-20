@@ -19,6 +19,7 @@ import { weatherIcon } from "../lib/forecast"
 import type { Item } from "../lib/github"
 import { groupIssues, type IssueGroupId } from "../lib/issues"
 import { internalHref, withBase } from "../lib/links"
+import { USERNAME_PAGE } from "../lib/username"
 import { ageLabels, compactLabels, statusLabels, type Label } from "../lib/pr-status"
 import { groupPulls, type GroupId } from "../lib/pulls"
 import type { Settled } from "../lib/settle"
@@ -74,13 +75,17 @@ function Failed({ id, title, icon, error }: { id: string; title: string; icon: I
   )
 }
 
-function Quiet({ id, title, icon, children }: { id: string; title: string; icon: IconName; children: string }) {
+/** An empty list that teaches: what would be here and why, and one way on. */
+function Quiet({ id, title, icon, children, description, action }: { id: string; title: string; icon: IconName; children: string; description: string; action: { href: string; label: string } }) {
   return (
     <PageSection id={id} title={title} icon={icon}>
-      <EmptyState title={children} />
+      <EmptyState title={children} description={description} icon={icon} action={action} />
     </PageSection>
   )
 }
+
+/** When a GitHub list is empty, the name may be the wrong one. */
+const CHANGE_USER = { href: USERNAME_PAGE, label: "Bytt brukernavn" }
 
 const PULLS_PATH = withBase("/pull-requests")
 const ISSUES_PATH = withBase("/issues")
@@ -102,7 +107,7 @@ const pullRow = ({ item, whose }: PullEntry, group: GroupId, instant: Date, comp
 export function PullsSection({ data, mode, instant }: { data: Settled<PullsData>; mode: "digest" | "full"; instant: Date }) {
   if (!data.ok) return <Failed id="pulls" title="Pull requests" icon="pull-request" error={data.error} />
   const groups = groupPulls(data.value)
-  if (groups.length === 0) return <Quiet id="pulls" title="Pull requests" icon="pull-request">Ingen åpne pull requests.</Quiet>
+  if (groups.length === 0) return <Quiet id="pulls" title="Pull requests" icon="pull-request" description="Her kommer åpne pull requests i offentlige repoer som brukeren har laget eller er bedt om å se gjennom. Venter du noen her, kan brukernavnet være feil." action={CHANGE_USER}>Ingen åpne pull requests.</Quiet>
   if (mode === "full") {
     return (
       <Stack gap="xl">
@@ -129,7 +134,7 @@ export type IssuesData = Parameters<typeof groupIssues>[0]
 export function IssuesSection({ data, mode, instant }: { data: Settled<IssuesData>; mode: "digest" | "full"; instant: Date }) {
   if (!data.ok) return <Failed id="issues" title="Issues" icon="issue" error={data.error} />
   const groups = groupIssues(data.value, instant)
-  if (groups.length === 0) return <Quiet id="issues" title="Issues" icon="issue">Ingen åpne issues.</Quiet>
+  if (groups.length === 0) return <Quiet id="issues" title="Issues" icon="issue" description="Her kommer åpne issues i offentlige repoer som brukeren er tildelt, har laget eller er nevnt i. Venter du noen her, kan brukernavnet være feil." action={CHANGE_USER}>Ingen åpne issues.</Quiet>
   const issueRow = (item: Item, compact = false) => row(item, [], { icon: "issue", label: "Issue" }, compact)
   if (mode === "full") {
     return (
@@ -164,7 +169,7 @@ const discussionRow = (item: DiscussionItem, compact = false): RowData =>
 export function DiscussionsSection({ data, mode }: { data: Settled<DiscussionsData>; mode: "digest" | "full" }) {
   if (!data.ok) return <Failed id="discussions" title="Discussions" icon="discussion" error={data.error} />
   const groups = groupDiscussions(data.value)
-  if (groups.length === 0) return mode === "full" ? <Quiet id="discussions" title="Discussions" icon="discussion">Ingen discussions.</Quiet> : null
+  if (groups.length === 0) return mode === "full" ? <Quiet id="discussions" title="Discussions" icon="discussion" description="Her kommer offentlige discussions brukeren har startet, svart i eller er nevnt i. Venter du noen her, kan brukernavnet være feil." action={CHANGE_USER}>Ingen discussions.</Quiet> : null
   if (mode === "full") {
     return (
       <Stack gap="xl">
@@ -260,7 +265,7 @@ export function AlertsSection({ data, mode, instant }: { data: AlertsData; mode:
     { id: "dependabot" as const, rows: data.dependabot.ok ? data.dependabot.value.map((item) => row(item, [...(item.status === undefined ? [] : statusLabels(item.status, "mine")), ...ageLabels(item, "mine", instant)], { icon: "package", label: "Dependabot" })) : [] },
   ].filter((group) => group.rows.length > 0)
   const failed = errors.map((error) => <ErrorMessage key={error.message} error={error}>Kunne ikke hente GitHub</ErrorMessage>)
-  if (groups.length === 0 && errors.length === 0) return mode === "full" ? <Quiet id="alerts" title="Varsler" icon="notification">Ingenting å følge opp.</Quiet> : null
+  if (groups.length === 0 && errors.length === 0) return mode === "full" ? <Quiet id="alerts" title="Varsler" icon="notification" description="Her kommer bygg som har feilet, svar på det du har skrevet og oppdateringer fra Dependabot. Når alt er grønt og besvart, er listen tom." action={{ href: withBase("/github"), label: "Til GitHub-oversikten" }}>Ingenting å følge opp.</Quiet> : null
   if (mode === "full") {
     return (
       <Stack gap="xl">

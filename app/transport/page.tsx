@@ -1,18 +1,20 @@
-import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Freshness } from "@lmfaole/designsystem/components/freshness"
+import { IntroCallout } from "@lmfaole/designsystem/components/intro-callout"
 import { Stack } from "@lmfaole/designsystem/components/layout"
-import { PageSection } from "@lmfaole/designsystem/components/page-section"
+import { MarkSeen } from "@lmfaole/designsystem/components/mark-seen"
+import { isSeen } from "@lmfaole/designsystem/lib/onboarding"
 import { Text } from "@lmfaole/designsystem/components/text"
 import { cookies } from "next/headers"
 
 import { NearbyStops } from "../../components/nearby-stops"
-import { PositionControl } from "../../components/position"
+import { PositionControl, PositionPermission } from "../../components/position"
 import { Shell } from "../../components/shell"
 import { now } from "../../lib/day"
 import { getStops } from "../../lib/entur"
 import { parsePosition, POSITION_COOKIE } from "../../lib/position"
 import { settle } from "../../lib/settle"
+import { SEEN_PATH, seenNotes } from "../../lib/visitor"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Transport · Startside" }
@@ -26,19 +28,28 @@ const RADIUS = 1000
 /** The stations nearest to where the device is and what leaves from them; without the device's position there is nothing to show. */
 export default async function Page() {
   const instant = now()
-  const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
+  const [position, seen] = await Promise.all([cookies().then((jar) => parsePosition(jar.get(POSITION_COOKIE)?.value)), seenNotes()])
   const stops = position === null ? null : await settle(getStops(position, RADIUS))
 
   return (
-    <Shell current="transport" width="wide" title="Transport" lead={<>Nærmeste stasjoner og avganger fra der du er · <Freshness at={instant.toISOString()} now={instant.toISOString()} staleAfterSeconds={STALE_AFTER} /></>} actions={<PositionControl current={position} />}>
+    <Shell current="transport" width="wide" title="Transport" lead={<>Nærmeste stasjoner og avganger fra der du er · <Freshness at={instant.toISOString()} now={instant.toISOString()} staleAfterSeconds={STALE_AFTER} /></>} actions={position === null ? undefined : <PositionControl current={position} />}>
+      <MarkSeen id="new-transport" cookiePath={SEEN_PATH} />
       <Stack gap="xl">
-        {stops === null ? (
-          <PageSection id="stations" title="Nærmeste stasjoner" icon="bus">
-            <EmptyState title="Vi vet ikke hvor du er" description="Trykk «Bruk min posisjon» for å se stasjonene nærmest deg og avgangene derfra." icon="place" />
-          </PageSection>
-        ) : (
-          <NearbyStops stops={stops} instant={instant} />
-        )}
+        <IntroCallout
+          id="intro-transport"
+          seen={isSeen(seen, "intro-transport")}
+          title="Avgangene der du er"
+          body="Siden finner stasjonene innen en kilometer fra deg og viser hva som går derfra den nærmeste tiden. Den oppdaterer seg selv hvert minutt, og følger med når du flytter deg."
+          icon="bus"
+          cookiePath={SEEN_PATH}
+        />
+        <PositionPermission
+          current={position}
+          title="Del posisjonen for å se avganger"
+          body="Vi trenger posisjonen din for å finne stasjonene nærmest deg. Den rundes av til omtrent hundre meter og lagres bare i en informasjonskapsel i denne nettleseren."
+          fallback={<Text size="sm">Uten posisjon kan ikke siden vite hvilke stasjoner som er nærmest, så den viser ingen avganger.</Text>}
+        />
+        {stops === null ? null : <NearbyStops stops={stops} instant={instant} />}
         <Text size="xs" tone="muted">
           Avganger fra <ExternalLink href="https://entur.no">Entur</ExternalLink>.
         </Text>

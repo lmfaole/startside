@@ -1,6 +1,9 @@
 import { Freshness } from "@lmfaole/designsystem/components/freshness"
+import { InstallPrompt } from "@lmfaole/designsystem/components/install-prompt"
+import { IntroCallout } from "@lmfaole/designsystem/components/intro-callout"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { SummaryBar } from "@lmfaole/designsystem/components/summary-bar"
+import { isSeen } from "@lmfaole/designsystem/lib/onboarding"
 import { cookies } from "next/headers"
 
 import { AlertsOwnerOnly, GithubUserForm } from "../components/github-user"
@@ -19,7 +22,7 @@ import { groupPulls } from "../lib/pulls"
 import { settle } from "../lib/settle"
 import { summaryItems } from "../lib/summary"
 import { formState, type SearchParams } from "../lib/username"
-import { githubPage } from "../lib/visitor"
+import { githubPage, SEEN_PATH, seenNotes } from "../lib/visitor"
 import { getForecast } from "../lib/yr"
 
 /** The page renews itself every minute (components/shell.tsx); after three missed renewals it says its data may be old. */
@@ -40,7 +43,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
   const day = dayOf(instant)
   const plan = planFor(day)
   const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
-  const { user, known, params } = await githubPage(searchParams)
+  const [{ user, known, params }, seen] = await Promise.all([githubPage(searchParams), seenNotes()])
   const asking = user === null
   const owner = user === null ? false : await isTokenOwner(user).catch(() => false)
   const wants = (id: (typeof plan.sections)[number]) => plan.sections.includes(id)
@@ -69,6 +72,16 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
   return (
     <Shell current="front" title={plan.greeting} lead={<>{dateLine.format(instant)} · <Freshness at={instant.toISOString()} now={instant.toISOString()} staleAfterSeconds={STALE_AFTER} /></>} actions={<PositionControl current={position} />}>
       <Stack gap="xl">
+        {formAt === null ? (
+          <IntroCallout
+            id="intro-front"
+            seen={isSeen(seen, "intro-front")}
+            title="Det du trenger nå, på én side"
+            body="Startsiden samler det som venter på deg på GitHub, været og avgangene i nærheten. Hva som vises, følger tiden på døgnet; hver del har en lenke videre til alt."
+            icon="home"
+            cookiePath={SEEN_PATH}
+          />
+        ) : null}
         {user === null ? null : <SummaryBar label="Oversikt" items={summary} />}
         {plan.sections.map((id) => {
           if (id === formAt) return form
@@ -82,6 +95,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
           return null
         })}
         {formAt === "end" ? form : null}
+        <InstallPrompt appName="Startside" seen={isSeen(seen, "install")} cookiePath={SEEN_PATH} />
       </Stack>
     </Shell>
   )

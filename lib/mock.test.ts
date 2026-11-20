@@ -4,7 +4,6 @@ import { test } from "node:test"
 import { discussionNodes } from "./discussions.ts"
 import { mockFetch } from "./mock.ts"
 import { readStatuses } from "./pr-status.ts"
-import { parseFollowed, parseNowPlaying, parseReleases, parseToken, recentReleases } from "./spotify.ts"
 import { discussionSteps, discussionTimeline, issueSteps, issueTimeline, prSpans, prSteps, prTimeline } from "./timeline.ts"
 import githubData from "./mock-data/github.json" with { type: "json" }
 
@@ -96,15 +95,6 @@ test("detail pages have timelines: a merged pull request with changes asked for 
   const discussion = { url: found.url, author: found.author.login, created: found.createdAt, answered: found.isAnswered, closed: found.closedAt, answerChosen: found.answerChosenAt, answerChosenBy: found.answerChosenBy?.login ?? null, thread: { items: thread, total: thread.length, truncated: false } }
   assert.ok(discussionTimeline(discussion).some((event) => event.badge === "Svar"))
   assert.equal(discussionSteps(discussion, now).at(-1)?.state, "done")
-})
-
-test("Spotify has a token, a song playing and recent releases, with covers that are files in public/", async () => {
-  assert.equal(parseToken(await mockFetch("https://accounts.spotify.com/api/token", { body: "" }).json()), "mock-access-token")
-  const playing = parseNowPlaying(await mockFetch("https://api.spotify.com/v1/me/player/currently-playing").json())
-  assert.ok(playing !== null && playing.image?.startsWith("/start/mock/covers/"))
-  const artists = parseFollowed(await mockFetch("https://api.spotify.com/v1/me/following?type=artist").json())
-  const found = (await Promise.all(artists.map(async (artist) => parseReleases(await mockFetch(`https://api.spotify.com/v1/artists/${artist.id}/albums`).json(), artist.name)))).flat()
-  assert.ok(recentReleases(found, new Date(), 60).length > 0)
 })
 
 test("the forecast starts no later than now and runs on; Entur's departures are around now", async () => {

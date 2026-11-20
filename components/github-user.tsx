@@ -2,7 +2,7 @@ import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 
 import { formState, USERNAME_ENDPOINT, withoutError, type SearchParams } from "../lib/username"
-import { UsernameForm } from "./username-form"
+import { UsernameForm } from "@lmfaole/designsystem/components/username-form"
 
 /** The form that asks for the GitHub username, shown where GitHub data would be until there is one; prefilled with `current`, or with what failed and why. */
 export function GithubUserForm({ back, params = {}, current, headingLevel = 2 }: { back: string; params?: SearchParams; current?: string; headingLevel?: 2 | 3 }) {

@@ -11,7 +11,7 @@ import { Time } from "@lmfaole/designsystem/components/time"
 import { notFound } from "next/navigation"
 
 import { AiSummary } from "../../../../../components/ai-summary"
-import { About, History, TimeInState } from "../../../../../components/detail"
+import { About, DetailIntro, History, TimeInState } from "../../../../../components/detail"
 import { GitHubPerson } from "../../../../../components/person"
 import { Byline } from "../../../../../components/byline"
 import { GITHUB, Shell } from "../../../../../components/shell"
@@ -68,6 +68,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
           </Stack>
         }
       >
+        <DetailIntro />
         <StateSteps label={`Status for pull request #${ref.number}`} steps={prSteps(pull, at)} now={at} />
         <AiSummary kind="pull request" input={{ title: pull.title, body: pull.body.text, comments: pull.comments.latest.map((comment) => `${comment.author}: ${comment.text}`) }} />
         <About body={pull.body} />

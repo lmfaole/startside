@@ -1,5 +1,5 @@
-// Captures real, public, keyless answers into lib/mock-data/*.json (and album covers into public/mock/covers/), which lib/mock.ts serves when MOCK_DATA=1.
-// Run it by hand now and then: `node scripts/fetch-mock-data.mjs [github] [yr] [entur] [nominatim] [spotify]` (all of them by default).
+// Captures real, public, keyless answers into lib/mock-data/*.json, which lib/mock.ts serves when MOCK_DATA=1.
+// Run it by hand now and then: `node scripts/fetch-mock-data.mjs [github] [yr] [entur] [nominatim]` (all of them by default).
 // Nothing private is read: only public repositories. GitHub is asked without authentication (60 requests an hour) unless GITHUB_TOKEN is set; `github` needs
 // about 100 requests for the timelines, so run it as `GITHUB_TOKEN=$(gh auth token) node scripts/fetch-mock-data.mjs github` (the token is only sent, never saved).
 // The threads of discussions come from the GraphQL API, which needs the token; without one they are left out.
@@ -9,9 +9,7 @@ import { fileURLToPath } from "node:url"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 const dataDir = join(root, "lib", "mock-data")
-const coverDir = join(root, "public", "mock", "covers")
 mkdirSync(dataDir, { recursive: true })
-mkdirSync(coverDir, { recursive: true })
 
 const UA = "startside-mock-capture github.com/lmfaole/startside"
 // Two places in Oslo to capture the stations around: Grünerløkka (also the forecast and the place name) and the centre.
@@ -237,28 +235,7 @@ async function captureNominatim() {
   save("nominatim", await (await get(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language=nb&lat=${GRUNERLOKKA.lat}&lon=${GRUNERLOKKA.lon}`)).json())
 }
 
-// Deezer and Apple have no Spotify, so the artists, their newest records and covers come from Deezer (keyless) and are served in Spotify's shape.
-async function captureSpotify() {
-  const artists = []
-  for (const name of ARTISTS) {
-    const found = (await (await get(`https://api.deezer.com/search/artist?q=${encodeURIComponent(name)}&limit=5`)).json()).data.find((artist) => artist.name.toLowerCase() === name.toLowerCase())
-    if (found === undefined) continue
-    const albums = (await (await get(`https://api.deezer.com/artist/${found.id}/albums?limit=100`)).json()).data
-      .filter((album) => album.record_type === "album" || album.record_type === "single")
-      .sort((a, b) => b.release_date.localeCompare(a.release_date))
-      .slice(0, 3)
-    for (const album of albums) {
-      const image = await get(album.cover_big)
-      writeFileSync(join(coverDir, `${album.id}.jpg`), Buffer.from(await image.arrayBuffer()))
-    }
-    const top = (await (await get(`https://api.deezer.com/artist/${found.id}/top?limit=1`)).json()).data[0]
-    if (top !== undefined) writeFileSync(join(coverDir, `${top.album.id}.jpg`), Buffer.from(await (await get(top.album.cover_big)).arrayBuffer()))
-    artists.push({ id: `dz-${found.id}`, name: found.name, albums: albums.map((album) => ({ id: `dz-${album.id}`, cover: String(album.id), title: album.title, kind: album.record_type, date: album.release_date })), top: top === undefined ? null : { title: top.title, album: top.album.title, cover: String(top.album.id) } })
-  }
-  save("spotify", { capturedAt: new Date().toISOString(), artists })
-}
-
-const steps = { github: captureGithub, yr: captureYr, entur: captureEntur, nominatim: captureNominatim, spotify: captureSpotify }
+const steps = { github: captureGithub, yr: captureYr, entur: captureEntur, nominatim: captureNominatim }
 const wanted = process.argv.slice(2)
 for (const [name, run] of Object.entries(steps)) {
   if (wanted.length > 0 && !wanted.includes(name)) continue

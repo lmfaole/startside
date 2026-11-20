@@ -22,7 +22,7 @@ export function NearbyStops({ stops, instant }: { stops: Settled<Stop[]>; instan
 function Boards({ stops, instant }: { stops: Stop[]; instant: Date }) {
   const shown = stops.filter((stop) => stop.departures.length > 0).toSorted((a, b) => a.distance - b.distance)
   if (shown.length === 0) {
-    return <EmptyState title="Ingen avganger" description="Ingenting går fra stasjonene rundt deg den nærmeste tiden." />
+    return <EmptyState title="Ingen avganger" description="Ingenting går fra stasjonene innen en kilometer fra deg den nærmeste tiden. Om natten kan det være stille en stund; reiseplanleggeren finner turer fra lenger unna." icon="bus" action={{ href: "https://entur.no", label: "Planlegg reisen hos Entur" }} />
   }
   return (
     <Grid columns="charts">

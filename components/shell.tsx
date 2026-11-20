@@ -1,15 +1,18 @@
 import { ConnectionBanner } from "@lmfaole/designsystem/components/connection-banner"
 import { Breadcrumbs } from "@lmfaole/designsystem/components/breadcrumbs"
 import { NavBar } from "@lmfaole/designsystem/components/nav-bar"
+import { NewBadge } from "@lmfaole/designsystem/components/new-badge"
 import { PageHeader } from "@lmfaole/designsystem/components/page-header"
 import { PageLayout } from "@lmfaole/designsystem/components/page-layout"
+import { isNew, isSeen } from "@lmfaole/designsystem/lib/onboarding"
 import type { ReactNode } from "react"
 
 import { withBase } from "../lib/links"
 import { USERNAME_PAGE } from "../lib/username"
-import { githubUser } from "../lib/visitor"
+import { now } from "../lib/day"
+import { githubUser, seenNotes, TRANSPORT_NEW_UNTIL } from "../lib/visitor"
 import { Refresh } from "./refresh"
-import { UserChip } from "./username-form"
+import { UserChip } from "@lmfaole/designsystem/components/user-chip"
 
 /** How often the open page asks for itself again (components/refresh.tsx). A source is kept at the edge for as long (lib/upstream.ts) and then shown at once, as it was, while it is asked for anew: a renewal never waits for GitHub. */
 const REFRESH_SECONDS = 60
@@ -33,9 +36,12 @@ const PLACES = [
  * the list it belongs to. At the foot, once a GitHub username is given: whose data it is, and the way to change it.
  */
 export async function Shell({ current, width = "reading", trail, crumb, title, lead, actions, children }: { current: PageId; /** `pane` on a detail page: what is looked up (status, facts) in a pane beside what is read from a wide screen up (design system, guide «Wide screens»); `wide` for a page that is looked at more than read (the departure boards). */ width?: "reading" | "pane" | "wide"; /** On a page below another: the pages above it, outermost first; the breadcrumbs are the front page, those, and the page itself. */ trail?: readonly { path: string; label: string }[]; /** The page's name in the breadcrumbs when the title is long (a pull request's title): `#6851`. */ crumb?: string; title: string; lead?: ReactNode; actions?: ReactNode; children: ReactNode }) {
-  const user = await githubUser()
+  const [user, seen] = await Promise.all([githubUser(), seenNotes()])
+  // The transport page is new for a while, until the reader has been there (it records `new-transport`, app/transport/page.tsx).
+  const at = now().toISOString()
+  const badges: Partial<Record<PageId, ReactNode>> = isNew(TRANSPORT_NEW_UNTIL, at) && !isSeen(seen, "new-transport") ? { transport: <NewBadge until={TRANSPORT_NEW_UNTIL} now={at} /> } : {}
   return (
-    <PageLayout width={width} nav={<NavBar label="Hovedmeny" title="Startside" items={PLACES.map((place) => ({ key: place.key, label: place.label, href: withBase(place.path), icon: place.icon, current: place.key === current }))} />}>
+    <PageLayout width={width} nav={<NavBar label="Hovedmeny" title="Startside" items={PLACES.map((place) => ({ key: place.key, label: place.label, href: withBase(place.path), icon: place.icon, current: place.key === current, badge: badges[place.key] }))} />}>
       <Refresh everySeconds={REFRESH_SECONDS} />
       <ConnectionBanner />
       {trail === undefined ? null : <Breadcrumbs items={[{ label: "Startside", href: withBase("") }, ...trail.map((page) => ({ label: page.label, href: withBase(page.path) })), { label: crumb ?? title, href: "#" }]} />}

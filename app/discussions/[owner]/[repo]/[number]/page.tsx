@@ -10,7 +10,7 @@ import { Time } from "@lmfaole/designsystem/components/time"
 import { notFound } from "next/navigation"
 
 import { AiSummary } from "../../../../../components/ai-summary"
-import { About, History, TimeInState } from "../../../../../components/detail"
+import { About, DetailIntro, History, TimeInState } from "../../../../../components/detail"
 import { GitHubPerson } from "../../../../../components/person"
 import { Byline } from "../../../../../components/byline"
 import { GITHUB, Shell } from "../../../../../components/shell"
@@ -58,6 +58,7 @@ export default async function Page({ params }: { params: Promise<{ owner: string
           </Stack>
         }
       >
+        <DetailIntro />
         <StateSteps label={`Status for discussion #${ref.number}`} steps={discussionSteps(discussion, at)} now={at} />
         <AiSummary kind="discussion" input={{ title: discussion.title, body: discussion.body.text, comments: discussion.comments.latest.map((comment) => `${comment.author}: ${comment.text}`) }} />
         <About body={discussion.body} />
