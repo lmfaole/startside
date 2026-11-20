@@ -1,40 +1,49 @@
-import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
+import { DurationBars } from "@lmfaole/designsystem/components/duration-bars"
+import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
-import { Stack } from "@lmfaole/designsystem/components/layout"
 import { Markdown } from "@lmfaole/designsystem/components/markdown"
 import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { Text } from "@lmfaole/designsystem/components/text"
-import { Time } from "@lmfaole/designsystem/components/time"
+import { Timeline, type TimelineEvent } from "@lmfaole/designsystem/components/timeline"
 
-import type { Body, Comment } from "../lib/detail"
-import { GitHubPerson } from "./person"
-import { now } from "../lib/day"
+import type { Body } from "../lib/detail"
+import type { DurationSpan, GitHubEvent } from "../lib/timeline"
 
-/** The last few comments of a thing: who, when and a short text of each; the whole conversation is where it lives, at the end. */
-export function LatestComments({ comments, title = "Siste kommentarer" }: { comments: { total: number; latest: Comment[] }; title?: string }) {
-  if (comments.total === 0) return null
-  const rows: RowData[] = comments.latest.map((comment) => ({
-    key: `${comment.author}-${comment.created}`,
-    icon: "discussion",
-    body: (
-      <Stack gap="xs">
-        <Text size="sm" weight="medium">
-          <GitHubPerson login={comment.author} />
-        </Text>
-        {comment.text === "" ? (
-          <Text size="sm" tone="muted">
-            (uten tekst)
-          </Text>
-        ) : (
-          <Markdown source={comment.text} size="sm" from="h4" />
-        )}
-      </Stack>
-    ),
-    trailing: <Time value={comment.created} now={now()} />,
-  }))
+/** How long it has spent in each state (waiting for review, in draft, changes requested), as bars on a wide screen and a list on a phone. */
+export function TimeInState({ spans, now }: { spans: DurationSpan[]; now: string }) {
+  if (spans.length === 0) return null
   return (
-    <PageSection id="comments" title={`${title} (${comments.total})`} icon="discussion">
-      <Rows lead="icon" rows={rows} columns={{ name: "Kommentar", value: "Dato" }} />
+    <PageSection id="time-in-state" title="Tid i hver tilstand" icon="duration">
+      <DurationBars label="Tid i hver tilstand" spans={spans} now={now} />
+    </PageSection>
+  )
+}
+
+/** Everything that happened to it, newest first: comments in full, the rest as one line each, runs of commits and labels folded. */
+export function History({ label, events, note, url, now }: { label: string; events: GitHubEvent[]; note: string | null; url: string; now: string }) {
+  const items: TimelineEvent[] = events.map(({ markdown, ...event }) =>
+    markdown === undefined
+      ? event
+      : {
+          ...event,
+          body:
+            markdown.trim() === "" ? (
+              <Text size="sm" tone="muted">
+                (uten tekst)
+              </Text>
+            ) : (
+              <Markdown source={markdown} size="sm" from="h4" />
+            ),
+        },
+  )
+  return (
+    <PageSection id="history" title="Historikk" icon="history">
+      <Timeline label={label} events={items} now={now} order="desc" groupNouns={{ commit: "commits", label: "etikettendringer" }} headingLevel={3} />
+      {note === null ? null : (
+        <Text size="xs" tone="muted">
+          {note} <ExternalLink href={url}>Se resten på GitHub</ExternalLink>
+        </Text>
+      )}
     </PageSection>
   )
 }

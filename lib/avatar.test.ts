@@ -6,6 +6,7 @@ import { avatarUrl } from "./avatar.ts"
 test("a login has a picture at github.com, a bot's without [bot]", () => {
   assert.equal(avatarUrl("lmfaole"), "https://github.com/lmfaole.png?size=40")
   assert.equal(avatarUrl("dependabot[bot]", 64), "https://github.com/dependabot.png?size=64")
+  assert.equal(avatarUrl("Copilot"), "https://github.com/copilot-pull-request-reviewer.png?size=40")
 })
 
 test("what is not a login has none", () => {

@@ -1,6 +1,7 @@
 /** A GitHub login as it can be in an address: letters, digits and dashes, and a bot's `[bot]` is not part of its picture's address. */
 function plain(login: string): string | null {
-  const name = login.replace(/\[bot\]$/, "")
+  // GitHub names Copilot's reviews and commits «Copilot», an account with no picture of its own; its reviewer bot has the logo.
+  const name = /^copilot$/i.test(login) ? "copilot-pull-request-reviewer" : login.replace(/\[bot\]$/, "")
   return /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/.test(name) ? name : null
 }
 

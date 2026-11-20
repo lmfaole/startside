@@ -108,6 +108,12 @@ test("spans: changes requested until the next commit, review requests wait until
   assert.deepEqual(lanes(spans), ["Åpen 00-08", "Venter på review 00-02", "Endringer etterspurt 02-04", "Venter på review 05-07"])
 })
 
+test("spans and steps: a bot's review request and review neither start nor end the wait", () => {
+  const items = [event("ReviewRequestedEvent", 1, { requestedReviewer: { login: "Copilot" } }), review(2, "Copilot", "COMMENTED", "Oversikt"), review(6, "ola", "APPROVED")]
+  assert.deepEqual(lanes(prSpans(pull(items), NOW)), ["Åpen 00-nå", "Venter på review 00-06"])
+  assert.equal(prSteps(pull(items), NOW).find((step) => step.label === "Review")?.at, at(6))
+})
+
 test("spans: a reopened pull request has two open spans, and the time it was closed waits for nothing", () => {
   const spans = prSpans(pull([event("ClosedEvent", 2, { stateReason: null }), event("ReopenedEvent", 5)]), NOW)
   assert.deepEqual(lanes(spans), ["Åpen 00-02", "Venter på review 00-02", "Åpen 05-nå", "Venter på review 05-nå"])
@@ -144,7 +150,7 @@ test("an open issue with nobody on it: no owner until now; one closed without as
 })
 
 test("a timeline that does not reach back says so", () => {
-  assert.equal(truncatedNote({ items: [comment(1, "a")], total: 230, truncated: true }), "Viser de siste 1 av 230 hendelser. Resten er på GitHub.")
+  assert.equal(truncatedNote({ items: [comment(1, "a")], total: 230, truncated: true }), "Viser de siste 1 av 230 hendelser.")
   assert.equal(truncatedNote({ items: [], total: 0, truncated: false }), null)
 })
 

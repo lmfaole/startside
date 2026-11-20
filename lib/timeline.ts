@@ -3,53 +3,13 @@
  * (`Timeline`), the steps it has been through (`StateSteps`) and the time it spent waiting (`DurationBars`). Pure: GitHub's GraphQL
  * timeline items in, Norwegian text out; the page passes `now`.
  */
-import type { ReactNode } from "react"
-import type { IconName as DesignSystemIcon } from "@lmfaole/designsystem/lib/icons"
+import type { IconName } from "@lmfaole/designsystem/lib/icons"
+import type { DurationSpan, StateStep, TimelineActor, TimelineEvent, TimelineTone } from "@lmfaole/designsystem/lib/timeline"
 
 import { avatarUrl } from "./avatar.ts"
 import type { DiscussionDetail, IssueDetail, PullDetail } from "./detail.ts"
 
-// The design system's types --------------------------------------------------------------------------------------------------------------------------------
-// These mirror @lmfaole/designsystem/components/timeline, …/state-steps and …/duration-bars (designsystem 8.47.0) and are to be replaced by
-// imports from there once it is out.
-
-/** The design system's icons, and the ones this file uses that it does not have yet: `comment`, `reopen` and `force-push`. */
-export type IconName = DesignSystemIcon | "comment" | "reopen" | "force-push"
-
-export type TimelineTone = "neutral" | "accent" | "success" | "warning" | "danger"
-
-export interface TimelineActor { name: string; avatar?: string; href?: string }
-
-export interface TimelineEvent {
-  id: string
-  at: string
-  kind: "comment" | "event"
-  icon: IconName
-  tone?: TimelineTone
-  actor?: TimelineActor
-  summary: string
-  target?: { label: string; href?: string }
-  body?: ReactNode
-  href?: string
-  group?: string
-  badge?: string
-}
-
-export interface StateStep {
-  label: string
-  at?: string
-  state: "done" | "current" | "upcoming" | "failed" | "skipped"
-  icon?: IconName
-}
-
-export interface DurationSpan {
-  key: string
-  label: string
-  start: string
-  end?: string
-  tone?: TimelineTone
-  row?: string
-}
+export type { DurationSpan, StateStep, TimelineEvent }
 
 /** A timeline event whose body is Markdown, for the page to render (`body: <Markdown source={markdown} />`): this file makes no elements. */
 export type GitHubEvent = Omit<TimelineEvent, "body"> & { markdown?: string }
@@ -133,9 +93,9 @@ const sortEvents = (events: GitHubEvent[]): GitHubEvent[] => events.map((event, 
 const sourceLabel = (source: NonNullable<Source>): string => [source.number === undefined ? "" : `#${source.number}`, source.title ?? ""].join(" ").trim() || "en annen sak"
 
 /** A note for a timeline that does not reach back to the start, or `null`. */
-export function truncatedNote(timeline: Pick<Timeline, "items" | "total" | "truncated">): string | null {
+export function truncatedNote(timeline: { items: readonly unknown[]; total: number; truncated: boolean }): string | null {
   if (!timeline.truncated) return null
-  return `Viser de siste ${timeline.items.length} av ${timeline.total} hendelser. Resten er på GitHub.`
+  return `Viser de siste ${timeline.items.length} av ${timeline.total} hendelser.`
 }
 
 // Events -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -170,29 +130,29 @@ function itemEvent(item: TimelineItem, kind: "pull" | "issue"): GitHubEvent | nu
     }
     case "ReviewRequestedEvent": {
       const who = item.requestedReviewer?.login ?? item.requestedReviewer?.name ?? UNKNOWN
-      return { id: item.id, at, kind: "event", icon: "view", actor: person(item.actor?.login), summary: `ba ${who} om review` }
+      return { id: item.id, at, kind: "event", icon: "review", actor: person(item.actor?.login), summary: `ba ${who} om review` }
     }
     case "ReadyForReviewEvent":
       return { id: item.id, at, kind: "event", icon: "pull-request", actor: person(item.actor?.login), summary: "markerte som klar for review", href: item.url }
     case "ConvertToDraftEvent":
-      return { id: item.id, at, kind: "event", icon: "pull-request-draft", actor: person(item.actor?.login), summary: "gjorde om til utkast", href: item.url }
+      return { id: item.id, at, kind: "event", icon: "draft", actor: person(item.actor?.login), summary: "gjorde om til utkast", href: item.url }
     case "MergedEvent":
       return { id: item.id, at, kind: "event", icon: "merge", tone: "accent", actor: person(item.actor?.login), summary: item.mergeRefName ? `merget inn i ${item.mergeRefName}` : "merget", href: item.url }
     case "ClosedEvent": {
       const actor = person(item.actor?.login)
       const closer = item.closer
       const target = closer === null || closer === undefined || closer.url === undefined ? {} : { target: { label: sourceLabel(closer), href: closer.url } }
-      if (kind === "pull") return { id: item.id, at, kind: "event", icon: "close", tone: "danger", actor, summary: "lukket", href: item.url }
-      if (item.stateReason === "NOT_PLANNED") return { id: item.id, at, kind: "event", icon: "close", actor, summary: "lukket som ikke planlagt", href: item.url, ...target }
-      if (item.stateReason === "DUPLICATE") return { id: item.id, at, kind: "event", icon: "close", actor, summary: "lukket som duplikat", href: item.url, ...target }
+      if (kind === "pull") return { id: item.id, at, kind: "event", icon: "pull-request-closed", tone: "danger", actor, summary: "lukket", href: item.url }
+      if (item.stateReason === "NOT_PLANNED") return { id: item.id, at, kind: "event", icon: "closed", actor, summary: "lukket som ikke planlagt", href: item.url, ...target }
+      if (item.stateReason === "DUPLICATE") return { id: item.id, at, kind: "event", icon: "closed", actor, summary: "lukket som duplikat", href: item.url, ...target }
       return { id: item.id, at, kind: "event", icon: "done", tone: "success", actor, summary: "lukket som fullført", href: item.url, ...target }
     }
     case "ReopenedEvent":
       return { id: item.id, at, kind: "event", icon: "reopen", actor: person(item.actor?.login), summary: "åpnet på nytt" }
     case "LabeledEvent":
-      return { id: item.id, at, kind: "event", icon: "tag", group: "label", actor: person(item.actor?.login), summary: `la til etiketten ${item.label.name}` }
+      return { id: item.id, at, kind: "event", icon: "label", group: "label", actor: person(item.actor?.login), summary: `la til etiketten ${item.label.name}` }
     case "UnlabeledEvent":
-      return { id: item.id, at, kind: "event", icon: "tag", group: "label", actor: person(item.actor?.login), summary: `fjernet etiketten ${item.label.name}` }
+      return { id: item.id, at, kind: "event", icon: "label", group: "label", actor: person(item.actor?.login), summary: `fjernet etiketten ${item.label.name}` }
     case "HeadRefForcePushedEvent": {
       const before = item.beforeCommit?.abbreviatedOid
       const after = item.afterCommit?.abbreviatedOid
@@ -200,7 +160,7 @@ function itemEvent(item: TimelineItem, kind: "pull" | "issue"): GitHubEvent | nu
     }
     case "AssignedEvent": {
       const who = item.assignee?.login ?? UNKNOWN
-      return { id: item.id, at, kind: "event", icon: "person", actor: person(item.actor?.login), summary: item.actor !== null && who === item.actor.login ? "tildelte seg selv" : `tildelte ${who}` }
+      return { id: item.id, at, kind: "event", icon: "assign", actor: person(item.actor?.login), summary: item.actor !== null && who === item.actor.login ? "tildelte seg selv" : `tildelte ${who}` }
     }
     case "ReviewDismissedEvent":
       return { id: item.id, at, kind: "event", icon: "cancelled", actor: person(item.actor?.login), summary: `avviste reviewen til ${loginOf(item.review?.author)}`, href: item.url }
@@ -248,7 +208,7 @@ export function discussionTimeline(detail: DiscussionInput): GitHubEvent[] {
     const answer = detail.thread.items.find((comment) => comment.isAnswer)
     list.push({ id: "answer-chosen", at: detail.answerChosen, kind: "event", icon: "success", tone: "success", actor: person(detail.answerChosenBy), summary: answer === undefined ? "valgte et svar" : `valgte svaret til ${loginOf(answer.author)}`, ...(answer === undefined ? {} : { href: answer.url }) })
   }
-  if (detail.closed !== null) list.push({ id: "closed", at: detail.closed, kind: "event", icon: "close", summary: "ble lukket" })
+  if (detail.closed !== null) list.push({ id: "closed", at: detail.closed, kind: "event", icon: "closed", summary: "ble lukket" })
   return sortEvents(list)
 }
 
@@ -278,8 +238,10 @@ function settleSteps(steps: Reached[], open: boolean): StateStep[] {
 
 const until = (items: readonly TimelineItem[], now: string): TimelineItem[] => sortItems(items).filter((item) => time(itemTime(item)) <= time(now))
 type Review = Extract<TimelineItem, { __typename: "PullRequestReview" }>
+/** A bot's account (Copilot, dependabot[bot]): its reviews come in minutes and are not what a pull request waits for. */
+const isBot = (login: string | null | undefined): boolean => login !== null && login !== undefined && (/\[bot\]$/.test(login) || /^copilot$/i.test(login))
 const isReview = (item: TimelineItem, author: string | null): item is Review =>
-  item.__typename === "PullRequestReview" && item.state !== "PENDING" && (author === null || item.author?.login !== author)
+  item.__typename === "PullRequestReview" && item.state !== "PENDING" && !isBot(item.author?.login) && (author === null || item.author?.login !== author)
 
 /** Whether a pull request was opened as a draft: its first draft event says, or else whether it is a draft now. */
 function openedAsDraft(items: readonly TimelineItem[], draftNow: boolean): boolean {
@@ -314,11 +276,11 @@ export function prSteps(detail: PullInput, now: string): StateStep[] {
   const closed = detail.state === "CLOSED" && merged === null
   const steps: Reached[] = [
     { label: "Åpnet", at: detail.created, reached: true, icon: "pull-request" },
-    { label: "Klar for review", ...(ready === null ? {} : { at: ready }), reached: ready !== null, icon: "view" },
-    { label: "Review", ...(review === undefined ? {} : { at: itemTime(review) }), reached: review !== undefined, icon: "comment" },
+    { label: "Klar for review", ...(ready === null ? {} : { at: ready }), reached: ready !== null, icon: "review" },
+    { label: "Review", ...(review === undefined ? {} : { at: itemTime(review) }), reached: review !== undefined, icon: "review" },
     { label: "Godkjent", ...(approved === null ? {} : { at: approved }), reached: approved !== null, icon: "success" },
     closed
-      ? { label: "Lukket", ...(detail.closed === null ? {} : { at: detail.closed }), reached: false, icon: "close", failed: true }
+      ? { label: "Lukket", ...(detail.closed === null ? {} : { at: detail.closed }), reached: false, icon: "pull-request-closed", failed: true }
       : { label: "Merget", ...(merged === null ? {} : { at: merged }), reached: merged !== null, icon: "merge" },
   ]
   return settleSteps(steps, detail.state === "OPEN")
@@ -334,7 +296,7 @@ export function issueSteps(detail: IssueInput, now: string): StateStep[] {
   const steps: Reached[] = [
     { label: "Åpnet", at: detail.created, reached: true, icon: "issue" },
     { label: "Tildelt", ...(assigned === undefined ? {} : { at: itemTime(assigned) }), reached: assigned !== undefined || detail.assignees.length > 0, icon: "person" },
-    { label: closeLabel, ...(closed && detail.closed !== null ? { at: detail.closed } : {}), reached: closed, icon: reason === "NOT_PLANNED" || reason === "DUPLICATE" ? "close" : "done" },
+    { label: closeLabel, ...(closed && detail.closed !== null ? { at: detail.closed } : {}), reached: closed, icon: reason === "NOT_PLANNED" || reason === "DUPLICATE" ? "closed" : "done" },
   ]
   return settleSteps(steps, !closed)
 }
@@ -351,7 +313,7 @@ export function discussionSteps(detail: DiscussionInput, now: string): StateStep
     { label: "Første svar", ...(replied ? { at: reply.createdAt } : {}), reached: replied, icon: "comment" },
   ]
   if (detail.answered !== null) steps.push({ label: "Besvart", ...(detail.answerChosen === null ? {} : { at: detail.answerChosen }), reached: detail.answerChosen !== null || detail.answered, icon: "success" })
-  else if (detail.closed !== null) steps.push({ label: "Lukket", at: detail.closed, reached: true, icon: "close" })
+  else if (detail.closed !== null) steps.push({ label: "Lukket", at: detail.closed, reached: true, icon: "closed" })
   return settleSteps(steps, detail.closed === null)
 }
 
@@ -392,7 +354,7 @@ class Spans {
 
 /**
  * How long a pull request spent in each state, on lanes: «Åpen» (again after a reopening), «Utkast», «Venter på review» (from ready or a
- * request for review until the next review) and «Endringer etterspurt» (from a request for changes until the next commit or review).
+ * request for review until the next review; bots' requests and reviews do not count) and «Endringer etterspurt» (from a request for changes until the next commit or review).
  */
 export function prSpans(detail: PullInput, now: string): DurationSpan[] {
   const items = until(detail.timeline.items, now)
@@ -417,7 +379,7 @@ export function prSpans(detail: PullInput, now: string): DurationSpan[] {
         if (open) spans.open("draft", "Utkast", at)
         break
       case "ReviewRequestedEvent":
-        if (open && !draft) spans.open("waiting", "Venter på review", at, "warning")
+        if (open && !draft && !isBot(item.requestedReviewer?.login)) spans.open("waiting", "Venter på review", at, "warning")
         break
       case "PullRequestReview":
         if (!isReview(item, detail.author) || item.state === "DISMISSED") break
