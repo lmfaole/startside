@@ -17,7 +17,7 @@
     "spotify:auth": "node scripts/spotify-auth.ts"
   },
   "dependencies": {
-    "@lmfaole/designsystem": "github:lmfaole/designsystem#653000b7db85baa32db690b0d1d174fc429319f7",
+    "@lmfaole/designsystem": "github:lmfaole/designsystem#8eebdc938d634ccd5b2d17ef4a329ebb81b6ebc1",
     "@opennextjs/cloudflare": "^1.20.17",
     "next": "^16.4.6",
     "react": "^19.2.8",
