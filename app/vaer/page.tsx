@@ -6,9 +6,9 @@ import { WeatherStage } from "@lmfaole/designsystem/components/weather-stage"
 import { DumbbellChart } from "@lmfaole/designsystem/components/dumbbell-chart"
 import { StatusLine } from "@lmfaole/designsystem/components/status-line"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
+import { Meteogram } from "@lmfaole/designsystem/components/meteogram"
 import { cookies } from "next/headers"
 
-import { ForecastCharts } from "../../components/forecast-charts"
 import { PositionControl } from "../../components/position"
 import { Shell } from "../../components/shell"
 import { dayOf, now } from "../../lib/day"
@@ -21,7 +21,7 @@ import { describeSymbol, getForecast } from "../../lib/yr"
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Vær · Startside" }
 
-/** The whole forecast: now and the day ahead in the card, the next 24 hours as charts, and the coming week as lowest to highest. */
+/** The whole forecast: now and the day ahead in the card, the next 24 hours as a meteogram, and the coming week as lowest to highest. */
 export default async function Page() {
   const instant = now()
   const day = dayOf(instant)
@@ -70,7 +70,7 @@ export default async function Page() {
           ) : null}
           {chartHours.length > 1 ? (
             <PageSection id="next-hours" title="Neste døgn" icon="time">
-              <ForecastCharts hours={chartHours} />
+              <Meteogram hours={chartHours} ariaLabel="Været de neste 24 timene" showTable />
             </PageSection>
           ) : null}
           {outlook.length === 0 ? null : (

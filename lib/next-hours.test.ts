@@ -19,6 +19,22 @@ test("the chart starts at the hour it is now and stops at the count", () => {
   assert.equal(points[0]?.precipitation, 0.5)
 })
 
+test("the chart uses the hourly symbol, falls back to the six-hour symbol, or has none", () => {
+  const hourly = entry(10)
+  hourly.data.next_1_hours!.summary.symbol_code = "hourly"
+
+  const fallback = entry(11)
+  ;(fallback.data.next_1_hours!.summary as { symbol_code?: string }).symbol_code = undefined
+  fallback.data.next_6_hours!.summary.symbol_code = "six-hour"
+
+  const missing = entry(12)
+  ;(missing.data.next_1_hours!.summary as { symbol_code?: string }).symbol_code = undefined
+  missing.data.next_6_hours = undefined
+
+  const points = nextHours([hourly, fallback, missing], new Date("2026-11-20T10:00:00Z"), 3)
+  assert.deepEqual(points.map((point) => point.symbol), ["hourly", "six-hour", undefined])
+})
+
 test("the chart ends where the forecast has no more hourly entries", () => {
   const series = [entry(10), entry(11), entry(12, false), entry(18, false)]
   assert.equal(nextHours(series, new Date("2026-11-20T10:00:00Z"), 24).length, 2)

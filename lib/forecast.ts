@@ -30,6 +30,7 @@ export interface HourPoint {
   temperature: number
   precipitation: number
   wind: number
+  symbol?: string
 }
 
 /** The next `count` hourly entries from the hour `instant` is in, for the chart; a forecast that has gone over to six-hourly entries ends it there. */
@@ -39,7 +40,7 @@ export function nextHours(timeseries: readonly Timeseries[], instant: Date, coun
     if (points.length === count) break
     if (new Date(entry.time).getTime() < instant.getTime() - 3_600_000 + 1) continue
     if (entry.data.next_1_hours === undefined) break
-    points.push({ time: entry.time, temperature: entry.data.instant.details.air_temperature, precipitation: entry.data.next_1_hours.details.precipitation_amount, wind: entry.data.instant.details.wind_speed })
+    points.push({ time: entry.time, temperature: entry.data.instant.details.air_temperature, precipitation: entry.data.next_1_hours.details.precipitation_amount, wind: entry.data.instant.details.wind_speed, symbol: entry.data.next_1_hours?.summary.symbol_code ?? entry.data.next_6_hours?.summary.symbol_code })
   }
   return points
 }
