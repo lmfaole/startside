@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert"
 import { test } from "node:test"
 
-import { isWatched, repoQualifiers, scope } from "./github-query.ts"
+import { isWatched, repliesQuery, repoQualifiers, scope, userQueries } from "./github-query.ts"
 
 test("only public repositories, without the excluded organisations", () => {
   assert.equal(scope(undefined), "is:public")
@@ -29,4 +29,26 @@ test("whether a repository is watched, whatever its case; with none watched, all
   assert.equal(isWatched("lmfaole/startside", "fremtind/jokul"), false)
   assert.equal(isWatched("lmfaole/startside", undefined), true)
   assert.equal(isWatched("lmfaole/startside", "not a repo"), true)
+})
+
+test("every search is by the username and limited to public repositories, never @me", () => {
+  const queries = userQueries("Kari-N", "fremtind")
+  assert.deepEqual(queries, {
+    reviews: "is:open review-requested:Kari-N archived:false is:public -org:fremtind",
+    mine: "is:open author:Kari-N archived:false is:public -org:fremtind",
+    assigned: "is:open is:issue assignee:Kari-N archived:false is:public -org:fremtind",
+    involved: "is:open is:issue involves:Kari-N archived:false is:public -org:fremtind",
+    discussions: "involves:Kari-N is:public -org:fremtind",
+    dependabot: "is:open author:app/dependabot user:Kari-N archived:false is:public -org:fremtind",
+  })
+  for (const query of [...Object.values(queries), repliesQuery("Kari-N", "2026-11-18", undefined)]) {
+    assert.ok(query.includes("is:public"), query)
+    assert.ok(!query.includes("@me"), query)
+  }
+  assert.equal(repliesQuery("kari", "2026-11-18", undefined), "involves:kari is:public archived:false updated:>=2026-11-18 sort:updated-desc")
+})
+
+test("a username that is not a login cannot get into a query", () => {
+  assert.throws(() => userQueries("kari is:private", undefined))
+  assert.throws(() => repliesQuery("kari", "2026-11-18 is:private", undefined))
 })

@@ -13,30 +13,43 @@ const graphql = async (query: string, variables?: unknown): Promise<any> => awai
 const HOUR = 3_600_000
 
 test("the captured GitHub data is moved to now: the newest thing is a few hours old at most", async () => {
-  const reviews = (await mockFetch(`https://api.github.com/search/issues?q=${encodeURIComponent("is:open review-requested:@me is:pr")}`).json()) as { items: { updated_at: string }[] }
+  const reviews = (await mockFetch(`https://api.github.com/search/issues?q=${encodeURIComponent("is:open review-requested:octocat is:pr")}`).json()) as { items: { updated_at: string }[] }
   const newest = Math.max(...reviews.items.map((item) => Date.parse(item.updated_at)))
   assert.ok(Date.now() - newest < 24 * HOUR && newest <= Date.now())
 })
 
 test("the pull request search and its statuses name the same pull requests, and the kinds do not overlap", async () => {
-  const q = "is:open review-requested:@me archived:false is:public is:pr"
+  const q = "is:open review-requested:octocat archived:false is:public is:pr"
   const list = (await mockFetch(`https://api.github.com/search/issues?q=${encodeURIComponent(q)}`).json()) as { items: { html_url: string }[] }
   const reviews = readStatuses(await graphql("search(query: $q", { q }))
-  const mine = readStatuses(await graphql("search(query: $q", { q: "is:open author:@me is:pr" }))
+  const mine = readStatuses(await graphql("search(query: $q", { q: "is:open author:octocat is:pr" }))
   assert.ok(list.items.length > 0)
   assert.deepEqual(list.items.map((item) => item.html_url).sort(), [...reviews.keys()].sort())
   for (const href of reviews.keys()) assert.ok(!mine.has(href))
 })
 
 test("discussions come under the aliases the query asks for, and issues for a watched repository", async () => {
-  const { data } = await graphql('query { involved: search(query: "involves:@me", type: DISCUSSION) r0: repository(owner: "navikt", name: "aksel") { discussions } }')
+  const { data } = await graphql('query { involved: search(query: $q, type: DISCUSSION) r0: repository(owner: "navikt", name: "aksel") { discussions } }')
   assert.ok(discussionNodes(data["r0"].discussions.nodes).length > 0)
   const issues = (await mockFetch("https://api.github.com/repos/fremtind/jokul/issues?state=open").json()) as unknown[]
   assert.ok(issues.length > 0)
 })
 
+test("any username is a user, and the searches by a username find the captured data", async () => {
+  const user = (await mockFetch("https://api.github.com/users/hvem-som-helst").json()) as { login: string; type: string }
+  assert.deepEqual(user, { login: "hvem-som-helst", type: "User" })
+  const assigned = (await mockFetch(`https://api.github.com/search/issues?q=${encodeURIComponent("is:open is:issue assignee:octocat archived:false is:public")}`).json()) as { items: unknown[] }
+  assert.ok(assigned.items.length > 0)
+  const ci = await graphql('query CiRepos($login: String!) { user(login: $login) { repositories { nodes { ...R } } } }', { login: "octocat" })
+  assert.ok(ci.data.user.repositories.nodes.length > 0)
+  const replies = await graphql("query Replies($q: String!) { search(query: $q, type: ISSUE, first: 30) { nodes { id } } }", { q: "involves:octocat is:public" })
+  assert.ok(Array.isArray(replies.data.search.nodes))
+  const repo = (await mockFetch("https://api.github.com/repos/fremtind/jokul").json()) as { private: boolean }
+  assert.equal(repo.private, false)
+})
+
 test("a detail is there for a captured pull request and null for one that is not", async () => {
-  const [href] = [...readStatuses(await graphql("search(query: $q", { q: "is:open author:@me is:pr" })).keys()]
+  const [href] = [...readStatuses(await graphql("search(query: $q", { q: "is:open author:octocat is:pr" })).keys()]
   const [owner, name] = href?.split("/").slice(3, 5) ?? []
   const found = await graphql("pullRequest(number: $number)", { owner, name, number: Number(href?.split("/").at(-1)) })
   assert.equal(found.data.repository.pullRequest.url, href)

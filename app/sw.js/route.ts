@@ -1,9 +1,10 @@
 // The service worker, at /start/sw.js. Its scope is /start (the page itself has no trailing slash), which is wider than
 // the folder it is in, so it says so with Service-Worker-Allowed. It handles /start and what is under /start/, never /startfoo; a page is kept by its address with the query.
+// A page shows the GitHub data of the username in this browser's cookie, so the kept pages are emptied when the username form is sent.
 
 const SCRIPT = String.raw`
 const STATIC = "startside-static-v1"
-const PAGES = "startside-pages-v1"
+const PAGES = "startside-pages-v2"
 const OFFLINE = "/start/offline"
 
 self.addEventListener("install", (event) => {
@@ -26,6 +27,11 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const request = event.request
   const url = new URL(request.url)
+  // A new GitHub username: the pages kept for the one before are for that name, so they go (all but the offline page).
+  if (request.method === "POST" && url.origin === location.origin && url.pathname === "/start/api/brukernavn") {
+    event.waitUntil(caches.open(PAGES).then(async (cache) => Promise.all((await cache.keys()).filter((key) => new URL(key.url).pathname !== OFFLINE).map((key) => cache.delete(key)))))
+    return
+  }
   if (request.method !== "GET" || url.origin !== location.origin || !(url.pathname === "/start" || url.pathname.startsWith("/start/"))) return
 
   // The built files never change under one name: from the cache when there, else fetched and kept.

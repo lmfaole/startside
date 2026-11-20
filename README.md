@@ -14,7 +14,8 @@ Built after the design system's «Pages and navigation» rules (5.3): three leve
 | `/start/pull-requests`, `/issues`, `/discussions` | The **lists**: everything, in groups by what needs you most. Discussions are under Issues (the bar holds five places) |
 | `/start/github` | GitHub in one place: the counts of what wants you and the pages under it (varsler, pull requests, issues, discussions), which have GitHub as their first breadcrumb |
 | `/start/transport` | The stations nearest to the device (Entur, within a kilometre, nearest first), each with a departure board (`DepartureBoard`): line, destination, platform, delays and cancellations. Only from the device's position («Bruk min posisjon»); without it the page says so. `/start/avganger` redirects here (`next.config.ts`) |
-| `/start/varsler` | What wants a look: **feilende CI** (a default branch whose last commit is red, in your public repositories and the watched ones), **nytt fra andre** (replies and reviews on what you are in, last three days, where somebody else wrote last) and **Dependabot** (its open pull requests in your public repositories, with their checks) |
+| `/start/varsler` | What wants a look: **feilende CI** (a default branch whose last commit is red, in the user's public repositories and the watched ones), **nytt fra andre** (replies and reviews on what the user is in, last three days, where somebody else wrote last) and **Dependabot** (its open pull requests in the user's public repositories, with their checks). Only when the username is the token's owner (see below) |
+| `/start/brukernavn` | The GitHub username form by itself, prefilled: where «Bytt» leads. Empty, it forgets the name |
 | `/start/vaer` | The whole forecast: the rest of today, tomorrow, the coming days |
 | `/start/pull-requests/{owner}/{repo}/{n}`, `/issues/…`, `/discussions/…` | The **detail** of one thing: status, description, facts, checks, last comments, and **«Åpne på GitHub» last** |
 
@@ -24,6 +25,27 @@ tabs. A description or a comment is Markdown, shown with `Markdown` and cut at a
 A row links to the app's own page for the thing (`lib/links.ts`), never straight out to GitHub: leaving is the last action on
 the detail page. The detail pages read one item from GitHub's GraphQL (`lib/detail.ts`); the address is checked before it is
 used (`parseRef`). The service worker keeps the last copy of each page by its address, so the pages open offline.
+
+## Whose data: the GitHub username
+
+Every GitHub list is fetched for a GitHub username the visitor gives, never for the token's owner (`@me`, `viewer`). Without one, the GitHub
+pages (`/github`, `/pull-requests`, `/issues`, `/discussions`, `/varsler`) and the GitHub sections of the front page show a form asking for it
+instead of data; Vær, Transport and the detail pages (public anyway) work as before. The form is a plain HTML form (no JavaScript) posted to
+`/start/api/brukernavn` (`app/api/brukernavn/route.ts`) with the field `github` and a hidden `back`: the endpoint asks GitHub (`GET /users/<u>`,
+with the server's token) whether the user exists, keeps the name in the cookie `github_user` (path `/start`, a year, `SameSite=Lax`, `Secure`,
+`HttpOnly`) and answers 303 to `back` (which must start with `/start` and have no `//`; else the front page). An unknown name goes back with
+`?brukernavn-feil=github&brukernavn-verdi=<what was written>`, which the page's form shows as the error; an empty field removes the cookie.
+Once a name is set, every page ends with «Viser data for <u> · Bytt» (`components/shell.tsx`). With `MOCK_DATA=1` any name is taken and the
+lists come from the mock data as before. `lib/username.ts` (pure, tested) checks the name, the way back and the cookie.
+
+The token is the owner's and could read private repositories, so **every search has `is:public`** and uses the name (`author:<u>`,
+`review-requested:<u>`, `assignee:<u>`, `involves:<u>`, Dependabot's `user:<u>`; `userQueries` and `repliesQuery` in `lib/github-query.ts`, tested), the
+user's own repositories for CI are `user(login:)` with `privacy: PUBLIC`, and the watched repositories are read only when they are public. The
+alerts (`/varsler` and «Følg opp») are shown only when the name is the token's login (any case); for anyone else they say so instead.
+
+No answer is shared between names: the edge cache in `lib/upstream.ts` is keyed by the address and the body, which hold the name; the pages are
+rendered per request (`force-dynamic`, `Cache-Control: private, no-store`); and the service worker empties the pages it keeps when the username form
+is sent. The page shows no Spotify data (Spilles nå and Ny musikk are gone; `/musikk` goes to the front page), so the Spotify secrets are not needed.
 
 ## Alerts
 
@@ -41,8 +63,7 @@ the summary, in the morning, the workday, the evening and the weekend, but not a
 | github.com (`<login>.png`, fetched by the browser) | The picture of each person next to their name on the detail pages (`Person` from the design system, `lib/avatar.ts`): reviewers, assignees, who answered, who commented. No token, nothing through the relay | none |
 | Entur (Journey Planner v3, through the relay) | Departures from the stations nearest to the device | none |
 | Yr (MET Norway `locationforecast`) | The forecast for the rest of the day | `WEATHER_PLACE`, `WEATHER_LAT`, `WEATHER_LON` in `wrangler.jsonc` |
-| GitHub | Pull requests awaiting your review, your open pull requests, issues assigned to you | secret `GITHUB_TOKEN` on `startside-upstream` |
-| Spotify (Web API, through the relay) | **Spilles nå** first on the front page, and **Ny musikk** (albums and singles of the last 60 days by the artists you follow: the 30 first followed) on weekends and weekday evenings, with a page of its own at `/musikk`. It sees what plays and who is followed, nothing that changes the account (`SCOPE` in `lib/spotify.ts`). Spotify's terms are kept: their mark (28 px, one colour) and a link back on every part that shows their content, nothing stored beyond minutes in the edge cache | secrets `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` and `SPOTIFY_REFRESH_TOKEN` on `startside`; the token is made by `npm run spotify:auth` and lasts six months |
+| GitHub | For the visitor's username (above), public repositories only: pull requests awaiting their review, their open pull requests, issues assigned to them | secret `GITHUB_TOKEN` on `startside-upstream` |
 
 GitHub is limited to public repositories, and can leave out organisations with `GITHUB_EXCLUDE_ORGS` (comma-separated, in
 `wrangler.jsonc`; none now): `lib/github-query.ts`.
@@ -87,7 +108,7 @@ the workday, not in the evening or the weekend.
 **Ubesvarte**, at most ten each; nothing is shown where there are none.
 
 Searching on `repo:` or `org:` is blocked for the token by SpareBank 1's SAML single sign-on, while reading the repository
-itself is not. So «Du er involvert i» searches by you (`involves:@me`) and is filtered to the watched repositories, and
+itself is not. So «Du er involvert i» searches by the username (`involves:<u> is:public`) and is filtered to the watched repositories, and
 the repositories' own issues (for «Nye uten eier» and «Nylig aktive») and discussions are read straight from them
 (`/repos/{repo}/issues`, GraphQL `repository(...)`). `GITHUB_TOKEN` must live 366 days or less (SpareBank 1 blocks GraphQL
 and direct reads for longer ones).
@@ -156,7 +177,7 @@ Secrets on the Workers, set with `wrangler secret put` or in the dashboard as **
 
 | Worker | Secret |
 | --- | --- |
-| `startside` | `UPSTREAM_KEY`, and for Spotify (optional: the parts are left out without them) `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REFRESH_TOKEN` |
+| `startside` | `UPSTREAM_KEY` |
 | `startside-upstream` | `UPSTREAM_KEY` (the same), `GITHUB_TOKEN` (read access to pull requests and issues) |
 
 ## Develop
@@ -178,7 +199,7 @@ pull request, a closed issue and an answered discussion, Yr for Grünerløkka, E
 now when served. Rerun the script to refresh them; `github` needs about 100 requests and the threads of discussions need GraphQL, so give it a token for that run only:
 `GITHUB_TOKEN=$(gh auth token) node scripts/fetch-mock-data.mjs github` (it is sent, never saved). Put it in `.env.local` (read by `next dev`; gitignored)
 and/or `.dev.vars`, with `GITHUB_WATCH_REPOS=fremtind/jokul,navikt/aksel` for the watched-repository parts. Unset, nothing changes. Never set it in production.
-The app is served under the base path, so the start page is <http://localhost:3000/start> (`/` is 404 by design).
+The app is served under the base path, so the start page is <http://localhost:3000/start> (`/` is 404 by design). Give any GitHub username in the form (or `curl -b github_user=octocat`); the mock's own login (`lmfaole`) also shows the alerts.
 
 The page shows personal data, so `lmfaole.party/start` is behind Cloudflare Access (the application «Startside»): only the owner's address gets in, with a login code by e-mail.
 

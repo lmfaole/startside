@@ -125,7 +125,7 @@ const searchItem = (repo: string, item: { id: number; url: string; title: string
 
 function search(q: string): unknown {
   if (q.includes("is:pr")) return { items: pullsFor(q).map(({ repo, pull }) => searchItem(repo, pull, [])) }
-  return { items: issuesFor(q.includes("assignee:@me") ? "assigned" : "involved").map(({ repo, issue }) => searchItem(repo, issue, issue.assignees)) }
+  return { items: issuesFor(/(^|\s)assignee:/.test(q) ? "assigned" : "involved").map(({ repo, issue }) => searchItem(repo, issue, issue.assignees)) }
 }
 
 const repoIssues = (repo: string): unknown => (nameOf(repo, github().repos)?.issues ?? []).map((issue) => ({ id: issue.id, html_url: issue.url, title: issue.title, created_at: issue.created, updated_at: issue.updated, assignees: issue.assignees.map((login) => ({ login })) }))
@@ -154,7 +154,7 @@ const repoNode = (repo: string, data: Repo) => ({
 
 function ci(query: string): unknown {
   const { repos } = github()
-  const data: Record<string, unknown> = { viewer: { repositories: { nodes: repos.map(([repo, entry]) => repoNode(repo, entry)) } } }
+  const data: Record<string, unknown> = { user: { repositories: { nodes: repos.map(([repo, entry]) => repoNode(repo, entry)) } } }
   for (const [, alias, owner, name] of query.matchAll(ALIAS)) {
     const entry = nameOf(`${owner}/${name}`, repos)
     data[alias as string] = entry === undefined ? null : repoNode(`${owner}/${name}`, entry)
@@ -271,17 +271,22 @@ function graphql(init: MockInit): Response {
   if (query.includes("pullRequest(number:")) return reply(pullDetail(...ref()))
   if (query.includes("issue(number:")) return reply(issueDetail(...ref()))
   if (query.includes("discussion(number:")) return reply(discussionDetail(...ref()))
-  if (query.includes("search(query: $q")) return reply({ data: { search: { nodes: pullsFor(String(variables["q"] ?? "")).map(prNode) } } })
   if (query.includes("type: DISCUSSION")) return reply(discussions(query))
-  if (query.includes("viewer { repositories")) return reply(ci(query))
-  if (query.includes("involves:@me is:public")) return reply(replies())
+  if (query.includes("user(login: $login)")) return reply(ci(query))
+  if (query.startsWith("query Replies")) return reply(replies())
   if (query.includes("viewer { login }")) return reply({ data: { viewer: { login: github().me } } })
+  if (query.includes("search(query: $q")) return reply({ data: { search: { nodes: pullsFor(String(variables["q"] ?? "")).map(prNode) } } })
   return reply({ errors: [{ message: "Ingen mock for denne spørringen" }] })
 }
 
 function githubAnswer(target: URL, init: MockInit): Response {
   if (target.pathname === "/graphql") return graphql(init)
   if (target.pathname === "/search/issues") return reply(search(target.searchParams.get("q") ?? ""))
+  const user = /^\/users\/([^/]+)$/.exec(target.pathname)
+  // Any username is a user in mock data: the lists come from the captured data, whoever is asked for.
+  if (user !== null) return reply({ login: user[1], type: "User" })
+  const repo = /^\/repos\/([^/]+\/[^/]+)$/.exec(target.pathname)
+  if (repo !== null) return reply({ full_name: repo[1], private: false })
   const issues = /^\/repos\/([^/]+\/[^/]+)\/issues$/.exec(target.pathname)
   return issues === null ? notFound(target.href) : reply(repoIssues(issues[1] as string))
 }

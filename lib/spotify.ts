@@ -1,6 +1,6 @@
 /**
  * What the page keeps of Spotify's Web API: the song playing now, the artists you follow and what they have released lately, and how the token to ask with is made.
- * Pure, so a test pins it; `spotify-source.ts` does the asking. Spotify's Development Mode (one owner, Premium) has these endpoints and not the lists of new releases, so
+ * Pure, so a test pins it. Not shown at the moment: the page shows no data of the owner's Spotify account (see README.md). Spotify's Development Mode (one owner, Premium) has these endpoints and not the lists of new releases, so
  * «new music» is made here: the albums and singles of the artists you follow, newest first.
  */
 

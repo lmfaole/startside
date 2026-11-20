@@ -5,9 +5,12 @@ const config: NextConfig = {
   basePath: "/start",
   // The design system ships as TypeScript source, so Next has to compile it.
   transpilePackages: ["@lmfaole/designsystem"],
-  // The departures page became Transport; the base path is put in front of both.
+  // The departures page became Transport; Ny musikk (Spotify) is gone. The base path is put in front of both sides.
   async redirects() {
-    return [{ source: "/avganger", destination: "/transport", permanent: true }]
+    return [
+      { source: "/avganger", destination: "/transport", permanent: true },
+      { source: "/musikk", destination: "/", permanent: false },
+    ]
   },
 }
 

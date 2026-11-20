@@ -6,7 +6,10 @@ import { PageLayout } from "@lmfaole/designsystem/components/page-layout"
 import type { ReactNode } from "react"
 
 import { withBase } from "../lib/links"
+import { USERNAME_PAGE } from "../lib/username"
+import { githubUser } from "../lib/visitor"
 import { Refresh } from "./refresh"
+import { UserChip } from "./username-form"
 
 /** How often the open page asks for itself again (components/refresh.tsx). A source is kept at the edge for as long (lib/upstream.ts) and then shown at once, as it was, while it is asked for anew: a renewal never waits for GitHub. */
 const REFRESH_SECONDS = 60
@@ -27,9 +30,10 @@ const PLACES = [
 /**
  * The frame of every page: the navigation between the places (a bar at the foot on a phone, a rail at the left from tablet width),
  * the title, and on a detail page the way back to the list it belongs to. `current` is the place the page is in; for a detail page,
- * the list it belongs to.
+ * the list it belongs to. At the foot, once a GitHub username is given: whose data it is, and the way to change it.
  */
-export function Shell({ current, width = "reading", trail, crumb, title, lead, actions, children }: { current: PageId; /** `pane` on a detail page: what is looked up (status, facts) in a pane beside what is read from a wide screen up (design system, guide «Wide screens»); `wide` for a page that is looked at more than read (the departure boards). */ width?: "reading" | "pane" | "wide"; /** On a page below another: the pages above it, outermost first; the breadcrumbs are the front page, those, and the page itself. */ trail?: readonly { path: string; label: string }[]; /** The page's name in the breadcrumbs when the title is long (a pull request's title): `#6851`. */ crumb?: string; title: string; lead?: ReactNode; actions?: ReactNode; children: ReactNode }) {
+export async function Shell({ current, width = "reading", trail, crumb, title, lead, actions, children }: { current: PageId; /** `pane` on a detail page: what is looked up (status, facts) in a pane beside what is read from a wide screen up (design system, guide «Wide screens»); `wide` for a page that is looked at more than read (the departure boards). */ width?: "reading" | "pane" | "wide"; /** On a page below another: the pages above it, outermost first; the breadcrumbs are the front page, those, and the page itself. */ trail?: readonly { path: string; label: string }[]; /** The page's name in the breadcrumbs when the title is long (a pull request's title): `#6851`. */ crumb?: string; title: string; lead?: ReactNode; actions?: ReactNode; children: ReactNode }) {
+  const user = await githubUser()
   return (
     <PageLayout width={width} nav={<NavBar label="Hovedmeny" title="Startside" items={PLACES.map((place) => ({ key: place.key, label: place.label, href: withBase(place.path), icon: place.icon, current: place.key === current }))} />}>
       <Refresh everySeconds={REFRESH_SECONDS} />
@@ -37,6 +41,7 @@ export function Shell({ current, width = "reading", trail, crumb, title, lead, a
       {trail === undefined ? null : <Breadcrumbs items={[{ label: "Startside", href: withBase("") }, ...trail.map((page) => ({ label: page.label, href: withBase(page.path) })), { label: crumb ?? title, href: "#" }]} />}
       <PageHeader title={title} lead={lead} actions={actions} />
       {children}
+      {user === null ? null : <UserChip user={user} href={USERNAME_PAGE} />}
     </PageLayout>
   )
 }

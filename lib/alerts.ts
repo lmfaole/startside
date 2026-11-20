@@ -91,7 +91,7 @@ export function fromOthers(nodes: readonly (InvolvedNode | null)[], me: string, 
     const reviewAt = review?.submittedAt ?? ""
     const latest = reviewAt > commentAt ? { last: review, at: reviewAt, review: true } : { last: comment, at: commentAt, review: false }
     const login = latest.last?.author?.login
-    if (latest.last === null || login === undefined || login === me || latest.at === "" || osloTime(new Date(latest.at)).date < since) continue
+    if (latest.last === null || login === undefined || login.toLowerCase() === me.toLowerCase() || latest.at === "" || osloTime(new Date(latest.at)).date < since) continue
     const state = latest.last.state
     replies.push({
       key: node.id,
