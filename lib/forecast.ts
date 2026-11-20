@@ -24,6 +24,25 @@ export function pickHours(timeseries: readonly Timeseries[], window: "today" | "
   return window === "today" ? inDay.filter((_, index) => index % 2 === 0) : inDay.filter((entry) => osloTime(new Date(entry.time)).hour % 3 === 0)
 }
 
+/** One hour of the chart: when, the temperature and the rain that falls in the hour after. */
+export interface HourPoint {
+  time: string
+  temperature: number
+  precipitation: number
+}
+
+/** The next `count` hourly entries from the hour `instant` is in, for the chart; a forecast that has gone over to six-hourly entries ends it there. */
+export function nextHours(timeseries: readonly Timeseries[], instant: Date, count: number): HourPoint[] {
+  const points: HourPoint[] = []
+  for (const entry of timeseries) {
+    if (points.length === count) break
+    if (new Date(entry.time).getTime() < instant.getTime() - 3_600_000 + 1) continue
+    if (entry.data.next_1_hours === undefined) break
+    points.push({ time: entry.time, temperature: entry.data.instant.details.air_temperature, precipitation: entry.data.next_1_hours.details.precipitation_amount })
+  }
+  return points
+}
+
 /** The icon for one of Yr's symbol codes (`lightrainshowersandthunder_day`): thunder before rain before snow before fog before cloud before clear. */
 export function weatherIcon(code: string): IconName {
   const base = code.replace(/_(day|night|polartwilight)$/, "")

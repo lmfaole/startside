@@ -8,11 +8,12 @@ import { WeatherStage } from "@lmfaole/designsystem/components/weather-stage"
 import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { cookies } from "next/headers"
 
+import { ForecastCharts } from "../../components/forecast-charts"
 import { PositionControl } from "../../components/position"
 import { hourRows } from "../../components/sections"
 import { Shell } from "../../components/shell"
 import { dayOf, now } from "../../lib/day"
-import { dailyOutlook, weatherIcon } from "../../lib/forecast"
+import { dailyOutlook, nextHours, weatherIcon } from "../../lib/forecast"
 import { dateLine, degrees, number } from "../../lib/format"
 import { parsePosition, POSITION_COOKIE } from "../../lib/position"
 import { settle } from "../../lib/settle"
@@ -31,6 +32,7 @@ export default async function Page() {
 
   const current = forecast.ok ? forecast.value.timeseries[0] : undefined
   const symbol = current?.data.next_1_hours?.summary.symbol_code ?? current?.data.next_6_hours?.summary.symbol_code
+  const chartHours = forecast.ok ? nextHours(forecast.value.timeseries, instant, 24) : []
   const today = forecast.ok ? hourRows(forecast.value, "today", day, instant) : []
 
   return (
@@ -53,6 +55,11 @@ export default async function Page() {
                 </Text>
               </Stack>
             </WeatherStage>
+          ) : null}
+          {chartHours.length > 1 ? (
+            <PageSection id="next-hours" title="Neste døgn" icon="time">
+              <ForecastCharts hours={chartHours} />
+            </PageSection>
           ) : null}
           <PageSection id="today" title="Resten av i dag" icon="weather">
             {today.length === 0 ? <EmptyState title="Ingen flere timer i dag" /> : <Rows lead="icon" rows={today} columns={columns} />}
