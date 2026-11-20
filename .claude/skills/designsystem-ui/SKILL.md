@@ -61,7 +61,7 @@ with a list, a table, a `dl` or `Text`. Cards are not nested (rule 8).
 - **Alpha never carries text or a mark that needs 3:1** (`border` and `input` are decorative, about 1.3:1; a field takes its edge from `muted-foreground`). Check a pair on `card` as well as on the page.
 - Chart colours: `series-*` are six that differ in lightness as well as hue and are told apart for every kind of colour vision; a chart still names its series. Never rely on the lightest default steps or a `chart-*` step alone.
 - A part with a shadow-only edge or a fill-only state also has a border or a mark (forced colours drop shadows and fills). Icons use `currentColor`.
-- A change to a token: `npm test` (`theme-contrast.test.ts`), the numbers in Tokens / Overview, the Accessibility panel in light and dark, and a look at hover, focus, selected, disabled and error.
+- A change to a token: `npm test` (`theme-contrast.test.ts`), the numbers in Foundations / Tokens / Overview, the Accessibility panel in light and dark, and a look at hover, focus, selected, disabled and error.
 
 ## Charts
 
@@ -87,8 +87,19 @@ decoration, and not the same icon on every row (use it to tell kinds and states 
 
 ## Motion
 
-Durations and easings come from the `--motion-*` tokens. Entrances **move and never fade text**. Everything is off under
-`prefers-reduced-motion`. Motion is for orienting the reader (a new row, a change of page), never decoration.
+Durations and easings come from the `--motion-*` tokens, named by purpose (`instant` for a press, `fast`, `enter`, `exit`, `reveal`,
+`data`, `live`; the easings `enter`, `exit`, `standard`, `spring`). Entrances **move and never fade text**; exits are shorter, on the exit
+curve. Everything is off under `prefers-reduced-motion`. Motion is for orienting the reader (a new row, a change of page), never decoration.
+The guide is **Foundations / Motion**.
+
+- **Every control keeps one state model**: hover (a tint, pointer only), pressed (at once, `motion-press`), focus (a solid outline in
+  `--ring`, never animated), selected, busy (`aria-busy`, label kept, dimmed with `motion-pending`), done or failed (a sentence in a status
+  region). No ripple; a state never changes the layout.
+- **Answer within 0.1 s; over 1 s say it is on its way** (a skeleton, `main[aria-busy]`); over 10 s say how long.
+- **No loop longer than five seconds** (WCAG 2.2.2): a pulse beats twice and stops.
+- **Only compositor properties move** (`transform`, `translate`, `scale`, `opacity`, registered numbers); never `transition-all` in our code.
+- Opening and closing is CSS (`@starting-style`, `allow-discrete`, `::details-content`); a change of page is the view transition, never
+  a `Reveal` on top of it.
 
 ## Installed and server-rendered
 
@@ -101,7 +112,7 @@ Durations and easings come from the `--motion-*` tokens. Entrances **move and ne
 
 - A `Picture` gets `sources` (the widths its API offers) so the browser takes the smallest sharp one; only the picture that leads the page
   is `priority`, every other is lazy.
-- No third-party script, font or CDN; no autoplay; two font families, `latin` only; motion from the tokens.
+- No third-party script, font or CDN; no autoplay; one font superfamily (Atkinson Hyperlegible Next and Mono), `latin` only, mono only for short labels and code; motion from the tokens.
 - An app runs `npx designsystem-budget dist` in CI: under 500 KB a page (150 script, 50 CSS, 100 fonts), with grams of CO2e per view.
 
 ## Before you write markup
