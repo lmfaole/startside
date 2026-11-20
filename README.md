@@ -15,7 +15,7 @@ Built after the design system's «Pages and navigation» rules (5.3): three leve
 | `/start/github` | GitHub in one place: the counts of what wants you and the pages under it (varsler, pull requests, issues, discussions), which have GitHub as their first breadcrumb |
 | `/start/transport` | The stations nearest to the device (Entur, within a kilometre, nearest first), each with a departure board (`DepartureBoard`): line, destination, platform, delays and cancellations. Only from the device's position («Bruk min posisjon»); without it the page says so. `/start/avganger` redirects here (`next.config.ts`) |
 | `/start/varsler` | What wants a look: **feilende CI** (a default branch whose last commit is red, in the user's public repositories and the watched ones), **nytt fra andre** (replies and reviews on what the user is in, last three days, where somebody else wrote last) and **Dependabot** (its open pull requests in the user's public repositories, with their checks). Only when the username is the token's owner (see below) |
-| `/start/innstillinger` | **Innstillinger**: the GitHub username and the watched repositories, the position, the front page's sections, the theme, the effects and the tilt, installing, and «Vis introen igjen». Where «Bytt» leads (`#github`); `/start/brukernavn` redirects here |
+| `/start/innstillinger` | **Innstillinger** (last in the menu): an overview (`SubPages` with what is chosen now) of the subpages `konto` (GitHub username; where «Bytt» leads, and where `/start/brukernavn` redirects), `repoer`, `forside` (sections and their order), `tid` (time of day), `posisjon`, `utseende` (theme, effects, tilt) and `app` (install, «Vis introen igjen»), each with its own small form; «Vis introen igjen» also at the bottom of the overview |
 | `/start/vaer` | The whole forecast: the rest of today, tomorrow, the coming days |
 | `/start/pull-requests/{owner}/{repo}/{n}`, `/issues/…`, `/discussions/…` | The **detail** of one thing: status, description, facts, checks, last comments, and **«Åpne på GitHub» last** |
 
@@ -93,7 +93,7 @@ The page follows the time of day in Oslo (`lib/day.ts`, the plan in `lib/plan.ts
 | Weekend | as above | as above without issues and discussions, own pull requests only | today by day, tomorrow in the evening |
 
 Before the morning starts (05:00) it is still the day before, so the night after Friday is a weekday and the night after Sunday a weekend.
-The time of day only decides which sections show; their order is one order, the visitor's (`order` in `prefs`, `lib/section-order.ts`;
+The time of day only decides which sections show; their order is one order, the visitor's (`order` in `prefs`, the design system's `orderSections`;
 by default alerts, pull requests, issues, discussions, weather).
 
 The visitor's settings are the cookie `startside_day` (`lib/day-settings.ts`, path `/start`, a year, `SameSite=Lax`, `Secure`; a query
@@ -172,8 +172,9 @@ server's); and the offer to install the app on the front page (`install`). An em
 On a first visit any page (not Innstillinger, the API or the offline page) opens over it the design system's **first-run wizard** (`FirstRun` +
 `FirstRunEnhancer`, `components/first-run.tsx`), drawn open by the server until `first-run@1` is in `seen`, so nothing flashes; the intros and the
 install offer wait until it is done. One question per step, nine steps: welcome · GitHub username · watched repositories (prefilled with
-`GITHUB_WATCH_REPOS`, at most 20) · position · the front page's sections · theme · effects · tilt (the light follows the phone) · install. **Innstillinger** (`app/innstillinger/page.tsx`) has the same fields
-(`components/settings-fields.tsx`) in one form, and «Vis introen igjen».
+`GITHUB_WATCH_REPOS`, at most 20) · position · the front page's sections · theme · effects · tilt (the light follows the phone) · install. **Innstillinger** (`app/innstillinger/`) has the same fields
+(`components/settings-fields.tsx`) on subpages, one small form each (`components/settings-subpage.tsx`, `?lagret=1` shows «Lagret»), plus the order
+(`ReorderList`) and the time of day; links to the old long page's anchors (`#tider`, `#rekkefolge`, …) are sent on to the subpage in the browser.
 
 Both post to `/start/api/innstillinger` (`app/api/innstillinger/route.ts`; pure parts in `lib/settings.ts`, tested), a plain form that works without
 JavaScript:
@@ -182,14 +183,14 @@ JavaScript:
 - Otherwise it keeps what is valid: `prefs` (the design system's `lib/preferences`: `theme`, `effects`, `tilt`, `sections`; not `HttpOnly`, the
   page's scripts read it), `github_user` (checked as for `/api/brukernavn`) and `github_repos` (each `owner/name` must be a public repository,
   `GET /repos/{repo}` with `private: false`; `HttpOnly`). It marks the wizard seen and answers 303 to `back` (the wizard sends none, so the page it
-  was opened on, from the referrer), with `?lagret=1` for the settings page.
-- What GitHub did not have goes back at its step: `?forste-gang=<step>#first-run-<step>` from the wizard (it opens there again), `#github` on the
-  settings page, with the errors and what was written in the short-lived cookie `innstillinger-feil` (two minutes, `HttpOnly`). The wizard is not
+  was opened on, from the referrer), with `?lagret=1` for a settings subpage.
+- What GitHub did not have goes back at its step: `?forste-gang=<step>#first-run-<step>` from the wizard (it opens there again), `#github` (or `#repos`, `#tider`) on the
+  settings subpage, with the errors and what was written in the short-lived cookie `innstillinger-feil` (two minutes, `HttpOnly`). The wizard is not
   marked seen then.
 - `skip=1` («Hopp over») only marks it seen; `rerun=1` («Vis introen igjen») removes it from `seen` and goes back.
 - `order=<id>,<id>` keeps the front page's order in `prefs` (`order=`). `move=<id>:up|down` (the reorder buttons without JavaScript) moves
-  one section in the submitted `order` (or the saved one), keeps only that, and goes back to `/start/innstillinger#rekkefolge`.
-- With `day=1` (the settings page's time-of-day fields; the wizard never sends it) it keeps `startside_day` (`readDayForm`): `mode`,
+  one section in the submitted `order` (or the saved one), keeps only that, and goes back to `back` (`/start/innstillinger/forside`) at `#rekkefolge`.
+- With `day=1` (`/start/innstillinger/tid`; the wizard never sends it) it keeps `startside_day` (`readDayForm`): `mode`,
   `greeting`, `weekend`, `weather.<part>`, `pulls.<part>` (absent: unchanged), `weekenddays` and `show.<part>` (checkboxes, several values;
   absent: none, so never disable them), and `starts.morgen`, `starts.arbeidsdag`, `starts.kveld`, `starts.natt` (`HH:MM`). Starts that are
   not quarter hours or not in order are not kept: the error goes back as `starts` in `innstillinger-feil`, to `#tider`.

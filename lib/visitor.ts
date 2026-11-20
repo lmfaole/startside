@@ -7,7 +7,6 @@ import { env } from "./env"
 import { parseRepos } from "./github-query"
 import { BASE } from "./links"
 import { decodeProblems, FIRST_RUN, parseReposCookie, PROBLEMS_COOKIE, REPOS_COOKIE, type Problems } from "./settings"
-import { parseOrder } from "./section-order"
 import { formState, GITHUB_USER_COOKIE, parseLogin, type SearchParams } from "./username"
 
 /** The visitor's GitHub username from their cookie, or `null` before they have given one: then no GitHub data is fetched. */
@@ -48,11 +47,6 @@ export function suggestedRepos(): string[] {
 /** How the visitor wants the app (the `prefs` cookie): theme, effects, tilt and the front page's sections. */
 export async function visitorPrefs(): Promise<Prefs> {
   return parsePrefs((await cookies()).get(PREFS_COOKIE)?.value)
-}
-
-/** The front page's order of sections (`order` in the `prefs` cookie, lib/section-order.ts); `undefined` before one is saved. */
-export async function visitorOrder(): Promise<string[] | undefined> {
-  return parseOrder((await cookies()).get(PREFS_COOKIE)?.value)
 }
 
 /** How the front page follows the time of day (the `startside_day` cookie); the defaults before anything is set. */

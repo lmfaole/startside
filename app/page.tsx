@@ -1,3 +1,4 @@
+import { orderSections } from "@lmfaole/designsystem/lib/preferences"
 import { EmptyState } from "@lmfaole/designsystem/components/empty-state"
 import { Freshness } from "@lmfaole/designsystem/components/freshness"
 import { InstallPrompt } from "@lmfaole/designsystem/components/install-prompt"
@@ -17,14 +18,13 @@ import { getCiFailures, getDependabot, getDiscussions, getIssues, getPulls, getR
 import { groupIssues } from "../lib/issues"
 import { BASE } from "../lib/links"
 import { chosenSections, planFor } from "../lib/plan"
-import { sectionOrder } from "../lib/section-order"
 import { parsePosition, POSITION_COOKIE } from "../lib/position"
 import { groupPulls } from "../lib/pulls"
 import { settle } from "../lib/settle"
-import { SETTINGS_PAGE } from "../lib/settings"
+import { settingsPage } from "../lib/settings"
 import { summaryItems } from "../lib/summary"
 import { formState, type SearchParams } from "../lib/username"
-import { githubPage, introSeen, SEEN_PATH, visitorDaySettings, visitorOrder, visitorPrefs } from "../lib/visitor"
+import { githubPage, introSeen, SEEN_PATH, visitorDaySettings, visitorPrefs } from "../lib/visitor"
 import { getForecast } from "../lib/yr"
 
 /** The page renews itself every minute (components/shell.tsx); after three missed renewals it says its data may be old. */
@@ -36,7 +36,7 @@ export const dynamic = "force-dynamic"
 /**
  * The front page is a digest: first the state in counts (each a link to what it counts), then the few things that need you
  * most from each source, each with a way to all of it. Which sections are shown follows the time of day as the visitor set it
- * (lib/plan.ts, lib/day-settings.ts), in the one order the visitor chose (lib/section-order.ts); what is left out
+ * (lib/plan.ts, lib/day-settings.ts), in the one order the visitor chose (`order` in `prefs`, the design system's `orderSections`); what is left out
  * is not fetched either. The lists, and a page for each thing, are one level down. GitHub is fetched for the visitor's username
  * (lib/visitor.ts); before there is one, the form asking for it stands where the first GitHub section would be. The alerts are the
  * token owner's only.
@@ -44,10 +44,10 @@ export const dynamic = "force-dynamic"
 export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const instant = now()
   const position = parsePosition((await cookies()).get(POSITION_COOKIE)?.value)
-  const [{ user, known, params }, prefs, order, daySettings] = await Promise.all([githubPage(searchParams), visitorPrefs(), visitorOrder(), visitorDaySettings()])
+  const [{ user, known, params }, prefs, daySettings] = await Promise.all([githubPage(searchParams), visitorPrefs(), visitorDaySettings()])
   const day = dayOf(instant, daySettings)
   const planned = planFor(day, daySettings)
-  const plan = { ...planned, sections: sectionOrder(chosenSections(planned.sections, prefs.sections), order) }
+  const plan = { ...planned, sections: orderSections(chosenSections(planned.sections, prefs.sections), prefs.order) }
   const asking = user === null
   const owner = user === null ? false : await isTokenOwner(user).catch(() => false)
   const wants = (id: (typeof plan.sections)[number]) => plan.sections.includes(id)
@@ -99,7 +99,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
           return null
         })}
         {formAt === "end" ? form : null}
-        {plan.sections.length === 0 ? <EmptyState title="Ingenting å vise nå" description="Forsiden viser bare delene du har valgt, og bare når de passer tiden på døgnet. Velg flere i innstillingene." icon="settings" action={{ href: `${SETTINGS_PAGE}#forside`, label: "Velg hva forsiden viser" }} /> : null}
+        {plan.sections.length === 0 ? <EmptyState title="Ingenting å vise nå" description="Forsiden viser bare delene du har valgt, og bare når de passer tiden på døgnet. Velg flere i innstillingene." icon="settings" action={{ href: settingsPage("forside"), label: "Velg hva forsiden viser" }} /> : null}
         <InstallPrompt appName="Startside" seen={await introSeen("install")} cookiePath={SEEN_PATH} />
       </Stack>
     </Shell>

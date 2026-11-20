@@ -1,13 +1,13 @@
 import { addSeen, SEEN_COOKIE, seenCookieString } from "@lmfaole/designsystem/lib/onboarding"
-import { parsePrefs, PREFS_COOKIE, prefsCookieString, serializePrefs } from "@lmfaole/designsystem/lib/preferences"
+import { orderSections, parsePrefs, PREFS_COOKIE, prefsCookieString, serializePrefs } from "@lmfaole/designsystem/lib/preferences"
+import { applyMove } from "@lmfaole/designsystem/lib/reorder"
 import { cookies } from "next/headers"
 
 import { DAY_COOKIE, dayCookieString, parseDaySettings, readDayForm, serializeDaySettings } from "../../../lib/day-settings"
 import { githubLogin, publicRepo } from "../../../lib/github-check"
 import { BASE } from "../../../lib/links"
 import { SECTIONS } from "../../../lib/plan"
-import { applyMove, parseOrder, readOrder, sectionOrder, withOrder } from "../../../lib/section-order"
-import { backWith, checkSettings, FIRST_RUN, firstStep, mergeChoices, problemsCookie, readSettingsForm, refererPath, reposCookie, SETTINGS_PAGE, withoutSeen, type Problems } from "../../../lib/settings"
+import { backWith, checkSettings, FIRST_RUN, firstStep, mergeChoices, problemsCookie, readSettingsForm, refererPath, reposCookie, withoutSeen, type Problems } from "../../../lib/settings"
 import { safeBack, userCookie } from "../../../lib/username"
 
 const go = (location: string, setCookies: string[]): Response => {
@@ -23,9 +23,9 @@ const go = (location: string, setCookies: string[]): Response => {
  * (`innstillinger-feil`, a couple of minutes), at the wizard's step. `skip=1` only marks it seen; `rerun=1` («Vis introen igjen») unmarks it.
  * The page to go back to is `back`, or, from the wizard (drawn on any page), the page it was sent from.
  *
- * The front page's order: `order` (comma ids) is kept in `prefs` (`order=`). `move=<id>:up|down` (the reorder list's buttons without
- * JavaScript) moves the section in the submitted `order` (or the saved one), keeps only that and goes back to the settings page's
- * `#rekkefolge`. The time of day (`startside_day`, lib/day-settings.ts) is only touched when the form has `day=1`, so the wizard leaves it
+ * The front page's order: `order` (comma ids, the design system's `ReorderList`) is kept in `prefs` (`order=`). `move=<id>:up|down` (its
+ * buttons without JavaScript) moves the section in the submitted `order` (`applyMove`), saves the form with it and goes back to the page's
+ * `#rekkefolge`, without «Lagret». The time of day (`startside_day`, lib/day-settings.ts) is only touched when the form has `day=1`, so the wizard leaves it
  * be: `mode`, `greeting`, `starts.<part>`, `weekend`, `weekenddays`, `show.<part>`, `weather.<part>`, `pulls.<part>` (`readDayForm`).
  */
 export async function POST(request: Request): Promise<Response> {
@@ -35,13 +35,9 @@ export async function POST(request: Request): Promise<Response> {
   const back = safeBack(typeof written === "string" && written !== "" ? written : refererPath(request.headers.get("referer"), new URL(request.url).origin))
   const seen = jar.get(SEEN_COOKIE)?.value
   const read = readSettingsForm(form)
-  const prefsValue = jar.get(PREFS_COOKIE)?.value
-  const writtenOrder = readOrder(form.get("order"))
-  const order = sectionOrder(SECTIONS, writtenOrder ?? parseOrder(prefsValue))
+  const current = parsePrefs(jar.get(PREFS_COOKIE)?.value)
   const move = form.get("move")
-  if (typeof move === "string" && move !== "") {
-    return go(`${SETTINGS_PAGE}#rekkefolge`, [prefsCookieString(withOrder(serializePrefs(parsePrefs(prefsValue)), applyMove(order, move)), BASE)])
-  }
+  if (typeof move === "string" && move !== "") read.order = applyMove(orderSections(SECTIONS, read.order ?? current.order), move) as typeof read.order
 
   if (read.rerun) return go(backWith(back), [seenCookieString(withoutSeen(seen, FIRST_RUN), BASE), problemsCookie(null)])
   if (read.skip) return go(backWith(back), [seenCookieString(addSeen(seen, FIRST_RUN), BASE), problemsCookie(null)])
@@ -51,8 +47,7 @@ export async function POST(request: Request): Promise<Response> {
   if (day?.errors.starts !== undefined) checked.errors.starts = day.errors.starts
   if (read.validate !== undefined) return Response.json({ errors: checked.errors }, { headers: { "Cache-Control": "no-store" } })
 
-  const prefs = serializePrefs(mergeChoices(parsePrefs(prefsValue), read))
-  const kept = [prefsCookieString(withOrder(prefs, writtenOrder === undefined ? parseOrder(prefsValue) : order), BASE)]
+  const kept = [prefsCookieString(serializePrefs(mergeChoices(current, read)), BASE)]
   if (day !== undefined) kept.push(dayCookieString(serializeDaySettings(day.settings), BASE))
   if (checked.github !== undefined) kept.push(userCookie(checked.github))
   if (checked.repos !== undefined) kept.push(reposCookie(checked.repos))
@@ -70,5 +65,6 @@ export async function POST(request: Request): Promise<Response> {
     }
     return go(read.fromWizard ? backWith(back, { step }) : `${backWith(back)}#${step}`, [...kept, problemsCookie(problems)])
   }
+  if (typeof move === "string" && move !== "") return go(`${backWith(back)}#rekkefolge`, [...kept, problemsCookie(null)])
   return go(read.fromWizard ? backWith(back) : backWith(back, { saved: true }), [...kept, seenCookieString(addSeen(seen, FIRST_RUN), BASE), problemsCookie(null)])
 }

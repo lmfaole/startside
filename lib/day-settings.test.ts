@@ -2,9 +2,8 @@ import { strict as assert } from "node:assert"
 import { test } from "node:test"
 
 import { dayOf, partOfMinute } from "./day.ts"
-import { DAY_COOKIE, dayCookieString, DEFAULT_DAY_SETTINGS, parseDaySettings, parseTime, readDayForm, serializeDaySettings, startsInOrder, type DaySettings } from "./day-settings.ts"
+import { DAY_COOKIE, dayCookieString, daySummary, DEFAULT_DAY_SETTINGS, parseDaySettings, parseTime, readDayForm, serializeDaySettings, startsInOrder, type DaySettings } from "./day-settings.ts"
 import { planFor } from "./plan.ts"
-import { applyMove, parseOrder, readOrder, sectionOrder, withOrder } from "./section-order.ts"
 
 const PARTS = ["morgen", "arbeidsdag", "kveld", "natt"] as const
 const settings = (cookie: string): DaySettings => parseDaySettings(cookie)
@@ -112,25 +111,8 @@ test("the form: absent radios are kept, checkbox groups are what is ticked, star
   assert.match(readDayForm(form([["starts.morgen", "kl 7"]]), current).errors.starts ?? "", /«kl 7» er ikke et klokkeslett/)
 })
 
-test("the one order of sections: saved ones first, new ones after in the default order, unknown ones ignored", () => {
-  const all = ["alerts", "pulls", "issues", "discussions", "weather"] as const
-  assert.deepEqual(sectionOrder(all, undefined), all)
-  assert.deepEqual(sectionOrder(all, ["weather", "gone", "issues"]), ["weather", "issues", "alerts", "pulls", "discussions"])
-  assert.deepEqual(sectionOrder(["pulls", "weather"], ["weather", "issues", "pulls"]), ["weather", "pulls"])
-  assert.deepEqual(parseOrder(encodeURIComponent("theme=dark&order=weather,pulls,,weather,<x>")), ["weather", "pulls"])
-  assert.equal(parseOrder("theme=dark"), undefined)
-  assert.deepEqual(readOrder(" pulls , weather "), ["pulls", "weather"])
-  assert.equal(readOrder(null), undefined)
-  assert.equal(decodeURIComponent(withOrder("theme=dark&order=x", ["weather", "pulls"])), "theme=dark&order=weather,pulls")
-  assert.equal(withOrder("theme=dark&order=x", undefined), "theme=dark")
-})
-
-test("a move without JavaScript: up and down, not past the ends, nonsense ignored", () => {
-  const order = ["alerts", "pulls", "weather"]
-  assert.deepEqual(applyMove(order, "weather:up"), ["alerts", "weather", "pulls"])
-  assert.deepEqual(applyMove(order, "alerts:down"), ["pulls", "alerts", "weather"])
-  assert.deepEqual(applyMove(order, "alerts:up"), order)
-  assert.deepEqual(applyMove(order, "weather:down"), order)
-  assert.deepEqual(applyMove(order, "nothing:up"), order)
-  assert.deepEqual(applyMove(order, "weather"), order)
+test("the overview's summary: off, or when the morning starts and what is turned off", () => {
+  assert.equal(daySummary(DEFAULT_DAY_SETTINGS), "Automatisk · morgen fra 05:00")
+  assert.equal(daySummary({ ...DEFAULT_DAY_SETTINGS, starts: { ...DEFAULT_DAY_SETTINGS.starts, morgen: 6 * 60 + 30 }, weekend: "off", greeting: "off" }), "Automatisk · morgen fra 06:30 · ingen egen helg · uten hilsen")
+  assert.equal(daySummary({ ...DEFAULT_DAY_SETTINGS, mode: "off" }), "Av · samme forside hele dagen")
 })

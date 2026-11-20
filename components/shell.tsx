@@ -8,7 +8,7 @@ import { isNew, isSeen } from "@lmfaole/designsystem/lib/onboarding"
 import type { ReactNode } from "react"
 
 import { withBase } from "../lib/links"
-import { SETTINGS_PAGE } from "../lib/settings"
+import { USERNAME_PAGE } from "../lib/username"
 import { now } from "../lib/day"
 import { githubUser, seenNotes, TRANSPORT_NEW_UNTIL } from "../lib/visitor"
 import { FirstRunWizard } from "./first-run"
@@ -50,7 +50,7 @@ export async function Shell({ current, firstRun = true, width = "reading", trail
       {trail === undefined ? null : <Breadcrumbs items={[{ label: "Startside", href: withBase("") }, ...trail.map((page) => ({ label: page.label, href: withBase(page.path) })), { label: crumb ?? title, href: "#" }]} />}
       <PageHeader title={title} lead={lead} actions={actions} />
       {children}
-      {user === null ? null : <UserChip user={user} href={`${SETTINGS_PAGE}#github`} />}
+      {user === null ? null : <UserChip user={user} href={USERNAME_PAGE} />}
       {firstRun ? <FirstRunWizard /> : null}
     </PageLayout>
   )

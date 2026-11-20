@@ -210,3 +210,12 @@ export function readDayForm(form: FormData, current: DaySettings): DayForm {
   result.settings.starts = starts
   return result
 }
+
+/** The time of day in a few words, for the settings overview: «Av», or «Automatisk · morgen fra 05:00» (and what differs from the defaults' kind). */
+export function daySummary(settings: DaySettings): string {
+  if (settings.mode === "off") return "Av · samme forside hele dagen"
+  const parts = [`Automatisk · morgen fra ${formatTime(settings.starts.morgen)}`]
+  if (settings.weekend === "off") parts.push("ingen egen helg")
+  if (settings.greeting === "off") parts.push("uten hilsen")
+  return parts.join(" · ")
+}

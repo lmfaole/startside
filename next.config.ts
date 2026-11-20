@@ -10,7 +10,7 @@ const config: NextConfig = {
     return [
       { source: "/avganger", destination: "/transport", permanent: true },
       { source: "/musikk", destination: "/", permanent: false },
-      { source: "/brukernavn", destination: "/innstillinger", permanent: true },
+      { source: "/brukernavn", destination: "/innstillinger/konto", permanent: true },
     ]
   },
 }

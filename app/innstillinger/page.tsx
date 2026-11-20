@@ -1,74 +1,52 @@
 import { Banner } from "@lmfaole/designsystem/components/banner"
 import { FormErrorSummary } from "@lmfaole/designsystem/components/form-error-summary"
-import { InstallPrompt } from "@lmfaole/designsystem/components/install-prompt"
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { SettingsSection } from "@lmfaole/designsystem/components/settings-section"
-import { Text } from "@lmfaole/designsystem/components/text"
-import { Button } from "@lmfaole/designsystem/components/ui/button"
+import { SubPages } from "@lmfaole/designsystem/components/sub-pages"
+import { orderSections } from "@lmfaole/designsystem/lib/preferences"
 import { cookies } from "next/headers"
 
-import { settingsFields } from "../../components/settings-fields"
+import { IntroAgain } from "../../components/intro-again"
+import { OldSettingsAnchor } from "../../components/old-settings-anchor"
 import { Shell } from "../../components/shell"
-import { BASE } from "../../lib/links"
+import { daySummary } from "../../lib/day-settings"
+import { SECTIONS } from "../../lib/plan"
 import { parsePosition, POSITION_COOKIE } from "../../lib/position"
-import { SETTINGS_ENDPOINT, SETTINGS_PAGE } from "../../lib/settings"
+import { appearanceSummary, parseReposCookie, REPOS_COOKIE, reposSummary, sectionsSummary, settingsPage } from "../../lib/settings"
 import type { SearchParams } from "../../lib/username"
-import { SEEN_PATH, settingsState } from "../../lib/visitor"
+import { settingsState, visitorDaySettings } from "../../lib/visitor"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Innstillinger · Startside" }
 
 /**
- * The same choices as the first-run wizard, all on one page and in one form to the settings endpoint, which comes back here with
- * `?lagret=1`, or with what GitHub did not have. The position is not a form field: it is shared from its own button, at once.
- * «Vis introen igjen» opens the wizard again on the front page.
+ * The settings' overview: one row per subpage with what is chosen there now, and «Vis introen igjen» at the bottom. Each subpage has its
+ * own small form to the settings endpoint. «Lagret» here is for a save that came back to the overview (an older form).
  */
 export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const [params, state, position] = await Promise.all([searchParams, settingsState(), cookies().then((jar) => parsePosition(jar.get(POSITION_COOKIE)?.value))])
-  const fields = settingsFields({ ...state, position })
-  const errors = Object.entries(state.problems?.errors ?? {}).map(([field, message]) => ({ field, message }))
+  const [params, state, day, jar] = await Promise.all([searchParams, settingsState(), visitorDaySettings(), cookies()])
+  const position = parsePosition(jar.get(POSITION_COOKIE)?.value)
+  const errors = Object.entries(state.problems?.errors ?? {}).map(([field, message]) => ({ field, message: String(message) }))
   return (
     <Shell current="settings" firstRun={false} title="Innstillinger" lead="Hvem startsiden henter data for, hva den viser og hvordan den ser ut. Alt lagres i informasjonskapsler i denne nettleseren.">
+      <OldSettingsAnchor />
       <Stack gap="xl">
-        {params["lagret"] === "1" && errors.length === 0 ? <Banner title="Lagret">Innstillingene gjelder fra nå av i denne nettleseren.</Banner> : null}
+        {params["lagret"] === "1" && errors.length === 0 ? <Banner tone="success" title="Lagret">Endringen gjelder fra nå av i denne nettleseren.</Banner> : null}
         {errors.length === 0 ? null : <FormErrorSummary errors={errors} />}
-        <form method="post" action={SETTINGS_ENDPOINT}>
-          <input type="hidden" name="back" value={SETTINGS_PAGE} />
-          <Stack gap="xl">
-            <SettingsSection id="github" title="GitHub" body="Brukernavnet og repoene startsiden henter offentlige data for.">
-              {fields.github}
-              {fields.repos}
-            </SettingsSection>
-            <SettingsSection id="posisjon" title="Posisjon" body="Gir avganger fra holdeplassene nær deg og været der du er. Lagres med en gang du deler den.">
-              {fields.position}
-            </SettingsSection>
-            <SettingsSection id="forside" title="Forside" body="Delene forsiden viser.">
-              {fields.sections}
-            </SettingsSection>
-            <SettingsSection id="tema" title="Utseende">
-              {fields.theme}
-            </SettingsSection>
-            <SettingsSection id="effekter" title="Effekter" body="Bakgrunnen og bildene kan tegnes i 3D.">
-              {fields.effects}
-            </SettingsSection>
-            <SettingsSection id="lys" title="Lyset følger telefonen" body="Når du vipper telefonen, flytter lyset og skyggene seg.">
-              {fields.tilt}
-            </SettingsSection>
-            <Button type="submit">Lagre</Button>
-          </Stack>
-        </form>
-        <SettingsSection id="installer" title="Installer" body="Startside kan legges på hjemskjermen og åpnes i eget vindu.">
-          <InstallPrompt appName="Startside" seen={false} cookiePath={SEEN_PATH} id="install-settings" />
-          <Text tone="muted">Ser du ingen knapp, kan du legge den til fra nettleserens meny («Legg til på Hjem-skjerm» eller «Installer»).</Text>
-        </SettingsSection>
+        <SubPages
+          label="Innstillinger"
+          pages={[
+            { href: settingsPage("konto"), label: "Konto", icon: "person", value: state.user ?? "Ikke valgt", description: "GitHub-brukeren startsiden henter offentlige data for." },
+            { href: settingsPage("repoer"), label: "Repoer", icon: "repository", value: reposSummary(parseReposCookie(jar.get(REPOS_COOKIE)?.value)), description: "Repoene du følger, også der du ikke selv er med." },
+            { href: settingsPage("forside"), label: "Forside", icon: "home", value: sectionsSummary(orderSections(SECTIONS, state.prefs.order), state.prefs.sections), description: "Hvilke deler forsiden viser, og i hvilken rekkefølge." },
+            { href: settingsPage("tid"), label: "Tid på døgnet", icon: "time", value: daySummary(day), description: "Hva forsiden viser om morgenen, på jobb, om kvelden og i helgen." },
+            { href: settingsPage("posisjon"), label: "Posisjon", icon: "place", value: position === null ? "Standardsted" : "Delt", description: "Avganger og vær der du er." },
+            { href: settingsPage("utseende"), label: "Utseende", icon: "sun", value: appearanceSummary(state.prefs), description: "Tema, effekter og lyset." },
+            { href: settingsPage("app"), label: "App", icon: "device", description: "Legg startsiden på hjemskjermen." },
+          ]}
+        />
         <SettingsSection id="intro" title="Introen" body="Gå gjennom de første valgene igjen, ett om gangen.">
-          <form method="post" action={SETTINGS_ENDPOINT}>
-            <input type="hidden" name="back" value={BASE} />
-            <input type="hidden" name="rerun" value="1" />
-            <Button type="submit" variant="outline">
-              Vis introen igjen
-            </Button>
-          </form>
+          <IntroAgain />
         </SettingsSection>
       </Stack>
     </Shell>

@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert"
 import { test } from "node:test"
 
-import { backWith, checkSettings, decodeProblems, encodeProblems, listOf, mergeChoices, parseReposCookie, readSettingsForm, refererPath, reposCookie, withoutSeen, type Checks } from "./settings.ts"
+import { appearanceSummary, backWith, checkSettings, decodeProblems, encodeProblems, listOf, mergeChoices, parseReposCookie, readSettingsForm, refererPath, reposCookie, reposSummary, sectionsSummary, withoutSeen, type Checks } from "./settings.ts"
 
 const form = (entries: [string, string][]): FormData => {
   const data = new FormData()
@@ -29,6 +29,9 @@ test("the choices take what the form changed; every section ticked is the defaul
   assert.deepEqual(mergeChoices(current, readSettingsForm(form([["sections-shown", "1"], ["sections", "weather"]]))).sections, ["weather"])
   const all = ["alerts", "pulls", "issues", "discussions", "weather"].map((id): [string, string] => ["sections", id])
   assert.equal(mergeChoices({ ...current, sections: ["weather"] }, readSettingsForm(form(all))).sections, undefined)
+  // The reorder list's hidden field: known sections only, once each; kept when another form (without it) is saved.
+  assert.deepEqual(readSettingsForm(form([["order", "weather, gone,pulls,weather"]])).order, ["weather", "pulls"])
+  assert.deepEqual(mergeChoices({ ...current, order: ["weather", "pulls"] }, readSettingsForm(form([["theme", "dark"]]))).order, ["weather", "pulls"])
 })
 
 test("the username and the repositories are checked against GitHub; an empty name forgets it", async () => {
@@ -74,4 +77,14 @@ test("«Vis introen igjen» takes the wizard out of the seen cookie and keeps th
   assert.equal(withoutSeen(encodeURIComponent("intro-front@1,first-run@1,install@1"), "first-run"), "intro-front@1,install@1")
   assert.equal(withoutSeen(undefined, "first-run"), "")
   assert.deepEqual(listOf("a\n\nA, b"), ["a", "b"])
+})
+
+test("the overview's summaries: the shown sections in order, the look, the repositories", () => {
+  assert.equal(sectionsSummary(["weather", "alerts", "pulls"], ["pulls", "weather"]), "Været, Pull requests")
+  assert.equal(sectionsSummary(["weather", "alerts"]), "Været, Følg opp")
+  assert.equal(sectionsSummary(["weather"], []), "Ingen deler")
+  assert.equal(appearanceSummary({ theme: "dark", effects: "off", tilt: "on" }), "Mørkt · effekter av · lyset følger telefonen")
+  assert.equal(reposSummary([]), "Ingen")
+  assert.equal(reposSummary(["a/b", "c/d"]), "a/b og c/d")
+  assert.equal(reposSummary(["a/b", "c/d", "e/f", "g/h"]), "a/b, c/d og 2 til")
 })

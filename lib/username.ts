@@ -8,8 +8,8 @@ import { BASE } from "./links.ts"
 export const GITHUB_USER_COOKIE = "github_user"
 /** Where the form posts to. */
 export const USERNAME_ENDPOINT = `${BASE}/api/brukernavn`
-/** Where «Bytt» leads: the GitHub part of the settings page. */
-export const USERNAME_PAGE = `${BASE}/innstillinger#github`
+/** Where «Bytt» leads: the settings' account page. */
+export const USERNAME_PAGE = `${BASE}/innstillinger/konto`
 
 /** The query parameters a failed submission comes back with: which service said no, and what was written. */
 export const ERROR_PARAM = "brukernavn-feil"

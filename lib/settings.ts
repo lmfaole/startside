@@ -10,6 +10,10 @@ import { parseLogin } from "./username.ts"
 
 export const SETTINGS_ENDPOINT = `${BASE}/api/innstillinger`
 export const SETTINGS_PAGE = `${BASE}/innstillinger`
+/** The settings' subpages (`app/innstillinger/<slug>`), each with its own small form; the overview links to them. */
+export const SETTINGS_SUBPAGES = ["konto", "repoer", "forside", "tid", "posisjon", "utseende", "app"] as const
+export type SettingsSubpage = (typeof SETTINGS_SUBPAGES)[number]
+export const settingsPage = (slug: SettingsSubpage): string => `${SETTINGS_PAGE}/${slug}`
 
 /** The repositories to follow, `owner/name` separated by commas (URL-encoded in the cookie). */
 export const REPOS_COOKIE = "github_repos"
@@ -27,7 +31,7 @@ const YEAR = 60 * 60 * 24 * 365
 export type Theme = "system" | "light" | "dark"
 export type OnOff = "on" | "off"
 /** The same shape as the design system's `Prefs`. */
-export type Choices = { theme: Theme; effects: OnOff; tilt: OnOff; sections?: string[] }
+export type Choices = { theme: Theme; effects: OnOff; tilt: OnOff; sections?: string[]; order?: string[] }
 
 /** The front page's sections, as they are offered: every one is shown at the time of day it fits (lib/plan.ts). */
 export const SECTION_OPTIONS: readonly { value: SectionId; label: string; description: string }[] = [
@@ -37,6 +41,9 @@ export const SECTION_OPTIONS: readonly { value: SectionId; label: string; descri
   { value: "discussions", label: "Discussions", description: "Der du er med, i repoene du følger." },
   { value: "weather", label: "Været", description: "Resten av dagen, eller i morgen om kvelden." },
 ]
+
+/** Each section's icon, in the order list and the overview. */
+export const SECTION_ICONS = { alerts: "notification", pulls: "pull-request", issues: "issue", discussions: "discussion", weather: "weather" } as const satisfies Record<SectionId, string>
 
 const SECTION_IDS = new Set<string>(SECTION_OPTIONS.map((option) => option.value))
 
@@ -48,6 +55,8 @@ export type SettingsForm = {
   effects?: OnOff
   tilt?: OnOff
   sections?: SectionId[]
+  /** The front page's order (the reorder list's hidden field, comma ids), known sections only. */
+  order?: SectionId[]
   skip: boolean
   rerun: boolean
   /** With JavaScript the wizard asks for one step at a time: the step's id. Then nothing is kept; the answer is the errors. */
@@ -78,8 +87,10 @@ export function readSettingsForm(form: FormData): SettingsForm {
   const repos = text(form.get("repos"))
   // A CheckboxList with nothing ticked sends nothing: the hidden `sections-shown` says the list was there, so none means none.
   const sections = form.has("sections-shown") || form.has("sections") ? form.getAll("sections").map(String).filter((id): id is SectionId => SECTION_IDS.has(id)) : undefined
+  const order = text(form.get("order"))
   return {
     ...(github === undefined ? {} : { github }),
+    ...(order === undefined ? {} : { order: [...new Set(order.split(",").map((id) => id.trim()).filter((id): id is SectionId => SECTION_IDS.has(id)))] }),
     ...(repos === undefined ? {} : { repos: listOf(repos) }),
     ...(oneOf(form.get("theme"), ["system", "light", "dark"] as const) === undefined ? {} : { theme: form.get("theme") as Theme }),
     ...(oneOf(form.get("effects"), ["on", "off"] as const) === undefined ? {} : { effects: form.get("effects") as OnOff }),
@@ -98,6 +109,8 @@ export function mergeChoices(current: Choices, form: SettingsForm): Choices {
   const all = sections !== undefined && SECTION_OPTIONS.every((option) => sections.includes(option.value))
   const next: Choices = { theme: form.theme ?? current.theme, effects: form.effects ?? current.effects, tilt: form.tilt ?? current.tilt }
   if (sections !== undefined && !all) next.sections = sections
+  const order = form.order ?? current.order
+  if (order !== undefined && order.length > 0) next.order = order
   return next
 }
 
@@ -254,4 +267,23 @@ export function withoutSeen(value: string | undefined, id: string): string {
     .map((part) => part.trim())
     .filter((part) => part !== "" && part.split("@")[0] !== id)
     .join(",")
+}
+
+const THEME_LABEL: Record<Theme, string> = { system: "Som enheten", light: "Lyst", dark: "Mørkt" }
+
+/** The overview's line for the front page: the sections it shows, in their order («Følg opp, Pull requests, …»), or that none are. */
+export function sectionsSummary(order: readonly string[], chosen?: readonly string[]): string {
+  const shown = order.filter((id) => chosen === undefined || chosen.includes(id)).map((id) => SECTION_OPTIONS.find((option) => option.value === id)?.label ?? id)
+  return shown.length === 0 ? "Ingen deler" : shown.join(", ")
+}
+
+/** The overview's line for the look: «Mørkt · effekter av · fast lys». */
+export function appearanceSummary(prefs: Pick<Choices, "theme" | "effects" | "tilt">): string {
+  return [THEME_LABEL[prefs.theme], prefs.effects === "on" ? "effekter på" : "effekter av", prefs.tilt === "on" ? "lyset følger telefonen" : "fast lys"].join(" · ")
+}
+
+/** The overview's line for the followed repositories (the cookie; absent is none, whatever the suggestion is). */
+export function reposSummary(repos: readonly string[]): string {
+  if (repos.length === 0) return "Ingen"
+  return repos.length <= 2 ? repos.join(" og ") : `${repos.slice(0, 2).join(", ")} og ${repos.length - 2} til`
 }
