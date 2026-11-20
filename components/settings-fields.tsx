@@ -19,7 +19,7 @@ export type SettingsState = { user: string | null; repos: string[]; prefs: Prefs
  * The fields the first-run wizard and the settings page share, one per choice, each as it was chosen (or the suggestion), with what
  * the server said about a failed submission. Plain form fields: the same form posts them all to the settings endpoint.
  */
-export function settingsFields({ user, repos, prefs, problems, position }: SettingsState): Record<"github" | "repos" | "position" | "sections" | "theme" | "effects", ReactNode> {
+export function settingsFields({ user, repos, prefs, problems, position }: SettingsState): Record<"github" | "repos" | "position" | "sections" | "theme" | "effects" | "tilt", ReactNode> {
   return {
     github: (
       <TextField
@@ -86,6 +86,10 @@ export function settingsFields({ user, repos, prefs, problems, position }: Setti
           ]}
         />
         <EffectsPreview name="effects" value={prefs.effects} />
+      </>
+    ),
+    tilt: (
+      <>
         <ChoiceCards
           name="tilt"
           legend="Lyset følger telefonen"

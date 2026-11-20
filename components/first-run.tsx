@@ -43,7 +43,8 @@ export async function FirstRunWizard() {
           { id: "position", title: "Hvor er du?", body: "Posisjonen gir avganger fra holdeplassene nær deg og været der du er.", icon: "place", content: fields.position },
           { id: "sections", title: "Hva skal forsiden vise?", body: "Velg delene du vil se. Resten finner du fortsatt i menyen.", icon: "home", content: fields.sections },
           { id: "theme", title: "Lyst eller mørkt?", icon: "sun", content: fields.theme },
-          { id: "effects", title: "Effekter", body: "Bakgrunnen og bildene kan tegnes i 3D og følge lyset. Slå det av for en flat og stille side som bruker mindre strøm.", icon: "idea", content: fields.effects },
+          { id: "effects", title: "Vil du ha effekter?", body: "Bakgrunnen og bildene kan tegnes i 3D og følge lyset. Slå det av for en flat og stille side som bruker mindre strøm.", icon: "idea", content: fields.effects },
+          { id: "tilt", title: "Skal lyset følge telefonen?", body: "Når du vipper telefonen, flytter lyset og skyggene seg. På en datamaskin følger lyset pekeren.", icon: "phone", content: fields.tilt },
           {
             id: "install",
             title: "Legg den på hjemskjermen",

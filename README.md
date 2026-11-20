@@ -163,8 +163,8 @@ server's); and the offer to install the app on the front page (`install`). An em
 
 On a first visit any page (not Innstillinger, the API or the offline page) opens over it the design system's **first-run wizard** (`FirstRun` +
 `FirstRunEnhancer`, `components/first-run.tsx`), drawn open by the server until `first-run@1` is in `seen`, so nothing flashes; the intros and the
-install offer wait until it is done. Eight steps: welcome · GitHub username · watched repositories (prefilled with `GITHUB_WATCH_REPOS`, at most 20) ·
-position · the front page's sections · theme · effects and tilt · install. **Innstillinger** (`app/innstillinger/page.tsx`) has the same fields
+install offer wait until it is done. One question per step, nine steps: welcome · GitHub username · watched repositories (prefilled with
+`GITHUB_WATCH_REPOS`, at most 20) · position · the front page's sections · theme · effects · tilt (the light follows the phone) · install. **Innstillinger** (`app/innstillinger/page.tsx`) has the same fields
 (`components/settings-fields.tsx`) in one form, and «Vis introen igjen».
 
 Both post to `/start/api/innstillinger` (`app/api/innstillinger/route.ts`; pure parts in `lib/settings.ts`, tested), a plain form that works without

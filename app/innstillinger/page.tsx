@@ -48,8 +48,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
             <SettingsSection id="tema" title="Utseende">
               {fields.theme}
             </SettingsSection>
-            <SettingsSection id="effekter" title="Effekter" body="Bakgrunnen og bildene kan tegnes i 3D og følge lyset.">
+            <SettingsSection id="effekter" title="Effekter" body="Bakgrunnen og bildene kan tegnes i 3D.">
               {fields.effects}
+            </SettingsSection>
+            <SettingsSection id="lys" title="Lyset følger telefonen" body="Når du vipper telefonen, flytter lyset og skyggene seg.">
+              {fields.tilt}
             </SettingsSection>
             <Button type="submit">Lagre</Button>
           </Stack>
