@@ -6,6 +6,7 @@ import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { details } from "@lmfaole/designsystem/components/picture-rows"
 import { Rows, type RowData } from "@lmfaole/designsystem/components/rows"
 import { StatusLine } from "@lmfaole/designsystem/components/status-line"
+import { SummaryBar } from "@lmfaole/designsystem/components/summary-bar"
 import { Text, TextLink } from "@lmfaole/designsystem/components/text"
 import { Time } from "@lmfaole/designsystem/components/time"
 import type { IconName } from "@lmfaole/designsystem/lib/icons"
@@ -23,6 +24,7 @@ import { USERNAME_PAGE } from "../lib/username"
 import { ageLabels, compactLabels, statusLabels, type Label } from "../lib/pr-status"
 import { groupPulls, type GroupId } from "../lib/pulls"
 import type { Settled } from "../lib/settle"
+import type { SummaryEntry } from "../lib/summary"
 import { now, type Day } from "../lib/day"
 import { describeSymbol } from "../lib/yr"
 import type { DiscussionItem } from "../lib/discussions"
@@ -104,7 +106,7 @@ const pullRow = ({ item, whose }: PullEntry, group: GroupId, instant: Date, comp
   )
 
 /** Pull requests: on the front page the few that need you most, with a way to all of them; on their own page all of them, in groups by what needs you most. */
-export function PullsSection({ data, mode, instant }: { data: Settled<PullsData>; mode: "digest" | "full"; instant: Date }) {
+export function PullsSection({ data, mode, instant, counts = [] }: { data: Settled<PullsData>; mode: "digest" | "full"; instant: Date; counts?: readonly SummaryEntry[] }) {
   if (!data.ok) return <Failed id="pulls" title="Pull requests" icon="pull-request" error={data.error} />
   const groups = groupPulls(data.value)
   if (groups.length === 0) return <Quiet id="pulls" title="Pull requests" icon="pull-request" description="Her kommer åpne pull requests i offentlige repoer som brukeren har laget eller er bedt om å se gjennom. Venter du noen her, kan brukernavnet være feil." action={CHANGE_USER}>Ingen åpne pull requests.</Quiet>
@@ -123,6 +125,7 @@ export function PullsSection({ data, mode, instant }: { data: Settled<PullsData>
   const first = takeFirst(groups.map((group) => group.entries.map((entry) => ({ entry, group: group.id }))), DIGEST.pulls)
   return (
     <PageSection id="pulls" title="Krever deg" icon="pull-request" more={{ href: PULLS_PATH, label: `Se alle ${total}` }}>
+      <SummaryBar label="Pull requests i tall" items={counts} />
       <Rows lead="icon" rows={first.map(({ entry, group }) => pullRow(entry, group, instant, true))} columns={COLUMNS} />
     </PageSection>
   )
@@ -131,7 +134,7 @@ export function PullsSection({ data, mode, instant }: { data: Settled<PullsData>
 export type IssuesData = Parameters<typeof groupIssues>[0]
 
 /** Issues: the few that are for you on the front page; all of them, in groups, on their own page. */
-export function IssuesSection({ data, mode, instant }: { data: Settled<IssuesData>; mode: "digest" | "full"; instant: Date }) {
+export function IssuesSection({ data, mode, instant, counts = [] }: { data: Settled<IssuesData>; mode: "digest" | "full"; instant: Date; counts?: readonly SummaryEntry[] }) {
   if (!data.ok) return <Failed id="issues" title="Issues" icon="issue" error={data.error} />
   const groups = groupIssues(data.value, instant)
   if (groups.length === 0) return <Quiet id="issues" title="Issues" icon="issue" description="Her kommer åpne issues i offentlige repoer som brukeren er tildelt, har laget eller er nevnt i. Venter du noen her, kan brukernavnet være feil." action={CHANGE_USER}>Ingen åpne issues.</Quiet>
@@ -150,6 +153,7 @@ export function IssuesSection({ data, mode, instant }: { data: Settled<IssuesDat
   const total = groups.reduce((sum, group) => sum + group.items.length, 0)
   return (
     <PageSection id="issues" title="Issues til deg" icon="issue" more={{ href: ISSUES_PATH, label: `Se alle ${total}` }}>
+      <SummaryBar label="Issues i tall" items={counts} />
       <Rows lead="icon" rows={takeFirst(groups.map((group) => group.items), DIGEST.issues).map((item) => issueRow(item, true))} columns={COLUMNS} />
     </PageSection>
   )
@@ -166,7 +170,7 @@ const discussionRow = (item: DiscussionItem, compact = false): RowData =>
   )
 
 /** Discussions: the few on the front page; all of them, in groups, on their own page. Nothing where there are none. */
-export function DiscussionsSection({ data, mode }: { data: Settled<DiscussionsData>; mode: "digest" | "full" }) {
+export function DiscussionsSection({ data, mode, counts = [] }: { data: Settled<DiscussionsData>; mode: "digest" | "full"; counts?: readonly SummaryEntry[] }) {
   if (!data.ok) return <Failed id="discussions" title="Discussions" icon="discussion" error={data.error} />
   const groups = groupDiscussions(data.value)
   if (groups.length === 0) return mode === "full" ? <Quiet id="discussions" title="Discussions" icon="discussion" description="Her kommer offentlige discussions brukeren har startet, svart i eller er nevnt i. Venter du noen her, kan brukernavnet være feil." action={CHANGE_USER}>Ingen discussions.</Quiet> : null
@@ -184,6 +188,7 @@ export function DiscussionsSection({ data, mode }: { data: Settled<DiscussionsDa
   const total = groups.reduce((sum, group) => sum + group.items.length, 0)
   return (
     <PageSection id="discussions" title="Discussions" icon="discussion" more={{ href: DISCUSSIONS_PATH, label: `Se alle ${total}` }}>
+      <SummaryBar label="Discussions i tall" items={counts} />
       <Rows lead="icon" rows={takeFirst(groups.map((group) => group.items), DIGEST.discussions).map((item) => discussionRow(item, true))} columns={COLUMNS} />
     </PageSection>
   )
@@ -257,7 +262,7 @@ const replyRow = (reply: Reply): RowData =>
  * in, and Dependabot's open pull requests. On the front page the first few of them, red first; on their own page each as a group. A source
  * that fails shows its own error; nothing is shown where there is nothing.
  */
-export function AlertsSection({ data, mode, instant }: { data: AlertsData; mode: "digest" | "full"; instant: Date }) {
+export function AlertsSection({ data, mode, instant, counts = [] }: { data: AlertsData; mode: "digest" | "full"; instant: Date; counts?: readonly SummaryEntry[] }) {
   const errors = [data.ci, data.replies, data.dependabot].flatMap((result) => (result.ok ? [] : [result.error]))
   const groups = [
     { id: "ci" as const, rows: data.ci.ok ? data.ci.value.map(ciRow) : [] },
@@ -281,6 +286,7 @@ export function AlertsSection({ data, mode, instant }: { data: AlertsData; mode:
   const total = groups.reduce((sum, group) => sum + group.rows.length, 0)
   return (
     <PageSection id="alerts" title="Følg opp" icon="notification" {...(total > DIGEST.alerts ? { more: { href: withBase("/varsler"), label: `Se alle ${total}` } } : {})}>
+      <SummaryBar label="Varsler i tall" items={counts} />
       <Rows lead="icon" rows={takeFirst(groups.map((group) => group.rows), DIGEST.alerts)} columns={COLUMNS} />
       {failed}
     </PageSection>

@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert"
 import { test } from "node:test"
 
-import { summaryItems } from "./summary.ts"
+import { countsOf, summaryItems } from "./summary.ts"
 import type { Group, Entry } from "./pulls.ts"
 import type { IssueGroup } from "./issues.ts"
 import type { DiscussionGroup } from "./discussions.ts"
@@ -37,4 +37,12 @@ test("what is red or new comes with the counts: failing CI first, as it stops so
 test("nothing for the reader is nothing", () => {
   assert.deepEqual(summaryItems("/start", { pulls: [], issues: [], discussions: [] }), [])
   assert.deepEqual(summaryItems("/start", { pulls: [pull("waiting", 3), pull("drafts", 1)], issues: [issue("recent", 4)], discussions: [] }), [])
+})
+
+test("each part gets its own counts, so they stand in its section", () => {
+  const items = summaryItems("/start", { pulls: [pull("blocked", 1), pull("review", 2)], issues: [issue("assigned", 3)], discussions: [], alerts: { ci: 1, replies: 0, dependabot: 4 } })
+  assert.deepEqual(countsOf(items, "pulls").map((item) => item.key), ["blocked", "review"])
+  assert.deepEqual(countsOf(items, "alerts").map((item) => item.key), ["ci", "dependabot"])
+  assert.deepEqual(countsOf(items, "issues").map((item) => item.key), ["assigned"])
+  assert.deepEqual(countsOf(items, "discussions"), [])
 })

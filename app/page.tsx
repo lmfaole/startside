@@ -4,7 +4,6 @@ import { Freshness } from "@lmfaole/designsystem/components/freshness"
 import { InstallPrompt } from "@lmfaole/designsystem/components/install-prompt"
 import { IntroCallout } from "@lmfaole/designsystem/components/intro-callout"
 import { Stack } from "@lmfaole/designsystem/components/layout"
-import { SummaryBar } from "@lmfaole/designsystem/components/summary-bar"
 import { cookies } from "next/headers"
 
 import { AlertsOwnerOnly, GithubUserForm } from "../components/github-user"
@@ -22,7 +21,7 @@ import { parsePosition, POSITION_COOKIE } from "../lib/position"
 import { groupPulls } from "../lib/pulls"
 import { settle } from "../lib/settle"
 import { settingsPage } from "../lib/settings"
-import { summaryItems } from "../lib/summary"
+import { countsOf, summaryItems } from "../lib/summary"
 import { formState, type SearchParams } from "../lib/username"
 import { githubPage, introSeen, SEEN_PATH, visitorDaySettings, visitorPrefs } from "../lib/visitor"
 import { getForecast } from "../lib/yr"
@@ -34,8 +33,8 @@ const STALE_AFTER = 180
 export const dynamic = "force-dynamic"
 
 /**
- * The front page is a digest: first the state in counts (each a link to what it counts), then the few things that need you
- * most from each source, each with a way to all of it. Which sections are shown follows the time of day as the visitor set it
+ * The front page is a digest: the few things that need you most from each source, each section with its own counts under its
+ * title (each a link to what it counts) and a way to all of it. Which sections are shown follows the time of day as the visitor set it
  * (lib/plan.ts, lib/day-settings.ts), in the one order the visitor chose (`order` in `prefs`, the design system's `orderSections`); what is left out
  * is not fetched either. The lists, and a page for each thing, are one level down. GitHub is fetched for the visitor's username
  * (lib/visitor.ts); before there is one, the form asking for it stands where the first GitHub section would be. The alerts are the
@@ -86,15 +85,14 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
             cookiePath={SEEN_PATH}
           />
         ) : null}
-        {user === null ? null : <SummaryBar label="Oversikt" items={summary} />}
         {plan.sections.map((id) => {
           if (id === formAt) return form
           if (user === null && isGithub(id)) return null
           if (id === "alerts" && !owner) return <AlertsOwnerOnly key={id} />
-          if (id === "alerts" && ci && replies && dependabot) return <AlertsSection key={id} data={{ ci, replies, dependabot }} mode="digest" instant={instant} />
-          if (id === "pulls" && pulls) return <PullsSection key={id} data={pulls} mode="digest" instant={instant} />
-          if (id === "issues" && issues) return <IssuesSection key={id} data={issues} mode="digest" instant={instant} />
-          if (id === "discussions" && discussions) return <DiscussionsSection key={id} data={discussions} mode="digest" />
+          if (id === "alerts" && ci && replies && dependabot) return <AlertsSection key={id} data={{ ci, replies, dependabot }} mode="digest" instant={instant} counts={countsOf(summary, "alerts")} />
+          if (id === "pulls" && pulls) return <PullsSection key={id} data={pulls} mode="digest" instant={instant} counts={countsOf(summary, "pulls")} />
+          if (id === "issues" && issues) return <IssuesSection key={id} data={issues} mode="digest" instant={instant} counts={countsOf(summary, "issues")} />
+          if (id === "discussions" && discussions) return <DiscussionsSection key={id} data={discussions} mode="digest" counts={countsOf(summary, "discussions")} />
           if (id === "weather" && forecast) return <WeatherDigest key={id} data={forecast} window={plan.weatherWindow} day={day} instant={instant} />
           return null
         })}
