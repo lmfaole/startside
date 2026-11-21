@@ -5,7 +5,6 @@ import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { Text } from "@lmfaole/designsystem/components/text"
 import { WeatherStage } from "@lmfaole/designsystem/components/weather-stage"
 import { DumbbellChart } from "@lmfaole/designsystem/components/dumbbell-chart"
-import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Meteogram } from "@lmfaole/designsystem/components/meteogram"
 import { cookies } from "next/headers"
 
@@ -82,9 +81,6 @@ export default async function Page() {
           )}
           </>
         )}
-        <Text size="xs" tone="muted">
-          Værdata fra <ExternalLink href="https://www.yr.no">Yr</ExternalLink> (Meteorologisk institutt).
-        </Text>
       </Stack>
     </Shell>
     </WeatherStage>

@@ -6,6 +6,7 @@ import { SubPages } from "@lmfaole/designsystem/components/sub-pages"
 import { orderSections } from "@lmfaole/designsystem/lib/preferences"
 import { cookies } from "next/headers"
 
+import { Credits } from "../../components/credits"
 import { IntroAgain } from "../../components/intro-again"
 import { OldSettingsAnchor } from "../../components/old-settings-anchor"
 import { Shell } from "../../components/shell"
@@ -20,7 +21,7 @@ export const dynamic = "force-dynamic"
 export const metadata = { title: "Innstillinger · Startside" }
 
 /**
- * The settings' overview: one row per subpage with what is chosen there now, and «Vis introen igjen» at the bottom. Each subpage has its
+ * The settings' overview: one row per subpage with what is chosen there now, «Vis introen igjen», and at the bottom where the data comes from (`Credits`). Each subpage has its
  * own small form to the settings endpoint. «Lagret» here is for a save that came back to the overview (an older form).
  */
 export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
@@ -47,6 +48,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
         />
         <SettingsSection id="intro" title="Introen" body="Gå gjennom de første valgene igjen, ett om gangen.">
           <IntroAgain />
+        </SettingsSection>
+        <SettingsSection id="kilder" title="Kilder" body="Hvor dataene kommer fra. Ingenting lagres; hver side spør kildene når den åpnes, og svarene holdes en kort stund.">
+          <Credits />
         </SettingsSection>
       </Stack>
     </Shell>

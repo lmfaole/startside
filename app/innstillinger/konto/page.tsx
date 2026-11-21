@@ -6,7 +6,7 @@ import { settingsState } from "../../../lib/visitor"
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Konto · Innstillinger · Startside" }
 
-/** The GitHub username the GitHub pages are fetched for; where «Bytt» leads. */
+/** The GitHub username the GitHub pages are fetched for; whose data it is is shown only here and on the overview. */
 export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const [params, state] = await Promise.all([searchParams, settingsState()])
   return (

@@ -1,4 +1,3 @@
-import { ExternalLink } from "@lmfaole/designsystem/components/external-link"
 import { Freshness } from "@lmfaole/designsystem/components/freshness"
 import { IntroCallout } from "@lmfaole/designsystem/components/intro-callout"
 import { Stack } from "@lmfaole/designsystem/components/layout"
@@ -49,9 +48,6 @@ export default async function Page() {
           fallback={<Text size="sm">Uten posisjon kan ikke siden vite hvilke stasjoner som er nærmest, så den viser ingen avganger.</Text>}
         />
         {stops === null ? null : <NearbyStops stops={stops} instant={instant} />}
-        <Text size="xs" tone="muted">
-          Avganger fra <ExternalLink href="https://entur.no">Entur</ExternalLink>.
-        </Text>
       </Stack>
     </Shell>
   )

@@ -15,7 +15,7 @@ Built after the design system's «Pages and navigation» rules (5.3): three leve
 | `/start/github` | GitHub in one place: the counts of what wants you and the pages under it (varsler, pull requests, issues, discussions), which have GitHub as their first breadcrumb |
 | `/start/transport` | The stations nearest to the device (Entur, within a kilometre, nearest first), each with a departure board (`DepartureBoard`): line, destination, platform, delays and cancellations. Only from the device's position («Bruk min posisjon»); without it the page says so. `/start/avganger` redirects here (`next.config.ts`) |
 | `/start/varsler` | What wants a look: **feilende CI** (a default branch whose last commit is red, in the user's public repositories and the watched ones), **nytt fra andre** (replies and reviews on what the user is in, last three days, where somebody else wrote last) and **Dependabot** (its open pull requests in the user's public repositories, with their checks). Only when the username is the token's owner (see below) |
-| `/start/innstillinger` | **Innstillinger** (last in the menu): an overview (`SubPages` with what is chosen now) of the subpages `konto` (GitHub username; where «Bytt» leads, and where `/start/brukernavn` redirects), `repoer`, `forside` (sections and their order), `tid` (time of day: the switch and greeting, with its own subpages `tid/deler`, `tid/helg`, `tid/innhold` and one per part, `tid/morgen` … `tid/natt`), `posisjon`, `utseende` (theme, effects, tilt) and `app` (install, «Vis introen igjen»), each with its own small form; «Vis introen igjen» also at the bottom of the overview |
+| `/start/innstillinger` | **Innstillinger** (last in the menu): an overview (`SubPages` with what is chosen now) of the subpages `konto` (GitHub username, the only place it is shown; and where `/start/brukernavn` redirects), `repoer`, `forside` (sections and their order), `tid` (time of day: the switch and greeting, with its own subpages `tid/deler`, `tid/helg`, `tid/innhold` and one per part, `tid/morgen` … `tid/natt`), `posisjon`, `utseende` (theme, effects, tilt) and `app` (install, «Vis introen igjen»), each with its own small form; «Vis introen igjen» also at the bottom of the overview |
 | `/start/vaer` | The whole forecast: the rest of today, tomorrow, the coming days |
 | `/start/pull-requests/{owner}/{repo}/{n}`, `/issues/…`, `/discussions/…` | The **detail** of one thing: status, description, facts, checks, last comments, and **«Åpne på GitHub» last** |
 
@@ -35,7 +35,7 @@ instead of data; Vær, Transport and the detail pages (public anyway) work as be
 with the server's token) whether the user exists, keeps the name in the cookie `github_user` (path `/start`, a year, `SameSite=Lax`, `Secure`,
 `HttpOnly`) and answers 303 to `back` (which must start with `/start` and have no `//`; else the front page). An unknown name goes back with
 `?brukernavn-feil=github&brukernavn-verdi=<what was written>`, which the page's form shows as the error; an empty field removes the cookie.
-Once a name is set, every page ends with «Viser data for <u> · Bytt» (`components/shell.tsx`). With `MOCK_DATA=1` any name is taken and the
+Whose data it is shows only under Innstillinger › Konto, not on every page. With `MOCK_DATA=1` any name is taken and the
 lists come from the mock data as before. `lib/username.ts` (pure, tested) checks the name, the way back and the cookie.
 
 The token is the owner's and could read private repositories, so **every search has `is:public`** and uses the name (`author:<u>`,
@@ -64,6 +64,8 @@ the summary, in the morning, the workday, the evening and the weekend, but not a
 | Entur (Journey Planner v3, through the relay) | Departures from the stations nearest to the device | none |
 | Yr (MET Norway `locationforecast`) | The forecast for the rest of the day | `WEATHER_PLACE`, `WEATHER_LAT`, `WEATHER_LON` in `wrangler.jsonc` |
 | GitHub | For the visitor's username (above), public repositories only: pull requests awaiting their review, their open pull requests, issues assigned to them | secret `GITHUB_TOKEN` on `startside-upstream` |
+
+Where the data comes from (GitHub, Entur, Yr, OpenStreetMap via Nominatim) is said once, under «Kilder» at the foot of Innstillinger (`components/credits.tsx`), not on each page.
 
 GitHub is limited to public repositories, and can leave out organisations with `GITHUB_EXCLUDE_ORGS` (comma-separated, in
 `wrangler.jsonc`; none now): `lib/github-query.ts`.
