@@ -124,7 +124,7 @@ export function PullsSection({ data, mode, instant, counts = [] }: { data: Settl
   const total = groups.reduce((sum, group) => sum + group.entries.length, 0)
   const first = takeFirst(groups.map((group) => group.entries.map((entry) => ({ entry, group: group.id }))), DIGEST.pulls)
   return (
-    <PageSection id="pulls" title="Krever deg" icon="pull-request" more={{ href: PULLS_PATH, label: `Se alle ${total}` }}>
+    <PageSection id="pulls" title="Krever deg" icon="pull-request" continues={{ href: PULLS_PATH, label: "Se alle pull requests", icon: "pull-request", count: total === 1 ? "1 åpen" : `${total} åpne` }}>
       <SummaryBar label="Pull requests i tall" items={counts} />
       <Rows lead="icon" rows={first.map(({ entry, group }) => pullRow(entry, group, instant, true))} columns={COLUMNS} />
     </PageSection>
@@ -152,7 +152,7 @@ export function IssuesSection({ data, mode, instant, counts = [] }: { data: Sett
   }
   const total = groups.reduce((sum, group) => sum + group.items.length, 0)
   return (
-    <PageSection id="issues" title="Issues til deg" icon="issue" more={{ href: ISSUES_PATH, label: `Se alle ${total}` }}>
+    <PageSection id="issues" title="Issues til deg" icon="issue" continues={{ href: ISSUES_PATH, label: "Se alle issues", icon: "issue", count: total === 1 ? "1 åpen" : `${total} åpne` }}>
       <SummaryBar label="Issues i tall" items={counts} />
       <Rows lead="icon" rows={takeFirst(groups.map((group) => group.items), DIGEST.issues).map((item) => issueRow(item, true))} columns={COLUMNS} />
     </PageSection>
@@ -187,7 +187,7 @@ export function DiscussionsSection({ data, mode, counts = [] }: { data: Settled<
   }
   const total = groups.reduce((sum, group) => sum + group.items.length, 0)
   return (
-    <PageSection id="discussions" title="Discussions" icon="discussion" more={{ href: DISCUSSIONS_PATH, label: `Se alle ${total}` }}>
+    <PageSection id="discussions" title="Discussions" icon="discussion" continues={{ href: DISCUSSIONS_PATH, label: "Se alle discussions", icon: "discussion", count: `${total} i alt` }}>
       <SummaryBar label="Discussions i tall" items={counts} />
       <Rows lead="icon" rows={takeFirst(groups.map((group) => group.items), DIGEST.discussions).map((item) => discussionRow(item, true))} columns={COLUMNS} />
     </PageSection>
@@ -221,7 +221,7 @@ export function hourRows(forecast: Forecast, window: "today" | "tomorrow", day: 
 export function WeatherDigest({ data, window, day, instant }: { data: Settled<Forecast>; window: "today" | "tomorrow"; day: Day; instant: Date }) {
   if (!data.ok) return <Failed id="weather" title="Vær" icon="weather" error={data.error} />
   return (
-    <PageSection id="weather" title={`Vær i ${data.value.place} ${window === "today" ? "nå" : "i morgen"}`} icon="weather" more={{ href: withBase("/vaer"), label: "Se hele meldingen" }}>
+    <PageSection id="weather" title={`Vær i ${data.value.place} ${window === "today" ? "nå" : "i morgen"}`} icon="weather" continues={{ href: withBase("/vaer"), label: "Se hele værmeldingen", icon: "weather" }}>
       <Rows lead="icon" rows={hourRows(data.value, window, day, instant, DIGEST.weather)} columns={{ name: "Tid og vær", value: "Temperatur, nedbør og vind" }} />
     </PageSection>
   )
@@ -285,7 +285,7 @@ export function AlertsSection({ data, mode, instant, counts = [] }: { data: Aler
   }
   const total = groups.reduce((sum, group) => sum + group.rows.length, 0)
   return (
-    <PageSection id="alerts" title="Følg opp" icon="notification" {...(total > DIGEST.alerts ? { more: { href: withBase("/varsler"), label: `Se alle ${total}` } } : {})}>
+    <PageSection id="alerts" title="Følg opp" icon="notification" continues={{ href: withBase("/varsler"), label: "Se alle varsler", icon: "notification", count: `${total} i alt` }}>
       <SummaryBar label="Varsler i tall" items={counts} />
       <Rows lead="icon" rows={takeFirst(groups.map((group) => group.rows), DIGEST.alerts)} columns={COLUMNS} />
       {failed}

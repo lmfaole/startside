@@ -1,8 +1,8 @@
 import { Stack } from "@lmfaole/designsystem/components/layout"
 import { PageSection } from "@lmfaole/designsystem/components/page-section"
 import { StreamedSection } from "@lmfaole/designsystem/components/streamed-section"
-import { SubPages } from "@lmfaole/designsystem/components/sub-pages"
 import { SummaryBar } from "@lmfaole/designsystem/components/summary-bar"
+import { Text } from "@lmfaole/designsystem/components/text"
 import type { IconName } from "@lmfaole/designsystem/lib/icons"
 
 import { GithubUserForm } from "../../components/github-user"
@@ -48,13 +48,13 @@ async function Counts({ counts, area, label }: { counts: Promise<SummaryEntry[]>
 }
 
 const PARTS = [
-  { area: "alerts", title: "Varsler", icon: "notification", href: "/varsler", page: "Alle varsler", description: "Feilende CI, nytt fra andre og Dependabot." },
-  { area: "pulls", title: "Pull requests", icon: "pull-request", href: "/pull-requests", page: "Alle pull requests", description: "Dine egne og de som venter på din review." },
-  { area: "issues", title: "Issues", icon: "issue", href: "/issues", page: "Alle issues", description: "Det som er tildelt deg, nytt uten eier og det som har rørt seg." },
-  { area: "discussions", title: "Discussions", icon: "discussion", href: "/discussions", page: "Alle discussions", description: "Samtalene du er med i og spørsmål uten svar." },
+  { area: "alerts", title: "Varsler", icon: "notification", href: "/varsler", page: "Se alle varsler", description: "Feilende CI, nytt fra andre og Dependabot." },
+  { area: "pulls", title: "Pull requests", icon: "pull-request", href: "/pull-requests", page: "Se alle pull requests", description: "Dine egne og de som venter på din review." },
+  { area: "issues", title: "Issues", icon: "issue", href: "/issues", page: "Se alle issues", description: "Det som er tildelt deg, nytt uten eier og det som har rørt seg." },
+  { area: "discussions", title: "Discussions", icon: "discussion", href: "/discussions", page: "Se alle discussions", description: "Samtalene du er med i og spørsmål uten svar." },
 ] as const satisfies readonly { area: SummaryArea; title: string; icon: IconName; href: string; page: string; description: string }[]
 
-/** GitHub in one place: a section for each part, with its counts and the link to its page under them. */
+/** GitHub in one place: a card for each part, with what it holds and its counts, its foot the link to its page. */
 export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { user, known, params } = await githubPage(searchParams)
   const counts = user === null ? null : allCounts(user)
@@ -63,13 +63,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
       <Stack gap="xl">
         {user === null ? <GithubUserForm back="/start/github" params={params} current={known ?? undefined} /> : null}
         {PARTS.map((part) => (
-          <PageSection key={part.area} id={`github-${part.area}`} title={part.title} icon={part.icon}>
+          <PageSection key={part.area} id={`github-${part.area}`} title={part.title} icon={part.icon} continues={{ href: withBase(part.href), label: part.page, icon: part.icon }}>
+            <Text size="sm" tone="muted">{part.description}</Text>
             {counts === null ? null : (
               <StreamedSection title={`tallene for ${part.title.toLowerCase()}`} lines={1}>
                 <Counts counts={counts} area={part.area} label={`${part.title} i tall`} />
               </StreamedSection>
             )}
-            <SubPages label={`Mer om ${part.title.toLowerCase()}`} pages={[{ href: withBase(part.href), label: part.page, icon: part.icon, description: part.description }]} />
           </PageSection>
         ))}
       </Stack>
